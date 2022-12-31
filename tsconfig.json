@@ -1,0 +1,23 @@
+{
+  "compilerOptions": {
+    "lib": ["ES2021"],
+    "target": "es2021",
+    "outDir": "dist",
+    "baseUrl": "src",
+    "module": "commonjs",
+    "moduleResolution": "node",
+    "noEmitOnError": true,
+    "experimentalDecorators": true,
+    "emitDecoratorMetadata": true,
+    "allowJs": true,
+    "skipLibCheck": true,
+    "strict": true,
+    "resolveJsonModule": true,
+    "removeComments": true,
+    "noErrorTruncation": true,
+    "forceConsistentCasingInFileNames": true,
+    "strictPropertyInitialization": true
+  },
+  "include": ["src", "index.d.ts"],
+  "exclude": ["node_modules"]
+}
