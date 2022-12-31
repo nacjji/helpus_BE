@@ -1,5 +1,5 @@
 import { ErrorRequestHandler } from 'express';
-import logger from 'config/logger';
+import logger from '../config/logger';
 
 const errorHandler: ErrorRequestHandler = (err, req, res) => {
   const { stack } = err;
