@@ -9,3 +9,56 @@ datasource db {
   provider = "mysql"
   url      = env("DATABASE_URL")
 }
+
+model User {
+  userId    Int       @id @default(autoincrement())
+  userName  String
+  email     String?
+  password  String?
+  state     String?
+  userImage String?
+  Post      Post[]
+  Wish      Wish[]
+  Comment   Comment[]
+  Friend    Friend[]
+}
+
+model Friend {
+  id            Int  @id @default(autoincrement())
+  user          User @relation(fields: [userId], references: [userId])
+  requestFriend Int
+
+  userId Int
+}
+
+model Post {
+  postId    Int       @id @default(autoincrement())
+  userId    Int
+  user      User      @relation(fields: [userId], references: [userId], onDelete: Cascade)
+  location1 String?
+  location2 String?
+  imageUrl  String?
+  updated   Boolean
+  createdAt DateTime
+  Wish      Wish[]
+  Comment   Comment[]
+}
+
+model Comment {
+  commentId Int      @id @default(autoincrement())
+  post      Post     @relation(fields: [postId], references: [postId])
+  postId    Int
+  user      User     @relation(fields: [userId], references: [userId])
+  userId    Int
+  updated   Boolean
+  createdAt DateTime
+}
+
+model Wish {
+  post   Post @relation(fields: [postId], references: [postId])
+  postId Int
+  user   User @relation(fields: [userId], references: [userId])
+  userId Int
+
+  @@id([postId, userId])
+}
