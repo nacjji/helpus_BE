@@ -19,6 +19,10 @@ class PostsService {
     imageUrl2?: string,
     imageUrl3?: string
   ) => {
+    const imageFileName1 = imageUrl1?.split('/');
+    const imageFileName2 = imageUrl2?.split('/');
+    const imageFileName3 = imageUrl3?.split('/');
+
     const result = await this.postsRepository.createPost(
       userId,
       title,
@@ -26,9 +30,9 @@ class PostsService {
       updated,
       location1,
       location2,
-      imageUrl1,
-      imageUrl2,
-      imageUrl3
+      imageFileName1 ? imageFileName1[4] : undefined,
+      imageFileName2 ? imageFileName2[4] : undefined,
+      imageFileName3 ? imageFileName3[4] : undefined
     );
     return result;
   };
