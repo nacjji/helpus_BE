@@ -48,6 +48,38 @@ class PostsService {
     const result = await this.postsRepository.findDetailPost(postId);
     return result;
   };
+
+  updatePost = async (
+    postId: number,
+    userId: number,
+    title?: string,
+    content?: string,
+    location1?: string,
+    location2?: string,
+    imageUrl1?: string,
+    imageUrl2?: string,
+    imageUrl3?: string,
+    tag?: string
+  ) => {
+    const result = await this.postsRepository.updatePost(
+      postId,
+      userId,
+      title,
+      content,
+      location1,
+      location2,
+      imageUrl1,
+      imageUrl2,
+      imageUrl3,
+      tag
+    );
+    return result;
+  };
+
+  deletePost = async (postId: number) => {
+    const result = await this.postsRepository.deletePost(postId);
+    return result;
+  };
 }
 
 export default PostsService;

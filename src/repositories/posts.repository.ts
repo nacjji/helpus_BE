@@ -66,6 +66,43 @@ class PostsRepository {
     });
     return result;
   };
+
+  updatePost = async (
+    postId: number,
+    userId: number,
+    title?: string,
+    content?: string,
+    location1?: string,
+    location2?: string,
+    imageUrl1?: string,
+    imageUrl2?: string,
+    imageUrl3?: string,
+    tag?: string
+  ) => {
+    // params 에 해당하는 게시글을 찾고, 없을 경우 에러를 반환함
+    await this.prisma.post.findUniqueOrThrow({
+      where: { postId },
+    });
+
+    const result = await this.prisma.post.update({
+      where: { postId },
+      data: { title, content, location1, location2, imageUrl1, imageUrl2, imageUrl3, tag },
+      include: {
+        user: {
+          select: {
+            userName: true,
+          },
+        },
+      },
+    });
+    return result;
+  };
+
+  deletePost = async (postId: number) => {
+    await this.prisma.post.findUniqueOrThrow({ where: { postId } });
+    const result = await this.prisma.post.delete({ where: { postId } });
+    return result;
+  };
 }
 
 export default PostsRepository;

@@ -16,10 +16,8 @@ class PostsController {
       const userId = 1;
       const { title, content, updated, location1, location2, tag } =
         await postInputPattern.validateAsync(req.body);
-
-      // const fileData: Express.MulterS3;
-
       const filesArr = req.files! as Array<Express.MulterS3.File>;
+
       const imageUrl = filesArr.map((file) => file.location);
       const imageUrl1 = imageUrl[0];
       const imageUrl2 = imageUrl[1];
@@ -58,6 +56,48 @@ class PostsController {
       const postId = Number(req.params.postId);
       const result = await this.postsService.findDetailPost(postId);
       return res.status(200).json({ result });
+    } catch (error) {
+      return next(error);
+    }
+  };
+
+  updatePost = async (req: Request, res: Response, next: NextFunction) => {
+    try {
+      const postId = Number(req.params.postId);
+      const { title, content, location1, location2, tag } = req.body;
+      // const userId = res.locals
+      const userId = 1;
+      await postInputPattern.validateAsync(req.body);
+      const filesArr = req.files! as Array<Express.MulterS3.File>;
+      const imageUrl = filesArr.map((file) => file.location);
+      const imageUrl1 = imageUrl[0];
+      const imageUrl2 = imageUrl[1];
+      const imageUrl3 = imageUrl[2];
+
+      const result = await this.postsService.updatePost(
+        postId,
+        userId,
+        title,
+        content,
+        location1,
+        location2,
+        imageUrl1,
+        imageUrl2,
+        imageUrl3,
+        tag
+      );
+      return res.status(201).json({ result });
+    } catch (error) {
+      return next(error);
+    }
+  };
+
+  deletePost = async (req: Request, res: Response, next: NextFunction) => {
+    try {
+      // const userId = res.locals;
+      const postId = Number(req.params.postId);
+      await this.postsService.deletePost(postId);
+      return res.status(201).json({ message: '게시글이 삭제되었습니다.' });
     } catch (error) {
       return next(error);
     }
