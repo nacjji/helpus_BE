@@ -11,21 +11,24 @@ datasource db {
 }
 
 model User {
-  userId    Int       @id @default(autoincrement())
+  userId    Int     @id @default(autoincrement())
   userName  String
-  email     String?
+  email     String? @unique
   password  String?
   state     String?
   userImage String?
+  kakao     BigInt?
+
   Post      Post[]
   Wish      Wish[]
-  Comment   Comment[]
-  Friend    Friend[]
+
+  Friend  Friend[]
+  Comment Comment[]
 }
 
 model Friend {
   id            Int  @id @default(autoincrement())
-  user          User @relation(fields: [userId], references: [userId])
+  user          User @relation(fields: [userId], references: [userId], onDelete: Cascade)
   requestFriend Int
 
   userId Int
@@ -35,29 +38,40 @@ model Post {
   postId    Int       @id @default(autoincrement())
   userId    Int
   user      User      @relation(fields: [userId], references: [userId], onDelete: Cascade)
+  title     String
+  content   String
   location1 String?
   location2 String?
-  imageUrl  String?
-  updated   Boolean
-  createdAt DateTime
+  imageUrl1  String?
+  imageUrl2 String?
+  imageUrl3 String?
+  
+  createdAt DateTime  @default(now())
+  updated   Boolean @default(false)
   Wish      Wish[]
   Comment   Comment[]
 }
 
 model Comment {
-  commentId Int      @id @default(autoincrement())
-  post      Post     @relation(fields: [postId], references: [postId])
-  postId    Int
-  user      User     @relation(fields: [userId], references: [userId])
-  userId    Int
-  updated   Boolean
-  createdAt DateTime
+  commentId      Int      @id @default(autoincrement())
+  post           Post     @relation(fields: [postId], references: [postId])
+  postId         Int
+  user           User     @relation(fields: [userId], references: [userId])
+  userId         Int
+
+  comment        String
+
+  replyComment   Comment? @relation("reply")
+  replyCommentId Int?     @unique
+  Comment        Comment? @relation("reply", fields: [replyCommentId], references: [commentId])
+  createdAt      DateTime @default(now())
+  updated        Boolean @default(false)
 }
 
 model Wish {
-  post   Post @relation(fields: [postId], references: [postId])
+  post   Post @relation(fields: [postId], references: [postId], onDelete: Cascade)
   postId Int
-  user   User @relation(fields: [userId], references: [userId])
+  user   User @relation(fields: [userId], references: [userId], onDelete: Cascade)
   userId Int
 
   @@id([postId, userId])
