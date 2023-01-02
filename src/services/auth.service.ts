@@ -90,6 +90,19 @@ class AuthService {
     await this.authRepository.updateImage(userId, userImage);
     return user.userImage;
   };
+
+  public changePassword = async (userId: number, newPw: string, oldPw: string) => {
+    const isUser = await this.authRepository.searchPassword(userId);
+    if (!isUser) throw badRequest('해당 유저 없음');
+    if (!isUser.password) throw badRequest('로컬 회원 아님');
+
+    const match = await bcrypt.compare(oldPw, isUser.password);
+
+    if (match) {
+      const hash = await bcrypt.hash(newPw, Number(salt));
+      await this.authRepository.updatePassword(userId, hash);
+    } else throw badRequest('요구사항에 맞지 않는 입력값');
+  };
 }
 
 export default AuthService;

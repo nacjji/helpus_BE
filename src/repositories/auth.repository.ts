@@ -93,6 +93,22 @@ class AuthRepository {
       data: { userImage },
     });
   };
+
+  public searchPassword = async (userId: number) => {
+    const password = await this.prisma.user.findUnique({
+      where: { userId },
+      select: { password: true },
+    });
+
+    return password;
+  };
+
+  public updatePassword = async (userId: number, password: string) => {
+    await this.prisma.user.update({
+      where: { userId },
+      data: { password },
+    });
+  };
 }
 
 export default AuthRepository;

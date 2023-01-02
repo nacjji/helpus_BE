@@ -29,5 +29,6 @@ authRouter.patch(
   authController.updateImage
 );
 authRouter.get('/wishlist', auth.requiredLogin, authController.wishlist);
+authRouter.patch('/password', auth.requiredLogin, authController.changePassword);
 
 export default authRouter;
