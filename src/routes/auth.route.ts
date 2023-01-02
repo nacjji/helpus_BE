@@ -20,4 +20,6 @@ authRouter.post(
 );
 authRouter.post('/login', auth.requiredNoLogin, authController.localLogin);
 
+authRouter.get('/detail', auth.requiredLogin, authController.detailUser);
+
 export default authRouter;
