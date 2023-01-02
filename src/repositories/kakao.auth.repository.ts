@@ -27,10 +27,10 @@ class KakaoAuthRepository {
     return user;
   };
 
-  public kakaoState = async (state: string, userId: number) => {
+  public kakaoState = async (state1: string, state2: string, userId: number) => {
     const user = await this.prisma.user.update({
       where: { userId },
-      data: { state },
+      data: { state1, state2 },
     });
 
     return user;
