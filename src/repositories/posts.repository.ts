@@ -23,6 +23,8 @@ class PostsRepository {
     tag?: string
     // eslint-disable-next-line consistent-return
   ) => {
+    console.log(updated);
+
     const result = await this.prisma.post.create({
       data: {
         userId,

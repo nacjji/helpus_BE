@@ -80,7 +80,7 @@ class PostsService {
       content,
       Number(category),
       appointed,
-      Number(updated),
+      Number(updated) || updated,
       Number(isDeadLine),
       location1 || undefined,
       location2 || undefined,
