@@ -14,8 +14,8 @@ const router = Router();
 //   })
 // );
 router.get('/', (req, res) => res.json({ message: 'OK' }));
-router.use('/auth', authRouter);
+router.use('/user', authRouter);
 router.use('/', commentsRouter);
-router.use('/posts', postsRouter);
+router.use('/post', postsRouter);
 
 export default router;
