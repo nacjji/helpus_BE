@@ -53,6 +53,22 @@ class AuthService {
       token,
     };
   };
+
+  public detailUser = async (userId: number) => {
+    const userInfo = await this.authRepository.userInfo(userId);
+    const imageUrl = `${process.env.S3_BUCKET_URL}/profile/${userInfo?.userImage}`;
+
+    if (!userInfo) throw badRequest('요구사항에 맞지 않는 입력값');
+
+    return {
+      userId: userInfo.userId,
+      userName: userInfo.userName,
+      userImage: imageUrl,
+      email: userInfo.email,
+      state1: userInfo.state1,
+      state2: userInfo.state2,
+    };
+  };
 }
 
 export default AuthService;
