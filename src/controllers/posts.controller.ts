@@ -50,6 +50,7 @@ class PostsController {
       // const category = Number(req.query.category);
       const q = Number(req.query.q);
       const result = await this.postsService.findAllPosts(q);
+      console.log(result);
       return res.status(200).json({ result });
     } catch (err) {
       return next(err);
