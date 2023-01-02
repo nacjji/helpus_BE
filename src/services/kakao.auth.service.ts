@@ -46,7 +46,7 @@ class KakaoAuthService {
     let isUser = await this.kakaoauthRepository.checkIsUser(data.id);
 
     let token = '';
-    if (isUser && isUser.state) {
+    if (isUser && isUser.state1) {
       token = jwt.sign({ userId: isUser.userId, userName: isUser.userName }, JWT_SECRET_KEY, {
         expiresIn: '2h',
       });

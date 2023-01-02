@@ -31,7 +31,7 @@ model Post {
   title       String
   content     String
   category    Int
-  appointed   DateTime  @default(now())
+  appointed   DateTime?  @default(now())
   isDeadLine  Boolean?  @default(false)
   location1   String?
   location2   String?

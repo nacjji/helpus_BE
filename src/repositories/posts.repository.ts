@@ -12,6 +12,8 @@ class PostsRepository {
     userId: number,
     title: string,
     content: string,
+    category: number,
+    appointed?: Date,
     updated?: boolean,
     location1?: string,
     location2?: string,
@@ -26,6 +28,8 @@ class PostsRepository {
         userId,
         title,
         content,
+        category,
+        appointed,
         updated,
         location1,
         location2,
@@ -72,6 +76,10 @@ class PostsRepository {
     userId: number,
     title?: string,
     content?: string,
+    category?: number,
+    appointed?: Date,
+    isDeadLine?: boolean,
+    updated?: boolean,
     location1?: string,
     location2?: string,
     imageUrl1?: string,
@@ -86,7 +94,22 @@ class PostsRepository {
 
     const result = await this.prisma.post.update({
       where: { postId },
-      data: { title, content, location1, location2, imageUrl1, imageUrl2, imageUrl3, tag },
+      data: {
+        postId,
+        userId,
+        title,
+        content,
+        category,
+        appointed,
+        isDeadLine,
+        updated,
+        location1,
+        location2,
+        imageUrl1,
+        imageUrl2,
+        imageUrl3,
+        tag,
+      },
       include: {
         user: {
           select: {

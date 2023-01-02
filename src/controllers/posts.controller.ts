@@ -14,7 +14,7 @@ class PostsController {
     try {
       //  userId = res.locals
       const userId = 1;
-      const { title, content, updated, location1, location2, tag } =
+      const { title, content, category, appointed, updated, location1, location2, tag } =
         await postInputPattern.validateAsync(req.body);
       const filesArr = req.files! as Array<Express.MulterS3.File>;
 
@@ -27,6 +27,8 @@ class PostsController {
         userId,
         title,
         content,
+        category,
+        appointed,
         updated,
         location1,
         location2,
@@ -64,7 +66,7 @@ class PostsController {
   updatePost = async (req: Request, res: Response, next: NextFunction) => {
     try {
       const postId = Number(req.params.postId);
-      const { title, content, location1, location2, tag } = req.body;
+      const { title, content, location1, category, appointed, updated, location2, tag } = req.body;
       // const userId = res.locals
       const userId = 1;
       await postInputPattern.validateAsync(req.body);
@@ -75,10 +77,12 @@ class PostsController {
       const imageUrl3 = imageUrl[2];
 
       const result = await this.postsService.updatePost(
-        postId,
         userId,
         title,
         content,
+        category,
+        appointed,
+        updated,
         location1,
         location2,
         imageUrl1,
