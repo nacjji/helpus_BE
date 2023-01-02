@@ -12,7 +12,9 @@ class PostsService {
     userId: number,
     title: string,
     content: string,
-    updated?: boolean,
+    category: number,
+    appointed: Date,
+    updated?: number,
     location1?: string,
     location2?: string,
     imageUrl1?: string,
@@ -28,7 +30,9 @@ class PostsService {
       userId,
       title,
       content,
-      updated,
+      Number(category),
+      appointed,
+      Number(updated),
       location1,
       location2,
       imageFileName1 ? imageFileName1[4] : undefined,
@@ -54,6 +58,10 @@ class PostsService {
     userId: number,
     title?: string,
     content?: string,
+    category?: number,
+    appointed?: Date,
+    updated?: number,
+    isDeadLine?: number,
     location1?: string,
     location2?: string,
     imageUrl1?: string,
@@ -61,16 +69,24 @@ class PostsService {
     imageUrl3?: string,
     tag?: string
   ) => {
+    const imageFileName1 = imageUrl1?.split('/');
+    const imageFileName2 = imageUrl2?.split('/');
+    const imageFileName3 = imageUrl3?.split('/');
+
     const result = await this.postsRepository.updatePost(
-      postId,
-      userId,
+      Number(postId),
+      Number(userId),
       title,
       content,
-      location1,
-      location2,
-      imageUrl1,
-      imageUrl2,
-      imageUrl3,
+      Number(category),
+      appointed,
+      Number(updated) || updated,
+      Number(isDeadLine),
+      location1 || undefined,
+      location2 || undefined,
+      imageFileName1 ? imageFileName1[4] : undefined,
+      imageFileName2 ? imageFileName2[4] : undefined,
+      imageFileName3 ? imageFileName3[4] : undefined,
       tag
     );
     return result;

@@ -12,7 +12,9 @@ class PostsRepository {
     userId: number,
     title: string,
     content: string,
-    updated?: boolean,
+    category: number,
+    appointed?: Date,
+    updated?: number,
     location1?: string,
     location2?: string,
     imageUrl1?: string,
@@ -21,11 +23,15 @@ class PostsRepository {
     tag?: string
     // eslint-disable-next-line consistent-return
   ) => {
+    console.log(updated);
+
     const result = await this.prisma.post.create({
       data: {
         userId,
         title,
         content,
+        category,
+        appointed,
         updated,
         location1,
         location2,
@@ -68,10 +74,14 @@ class PostsRepository {
   };
 
   updatePost = async (
-    postId: number,
-    userId: number,
+    postId?: number,
+    userId?: number,
     title?: string,
     content?: string,
+    category?: number,
+    appointed?: Date,
+    updated?: number,
+    isDeadLine?: number,
     location1?: string,
     location2?: string,
     imageUrl1?: string,
@@ -80,13 +90,28 @@ class PostsRepository {
     tag?: string
   ) => {
     // params 에 해당하는 게시글을 찾고, 없을 경우 에러를 반환함
-    await this.prisma.post.findUniqueOrThrow({
-      where: { postId },
-    });
-
+    // await this.prisma.post.findUniqueOrThrow({
+    //   where: { postId },
+    // });
+    console.log(isDeadLine);
     const result = await this.prisma.post.update({
       where: { postId },
-      data: { title, content, location1, location2, imageUrl1, imageUrl2, imageUrl3, tag },
+      data: {
+        postId,
+        userId,
+        title,
+        content,
+        category,
+        appointed,
+        updated,
+        isDeadLine,
+        location1,
+        location2,
+        imageUrl1,
+        imageUrl2,
+        imageUrl3,
+        tag,
+      },
       include: {
         user: {
           select: {

@@ -21,9 +21,9 @@ class KakaoAuthController {
 
   public kakaoState: RequestHandler = async (req, res, next) => {
     try {
-      const { state, userId } = req.body;
+      const { state1, state2, userId } = req.body;
 
-      const result = await this.kakaoAuthService.kakaoState(state, userId);
+      const result = await this.kakaoAuthService.kakaoState(state1, state2, userId);
       res.status(201).json(result);
     } catch (err) {
       next(err);

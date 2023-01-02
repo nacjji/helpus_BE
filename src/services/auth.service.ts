@@ -23,14 +23,15 @@ class AuthService {
     email: string,
     password: string,
     userName: string,
-    state: string,
-    profileImage: string
+    state1: string,
+    state2: string,
+    profileImage?: string
   ) => {
     const check = await this.authRepository.emailCheck(email);
     if (check) throw badRequest('사용 중인 이메일');
 
     const hash = await bcrypt.hash(password, Number(salt));
-    await this.authRepository.createUser(email, userName, hash, state);
+    await this.authRepository.createUser(email, userName, hash, state1, state2, profileImage);
   };
 
   public localLogin = async (email: string, password: string) => {

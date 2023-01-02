@@ -46,7 +46,7 @@ class KakaoAuthService {
     let isUser = await this.kakaoauthRepository.checkIsUser(data.id);
 
     let token = '';
-    if (isUser && isUser.state) {
+    if (isUser && isUser.state1) {
       token = jwt.sign({ userId: isUser.userId, userName: isUser.userName }, JWT_SECRET_KEY, {
         expiresIn: '2h',
       });
@@ -68,8 +68,8 @@ class KakaoAuthService {
     };
   };
 
-  public kakaoState = async (state: string, userId: number) => {
-    const result = await this.kakaoauthRepository.kakaoState(state, userId);
+  public kakaoState = async (state1: string, state2: string, userId: number) => {
+    const result = await this.kakaoauthRepository.kakaoState(state1, state2, userId);
 
     const token = jwt.sign({ userId: result.userId, userName: result.userName }, JWT_SECRET_KEY, {
       expiresIn: '2h',

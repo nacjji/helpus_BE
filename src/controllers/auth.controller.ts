@@ -1,6 +1,7 @@
 import { RequestHandler } from 'express';
 import AuthService from '../services/auth.service';
 import { emailPattern, signupPattern, loginPattenrn } from '../validations/auth.validations';
+import { deleteS3Image } from '../middlewares/multer.uploader';
 
 class AuthController {
   authService: AuthService;
@@ -22,13 +23,26 @@ class AuthController {
   };
 
   public localSignup: RequestHandler = async (req, res, next) => {
+    const { location: userImage } = req.file as Express.MulterS3.File;
+    const fileUrl = userImage.split('/');
+
     try {
-      const { email, password, userName, state, profileImage } = await signupPattern.validateAsync(
+      const { email, password, userName, state1, state2 } = await signupPattern.validateAsync(
         req.body
       );
-      await this.authService.localSignup(email, password, userName, state, profileImage);
+
+      await this.authService.localSignup(
+        email,
+        password,
+        userName,
+        state1,
+        state2,
+        fileUrl[fileUrl.length - 1]
+      );
+
       res.status(201).json({ message: '가입 완료' });
     } catch (err) {
+      if (userImage) deleteS3Image(fileUrl[fileUrl.length - 1]);
       next(err);
     }
   };
