@@ -19,55 +19,28 @@ model User {
   state2    String?
   userImage String?
   kakao     BigInt? @unique
-
   Post      Post[]
   Wish      Wish[]
-
-  Friend  Friend[]
-  Comment Comment[]
-}
-
-model Friend {
-  id            Int  @id @default(autoincrement())
-  user          User @relation(fields: [userId], references: [userId], onDelete: Cascade)
-  requestFriend Int
-
-  userId Int
 }
 
 model Post {
-  postId      Int       @id @default(autoincrement())
+  postId      Int         @id @default(autoincrement())
   userId      Int
-  user        User      @relation(fields: [userId], references: [userId], onDelete: Cascade)
+  user        User        @relation(fields: [userId], references: [userId], onDelete: Cascade)
   title       String
   content     String
+  category    Int
+  appointed   DateTime?   @default(now())
+  isDeadLine  Int?        @default(0)
   location1   String?
   location2   String?
   imageUrl1   String?
   imageUrl2   String?
   imageUrl3   String?
   tag         String?
-  
-  createdAt DateTime  @default(now())
-  updated   Boolean @default(false)
+  createdAt   DateTime    @default(now())
+  updated     Int         @default(0)
   Wish      Wish[]
-  Comment   Comment[]
-}
-
-model Comment {
-  commentId      Int      @id @default(autoincrement())
-  post           Post     @relation(fields: [postId], references: [postId])
-  postId         Int
-  user           User     @relation(fields: [userId], references: [userId])
-  userId         Int
-
-  comment        String
-
-  replyComment   Comment? @relation("reply")
-  replyCommentId Int?     @unique
-  Comment        Comment? @relation("reply", fields: [replyCommentId], references: [commentId])
-  createdAt      DateTime @default(now())
-  updated        Boolean @default(false)
 }
 
 model Wish {
