@@ -86,6 +86,13 @@ class AuthRepository {
       },
     });
   };
+
+  public updateImage = async (userId: number, userImage: string) => {
+    await this.prisma.user.update({
+      where: { userId },
+      data: { userImage },
+    });
+  };
 }
 
 export default AuthRepository;
