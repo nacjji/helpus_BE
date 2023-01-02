@@ -23,10 +23,9 @@ class AuthController {
 
   public localSignup: RequestHandler = async (req, res, next) => {
     try {
-      const { email, password, userName, state, profileImage } = await signupPattern.validateAsync(
-        req.body
-      );
-      await this.authService.localSignup(email, password, userName, state, profileImage);
+      const { location: userImage } = req.file as Express.MulterS3.File;
+      const { email, password, userName, state1, state2 } = await signupPattern.validateAsync(req.body);
+      await this.authService.localSignup(email, password, userName, state1, state2, userImage);
       res.status(201).json({ message: '가입 완료' });
     } catch (err) {
       next(err);

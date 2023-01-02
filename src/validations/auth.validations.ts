@@ -8,7 +8,8 @@ export const signupPattern = joi.object().keys({
     .required()
     .description('사용자 닉네임'),
   password: joi.string().min(4).max(20).required().description('비밀번호'),
-  state: joi.string().required().description('기본 주소지'),
+  state1: joi.string().required().description('기본 주소지'),
+  state2: joi.string().required().description('상세 기본 주소지'),
   profileImage: joi.string().allow('').description('프로필 이미지'),
 });
 

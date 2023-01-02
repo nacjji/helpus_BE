@@ -19,11 +19,12 @@ class AuthRepository {
     email: string,
     userName: string,
     password: string,
-    state: string,
+    state1: string,
+    state2: string,
     userImage?: string
   ) => {
     await this.prisma.user.create({
-      data: { email, userName, password, state, userImage },
+      data: { email, userName, password, state1, state2, userImage },
     });
   };
 }

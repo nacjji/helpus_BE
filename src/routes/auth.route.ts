@@ -1,4 +1,5 @@
 import { Router } from 'express';
+import multeruploader from '../middlewares/multer.uploader';
 import KakaoAuthController from '../controllers/kakao.auth.controller';
 import AuthController from '../controllers/auth.controller';
 
@@ -10,7 +11,7 @@ authRouter.get('/kakao', kakaoAuthController.kakao);
 authRouter.post('/kakao/state', kakaoAuthController.kakaoState);
 
 authRouter.post('/email', authController.emailCheck);
-authRouter.post('/signup', authController.localSignup);
+authRouter.post('/signup', multeruploader.single('userImage'), authController.localSignup);
 authRouter.post('/login', authController.localLogin);
 
 export default authRouter;
