@@ -12,9 +12,8 @@ class PostsController {
   // eslint-disable-next-line class-methods-use-this
   createPost = async (req: Request, res: Response, next: NextFunction) => {
     try {
-      //  userId = res.locals
-      const userId = 8;
-      const { title, content, category, appointed, updated, location1, location2, tag } =
+      const { userId, userName } = res.locals;
+      const { title, content, category, appointed, location1, location2, tag } =
         await postInputPattern.validateAsync(req.body);
       const filesArr = req.files! as Array<Express.MulterS3.File>;
 
@@ -25,11 +24,11 @@ class PostsController {
       const tagArr = tag?.split(',');
       const result = await this.postsService.createPost(
         userId,
+        userName,
         title,
         content,
         category,
         appointed,
-        updated,
         location1,
         location2,
         imageUrl1,
@@ -44,9 +43,24 @@ class PostsController {
   };
 
   findAllPosts = async (req: Request, res: Response, next: NextFunction) => {
+    if (req.query.category) {
+      return next();
+    }
     try {
+      // const category = Number(req.query.category);
       const q = Number(req.query.q);
       const result = await this.postsService.findAllPosts(q);
+      return res.status(200).json({ result });
+    } catch (error) {
+      return next(error);
+    }
+  };
+
+  public findByCategory = async (req: Request, res: Response, next: NextFunction) => {
+    try {
+      const category = Number(req.query.category);
+      const q = Number(req.query.q);
+      const result = await this.postsService.findByCategory(q, category);
       return res.status(200).json({ result });
     } catch (error) {
       return next(error);
@@ -66,21 +80,9 @@ class PostsController {
   updatePost = async (req: Request, res: Response, next: NextFunction) => {
     try {
       const postId = Number(req.params.postId);
-      const {
-        title,
-        content,
-        location1,
-        category,
-        appointed,
-        updated,
-        isDeadLine,
-        location2,
-        tag,
-      } = req.body;
-      // const userId = res.locals;
-      console.log(updated);
-
-      const userId = 8;
+      const { title, content, location1, category, appointed, isDeadLine, location2, tag } =
+        req.body;
+      const { userId } = res.locals;
       await postInputPattern.validateAsync(req.body);
       const filesArr = req.files! as Array<Express.MulterS3.File>;
       const imageUrl = filesArr.map((file) => file.location);
@@ -95,7 +97,6 @@ class PostsController {
         content,
         category,
         appointed,
-        updated,
         isDeadLine,
         location1,
         location2,
@@ -112,7 +113,6 @@ class PostsController {
 
   deletePost = async (req: Request, res: Response, next: NextFunction) => {
     try {
-      // const userId = res.locals;
       const postId = Number(req.params.postId);
       await this.postsService.deletePost(postId);
       return res.status(201).json({ message: '게시글이 삭제되었습니다.' });

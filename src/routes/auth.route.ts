@@ -21,5 +21,6 @@ authRouter.post(
 authRouter.post('/login', auth.requiredNoLogin, authController.localLogin);
 
 authRouter.get('/detail', auth.requiredLogin, authController.detailUser);
+authRouter.get('/wishlist', auth.requiredLogin, authController.wishlist);
 
 export default authRouter;

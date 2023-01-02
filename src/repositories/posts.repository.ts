@@ -10,11 +10,11 @@ class PostsRepository {
 
   createPost = async (
     userId: number,
+    userName: string,
     title: string,
     content: string,
     category: number,
     appointed?: Date,
-    updated?: number,
     location1?: string,
     location2?: string,
     imageUrl1?: string,
@@ -23,16 +23,14 @@ class PostsRepository {
     tag?: string
     // eslint-disable-next-line consistent-return
   ) => {
-    console.log(updated);
-
     const result = await this.prisma.post.create({
       data: {
         userId,
+        userName,
         title,
         content,
         category,
         appointed,
-        updated,
         location1,
         location2,
         imageUrl1,
@@ -45,14 +43,28 @@ class PostsRepository {
   };
 
   findAllPosts = async (q: number) => {
+    // 전체 조회
     const result = await this.prisma.post.findMany({
       // 무한스크롤
       skip: q || 0,
-      take: 30,
+      // FIXME : 2 to 30
+      take: 2,
       // 생성순으로 정렬
       orderBy: { createdAt: 'desc' },
       // :FIXME user: {"userName" : "nickname"} --> "userName" : "nickname"
-      include: { user: { select: { userName: true } } },
+    });
+    return result;
+  };
+
+  // 카테고리 별로 조회
+  public findByCategory = async (q: number, category: number) => {
+    const result = await this.prisma.post.findMany({
+      where: { category }, // 무한스크롤
+      skip: q || 0,
+      // FIXME : 2 to 30
+      take: 2,
+      // 생성순으로 정렬
+      orderBy: { createdAt: 'desc' },
     });
     return result;
   };
@@ -60,15 +72,6 @@ class PostsRepository {
   findDetailPost = async (postId: number) => {
     const result = await this.prisma.post.findUnique({
       where: { postId },
-      // :FIXME user: {"userName" : "nickname"} --> "userName" : "nickname"
-
-      include: {
-        user: {
-          select: {
-            userName: true,
-          },
-        },
-      },
     });
     return result;
   };
@@ -80,7 +83,6 @@ class PostsRepository {
     content?: string,
     category?: number,
     appointed?: Date,
-    updated?: number,
     isDeadLine?: number,
     location1?: string,
     location2?: string,
@@ -93,7 +95,6 @@ class PostsRepository {
     // await this.prisma.post.findUniqueOrThrow({
     //   where: { postId },
     // });
-    console.log(isDeadLine);
     const result = await this.prisma.post.update({
       where: { postId },
       data: {
@@ -103,7 +104,7 @@ class PostsRepository {
         content,
         category,
         appointed,
-        updated,
+        updated: 1,
         isDeadLine,
         location1,
         location2,
@@ -111,13 +112,6 @@ class PostsRepository {
         imageUrl2,
         imageUrl3,
         tag,
-      },
-      include: {
-        user: {
-          select: {
-            userName: true,
-          },
-        },
       },
     });
     return result;

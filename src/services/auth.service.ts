@@ -69,6 +69,15 @@ class AuthService {
       state2: userInfo.state2,
     };
   };
+
+  public wishlist = async (userId: number) => {
+    const posts = await this.authRepository.wishlist(userId);
+
+    console.log(posts);
+    const results = posts.map((v) => v.post);
+
+    return results;
+  };
 }
 
 export default AuthService;
