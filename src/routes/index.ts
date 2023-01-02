@@ -16,6 +16,6 @@ const router = Router();
 router.get('/', (req, res) => res.json({ message: 'OK' }));
 router.use('/auth', authRouter);
 router.use('/', commentsRouter);
-router.use('/posts', postsRouter);
+router.use('/board', postsRouter);
 
 export default router;
