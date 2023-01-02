@@ -76,8 +76,6 @@ class AuthService {
 
   public wishlist = async (userId: number) => {
     const posts = await this.authRepository.wishlist(userId);
-
-    console.log(posts);
     const results = posts.map((v) => v.post);
 
     return results;
