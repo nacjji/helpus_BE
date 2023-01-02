@@ -22,17 +22,6 @@ model User {
 
   Post      Post[]
   Wish      Wish[]
-
-  Friend  Friend[]
-  Comment Comment[]
-}
-
-model Friend {
-  id            Int  @id @default(autoincrement())
-  user          User @relation(fields: [userId], references: [userId], onDelete: Cascade)
-  requestFriend Int
-
-  userId Int
 }
 
 model Post {
@@ -41,6 +30,9 @@ model Post {
   user        User      @relation(fields: [userId], references: [userId], onDelete: Cascade)
   title       String
   content     String
+  category    Int
+  appointed   DateTime  @default(now())
+  isDeadLine  Boolean?  @default(false)
   location1   String?
   location2   String?
   imageUrl1   String?
@@ -51,23 +43,6 @@ model Post {
   createdAt DateTime  @default(now())
   updated   Boolean @default(false)
   Wish      Wish[]
-  Comment   Comment[]
-}
-
-model Comment {
-  commentId      Int      @id @default(autoincrement())
-  post           Post     @relation(fields: [postId], references: [postId])
-  postId         Int
-  user           User     @relation(fields: [userId], references: [userId])
-  userId         Int
-
-  comment        String
-
-  replyComment   Comment? @relation("reply")
-  replyCommentId Int?     @unique
-  Comment        Comment? @relation("reply", fields: [replyCommentId], references: [commentId])
-  createdAt      DateTime @default(now())
-  updated        Boolean @default(false)
 }
 
 model Wish {
