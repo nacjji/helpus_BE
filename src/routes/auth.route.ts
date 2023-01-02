@@ -30,5 +30,6 @@ authRouter.patch(
 );
 authRouter.get('/wishlist', auth.requiredLogin, authController.wishlist);
 authRouter.patch('/password', auth.requiredLogin, authController.changePassword);
+authRouter.get('/:userId/detail', authController.getUserDetail);
 
 export default authRouter;

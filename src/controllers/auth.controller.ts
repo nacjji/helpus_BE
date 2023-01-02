@@ -129,6 +129,17 @@ class AuthController {
       next(err);
     }
   };
+
+  public getUserDetail: RequestHandler = async (req, res, next) => {
+    try {
+      const { userId } = req.params;
+
+      const result = await this.authService.detailUser(Number(userId));
+      res.status(200).json(result);
+    } catch (err) {
+      next(err);
+    }
+  }
 }
 
 export default AuthController;
