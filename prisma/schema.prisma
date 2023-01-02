@@ -15,9 +15,10 @@ model User {
   userName  String
   email     String? @unique
   password  String?
-  state     String?
-  userImage String? 
-  kakao     BigInt?
+  state1    String?
+  state2    String?
+  userImage String?
+  kakao     BigInt? @unique
 
   Post      Post[]
   Wish      Wish[]
