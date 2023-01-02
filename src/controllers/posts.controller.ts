@@ -10,7 +10,7 @@ class PostsController {
   }
 
   // eslint-disable-next-line class-methods-use-this
-  createPost = async (req: Request, res: Response, next: NextFunction) => {
+  public createPost = async (req: Request, res: Response, next: NextFunction) => {
     try {
       const { userId, userName } = res.locals;
       const { title, content, category, appointed, location1, location2, tag } =
@@ -37,12 +37,12 @@ class PostsController {
         tag
       );
       return res.status(201).json({ result, tag: tagArr });
-    } catch (error) {
-      return next(error);
+    } catch (err) {
+      return next(err);
     }
   };
 
-  findAllPosts = async (req: Request, res: Response, next: NextFunction) => {
+  public findAllPosts = async (req: Request, res: Response, next: NextFunction) => {
     if (req.query.category) {
       return next();
     }
@@ -51,8 +51,8 @@ class PostsController {
       const q = Number(req.query.q);
       const result = await this.postsService.findAllPosts(q);
       return res.status(200).json({ result });
-    } catch (error) {
-      return next(error);
+    } catch (err) {
+      return next(err);
     }
   };
 
@@ -62,22 +62,23 @@ class PostsController {
       const q = Number(req.query.q);
       const result = await this.postsService.findByCategory(q, category);
       return res.status(200).json({ result });
-    } catch (error) {
-      return next(error);
+    } catch (err) {
+      return next(err);
     }
   };
 
-  findDetailPost = async (req: Request, res: Response, next: NextFunction) => {
+  public findDetailPost = async (req: Request, res: Response, next: NextFunction) => {
     try {
       const postId = Number(req.params.postId);
+
       const result = await this.postsService.findDetailPost(postId);
       return res.status(200).json({ result });
-    } catch (error) {
-      return next(error);
+    } catch (err) {
+      return next(err);
     }
   };
 
-  updatePost = async (req: Request, res: Response, next: NextFunction) => {
+  public updatePost = async (req: Request, res: Response, next: NextFunction) => {
     try {
       const postId = Number(req.params.postId);
       const { title, content, location1, category, appointed, isDeadLine, location2, tag } =
@@ -106,18 +107,18 @@ class PostsController {
         tag
       );
       return res.status(201).json({ result });
-    } catch (error) {
-      return next(error);
+    } catch (err) {
+      return next(err);
     }
   };
 
-  deletePost = async (req: Request, res: Response, next: NextFunction) => {
+  public deletePost = async (req: Request, res: Response, next: NextFunction) => {
     try {
       const postId = Number(req.params.postId);
       await this.postsService.deletePost(postId);
       return res.status(201).json({ message: '게시글이 삭제되었습니다.' });
-    } catch (error) {
-      return next(error);
+    } catch (err) {
+      return next(err);
     }
   };
 }
