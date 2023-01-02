@@ -12,7 +12,7 @@ class PostsController {
   // eslint-disable-next-line class-methods-use-this
   createPost = async (req: Request, res: Response, next: NextFunction) => {
     try {
-      const { userId } = res.locals;
+      const { userId, userName } = res.locals;
       const { title, content, category, appointed, updated, location1, location2, tag } =
         await postInputPattern.validateAsync(req.body);
       const filesArr = req.files! as Array<Express.MulterS3.File>;
@@ -24,6 +24,7 @@ class PostsController {
       const tagArr = tag?.split(',');
       const result = await this.postsService.createPost(
         userId,
+        userName,
         title,
         content,
         category,

@@ -10,10 +10,11 @@ class PostsService {
 
   createPost = async (
     userId: number,
+    userName: string,
     title: string,
     content: string,
     category: number,
-    appointed: Date,
+    appointed?: Date,
     updated?: number,
     location1?: string,
     location2?: string,
@@ -28,6 +29,7 @@ class PostsService {
 
     const result = await this.postsRepository.createPost(
       userId,
+      userName,
       title,
       content,
       Number(category),

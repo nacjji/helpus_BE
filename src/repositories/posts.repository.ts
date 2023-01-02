@@ -10,6 +10,7 @@ class PostsRepository {
 
   createPost = async (
     userId: number,
+    userName: string,
     title: string,
     content: string,
     category: number,
@@ -26,6 +27,7 @@ class PostsRepository {
     const result = await this.prisma.post.create({
       data: {
         userId,
+        userName,
         title,
         content,
         category,
