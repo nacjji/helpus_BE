@@ -27,6 +27,22 @@ class AuthRepository {
       data: { email, userName, password, state1, state2, userImage },
     });
   };
+
+  public userInfo = async (userId: number) => {
+    const user = await this.prisma.user.findUnique({
+      where: { userId },
+      select: {
+        userId: true,
+        userName: true,
+        email: true,
+        userImage: true,
+        state1: true,
+        state2: true,
+      },
+    });
+
+    return user;
+  };
 }
 
 export default AuthRepository;
