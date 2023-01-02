@@ -21,3 +21,13 @@ export const loginPattenrn = joi.object().keys({
   email: joi.string().email().required(),
   password: joi.string().min(4).max(20).required(),
 });
+
+export const updatePattern = joi.object().keys({
+  userName: joi
+    .string()
+    .regex(/^[\w\W]{1,20}$/)
+    .required()
+    .description('사용자 닉네임'),
+  state1: joi.string().required().description('기본 주소지'),
+  state2: joi.string().required().description('상세 기본 주소지'),
+});

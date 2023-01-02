@@ -1,6 +1,11 @@
 import { RequestHandler } from 'express';
 import AuthService from '../services/auth.service';
-import { emailPattern, signupPattern, loginPattenrn } from '../validations/auth.validations';
+import {
+  emailPattern,
+  signupPattern,
+  loginPattenrn,
+  updatePattern,
+} from '../validations/auth.validations';
 import { deleteS3Image } from '../middlewares/multer.uploader';
 
 class AuthController {
@@ -68,6 +73,19 @@ class AuthController {
       const userInfo = await this.authService.detailUser(res.locals.userId);
 
       res.status(200).json(userInfo);
+    } catch (err) {
+      next(err);
+    }
+  };
+
+  public updateUser: RequestHandler = async (req, res, next) => {
+    try {
+      const { userName, state1, state2 } = await updatePattern.validateAsync(req.body);
+      const { userId } = res.locals;
+
+      await this.authService.updateUser(userId, userName, state1, state2);
+
+      res.status(200).json({ message: '변경 완료' });
     } catch (err) {
       next(err);
     }
