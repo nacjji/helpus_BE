@@ -1,3 +1,4 @@
+import { notFound } from '@hapi/boom';
 import { PrismaClient } from '@prisma/client';
 
 class PostsRepository {
@@ -8,7 +9,7 @@ class PostsRepository {
     this.prisma = prisma;
   }
 
-  createPost = async (
+  public createPost = async (
     userId: number,
     userName: string,
     title: string,
@@ -42,7 +43,7 @@ class PostsRepository {
     return result;
   };
 
-  findAllPosts = async (q: number) => {
+  public findAllPosts = async (q: number) => {
     // 전체 조회
     const result = await this.prisma.post.findMany({
       // 무한스크롤
@@ -69,14 +70,14 @@ class PostsRepository {
     return result;
   };
 
-  findDetailPost = async (postId: number) => {
+  public findDetailPost = async (postId: number) => {
     const result = await this.prisma.post.findUnique({
       where: { postId },
     });
     return result;
   };
 
-  updatePost = async (
+  public updatePost = async (
     postId?: number,
     userId?: number,
     title?: string,
@@ -91,10 +92,10 @@ class PostsRepository {
     imageUrl3?: string,
     tag?: string
   ) => {
-    // params 에 해당하는 게시글을 찾고, 없을 경우 에러를 반환함
-    // await this.prisma.post.findUniqueOrThrow({
-    //   where: { postId },
-    // });
+    const postExist = await this.prisma.post.findUnique({ where: { postId } });
+    if (!postExist) {
+      throw notFound('게시글 없음');
+    }
     const result = await this.prisma.post.update({
       where: { postId },
       data: {
@@ -117,7 +118,11 @@ class PostsRepository {
     return result;
   };
 
-  deletePost = async (postId: number) => {
+  public deletePost = async (postId: number) => {
+    const postExist = await this.prisma.post.findUnique({ where: { postId } });
+    if (!postExist) {
+      throw notFound('게시글 없음');
+    }
     await this.prisma.post.findUniqueOrThrow({ where: { postId } });
     const result = await this.prisma.post.delete({ where: { postId } });
     return result;
