@@ -23,8 +23,6 @@ class PostsRepository {
     tag?: string
     // eslint-disable-next-line consistent-return
   ) => {
-    console.log(updated);
-
     const result = await this.prisma.post.create({
       data: {
         userId,
@@ -45,10 +43,27 @@ class PostsRepository {
   };
 
   findAllPosts = async (q: number) => {
+    // 전체 조회
     const result = await this.prisma.post.findMany({
       // 무한스크롤
       skip: q || 0,
-      take: 30,
+      // FIXME : 2 to 30
+      take: 2,
+      // 생성순으로 정렬
+      orderBy: { createdAt: 'desc' },
+      // :FIXME user: {"userName" : "nickname"} --> "userName" : "nickname"
+      include: { user: { select: { userName: true } } },
+    });
+    return result;
+  };
+
+  // 카테고리 별로 조회
+  public findByCategory = async (q: number, category: number) => {
+    const result = await this.prisma.post.findMany({
+      where: { category }, // 무한스크롤
+      skip: q || 0,
+      // FIXME : 2 to 30
+      take: 2,
       // 생성순으로 정렬
       orderBy: { createdAt: 'desc' },
       // :FIXME user: {"userName" : "nickname"} --> "userName" : "nickname"
@@ -93,7 +108,6 @@ class PostsRepository {
     // await this.prisma.post.findUniqueOrThrow({
     //   where: { postId },
     // });
-    console.log(isDeadLine);
     const result = await this.prisma.post.update({
       where: { postId },
       data: {
