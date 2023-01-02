@@ -70,6 +70,10 @@ class AuthService {
     };
   };
 
+  public updateUser = async (userId: number, userName: string, state1: string, state2: string) => {
+    await this.authRepository.updateUser(userId, userName, state1, state2);
+  };
+
   public wishlist = async (userId: number) => {
     const posts = await this.authRepository.wishlist(userId);
 

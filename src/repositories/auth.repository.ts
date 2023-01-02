@@ -1,4 +1,5 @@
 import { PrismaClient } from '@prisma/client';
+import { string } from 'joi';
 
 class AuthRepository {
   prisma: PrismaClient;
@@ -73,6 +74,17 @@ class AuthRepository {
     });
 
     return results;
+  };
+
+  public updateUser = async (userId: number, userName: string, state1: string, state2: string) => {
+    await this.prisma.user.update({
+      where: { userId },
+      data: {
+        userName,
+        state1,
+        state2,
+      },
+    });
   };
 }
 
