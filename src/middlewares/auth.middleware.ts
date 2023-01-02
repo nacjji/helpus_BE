@@ -15,6 +15,7 @@ const requiredLogin: RequestHandler = (req, res, next) => {
       const payload: any = jwt.verify(tokenValue, JWT_SECRET_KEY);
 
       res.locals.userId = payload.userId;
+      res.locals.userName = payload.userName;
     }
     next();
   } catch (err) {
