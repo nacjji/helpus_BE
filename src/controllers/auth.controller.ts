@@ -117,6 +117,18 @@ class AuthController {
       next(err);
     }
   };
+
+  public changePassword: RequestHandler = async (req, res, next) => {
+    try {
+      const { userId } = res.locals;
+      const { newPw, password } = req.body;
+
+      await this.authService.changePassword(userId, newPw, password);
+      res.status(200).json({ message: '비밀번호 변경 성공' });
+    } catch (err) {
+      next(err);
+    }
+  };
 }
 
 export default AuthController;
