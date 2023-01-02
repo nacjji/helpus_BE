@@ -65,7 +65,6 @@ class PostsRepository {
   public findByCategory = async (q: number, category: number) => {
     const findByCategoryResult = await this.prisma.post.findMany({
       where: { category }, // 무한스크롤
-      include: { Wish: true },
       skip: q || 0,
       // FIXME : 2 to 30
       take: 30,
@@ -75,8 +74,12 @@ class PostsRepository {
     const wishCount = await this.prisma.wish.aggregate({
       _count: true,
     });
-    const result = [...findByCategoryResult, wishCount];
-    return result;
+    // eslint-disable-next-line no-underscore-dangle
+    if (wishCount._count !== 0) {
+      const result = [...findByCategoryResult, wishCount];
+      return result;
+    }
+    return findByCategoryResult;
   };
 
   public findDetailPost = async (postId: number) => {
