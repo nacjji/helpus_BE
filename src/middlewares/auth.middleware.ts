@@ -31,10 +31,9 @@ const requiredNoLogin: RequestHandler = (req, res, next) => {
 
       if (tokenType === 'Bearer' && tokenValue) {
         jwt.verify(tokenValue, JWT_SECRET_KEY);
-        throw unauthorized('로그인 정보 있음');
+        next(unauthorized('로그인 정보 있음'));
       }
-    }
-    next();
+    } else next();
   } catch (err) {
     next();
   }
