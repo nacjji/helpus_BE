@@ -45,35 +45,48 @@ class PostsRepository {
 
   public findAllPosts = async (q: number) => {
     // 전체 조회
-    const result = await this.prisma.post.findMany({
+    const findAllResult = await this.prisma.post.findMany({
       // 무한스크롤
       skip: q || 0,
       // FIXME : 2 to 30
-      take: 2,
+      take: 30,
       // 생성순으로 정렬
       orderBy: { createdAt: 'desc' },
       // :FIXME user: {"userName" : "nickname"} --> "userName" : "nickname"
     });
+    const wishCount = await this.prisma.wish.aggregate({
+      _count: true,
+    });
+    const result = [...findAllResult, wishCount];
     return result;
   };
 
   // 카테고리 별로 조회
   public findByCategory = async (q: number, category: number) => {
-    const result = await this.prisma.post.findMany({
+    const findByCategoryResult = await this.prisma.post.findMany({
       where: { category }, // 무한스크롤
+      include: { Wish: true },
       skip: q || 0,
       // FIXME : 2 to 30
-      take: 2,
+      take: 30,
       // 생성순으로 정렬
       orderBy: { createdAt: 'desc' },
     });
+    const wishCount = await this.prisma.wish.aggregate({
+      _count: true,
+    });
+    const result = [...findByCategoryResult, wishCount];
     return result;
   };
 
   public findDetailPost = async (postId: number) => {
-    const result = await this.prisma.post.findUnique({
+    const findDetailResult = await this.prisma.post.findUnique({
       where: { postId },
     });
+    const wishCount = await this.prisma.wish.aggregate({
+      _count: true,
+    });
+    const result = [findDetailResult, wishCount];
     return result;
   };
 
