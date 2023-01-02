@@ -72,6 +72,16 @@ class AuthController {
       next(err);
     }
   };
+
+  public wishlist: RequestHandler = async (req, res, next) => {
+    try {
+      const results = await this.authService.wishlist(res.locals.userId);
+
+      res.status(200).json(results);
+    } catch (err) {
+      next(err);
+    }
+  };
 }
 
 export default AuthController;
