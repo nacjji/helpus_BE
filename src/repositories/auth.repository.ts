@@ -1,4 +1,5 @@
 import { PrismaClient } from '@prisma/client';
+import { string } from 'joi';
 
 class AuthRepository {
   prisma: PrismaClient;
@@ -42,6 +43,71 @@ class AuthRepository {
     });
 
     return user;
+  };
+
+  public wishlist = async (userId: number) => {
+    interface Wish {
+      postId: number;
+      userId: number;
+      post?: object;
+    }
+
+    const results: Wish[] = await this.prisma.wish.findMany({
+      where: { userId },
+      include: {
+        post: {
+          select: {
+            postId: true,
+            userName: true,
+            title: true,
+            content: true,
+            category: true,
+            location1: true,
+            location2: true,
+            imageUrl1: true,
+            tag: true,
+            createdAt: true,
+            updated: true,
+          },
+        },
+      },
+    });
+
+    return results;
+  };
+
+  public updateUser = async (userId: number, userName: string, state1: string, state2: string) => {
+    await this.prisma.user.update({
+      where: { userId },
+      data: {
+        userName,
+        state1,
+        state2,
+      },
+    });
+  };
+
+  public updateImage = async (userId: number, userImage: string) => {
+    await this.prisma.user.update({
+      where: { userId },
+      data: { userImage },
+    });
+  };
+
+  public searchPassword = async (userId: number) => {
+    const password = await this.prisma.user.findUnique({
+      where: { userId },
+      select: { password: true },
+    });
+
+    return password;
+  };
+
+  public updatePassword = async (userId: number, password: string) => {
+    await this.prisma.user.update({
+      where: { userId },
+      data: { password },
+    });
   };
 }
 
