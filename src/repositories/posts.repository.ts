@@ -10,11 +10,11 @@ class PostsRepository {
 
   createPost = async (
     userId: number,
+    userName: string,
     title: string,
     content: string,
     category: number,
     appointed?: Date,
-    updated?: number,
     location1?: string,
     location2?: string,
     imageUrl1?: string,
@@ -26,11 +26,11 @@ class PostsRepository {
     const result = await this.prisma.post.create({
       data: {
         userId,
+        userName,
         title,
         content,
         category,
         appointed,
-        updated,
         location1,
         location2,
         imageUrl1,
@@ -52,7 +52,6 @@ class PostsRepository {
       // 생성순으로 정렬
       orderBy: { createdAt: 'desc' },
       // :FIXME user: {"userName" : "nickname"} --> "userName" : "nickname"
-      include: { user: { select: { userName: true } } },
     });
     return result;
   };
@@ -66,8 +65,6 @@ class PostsRepository {
       take: 2,
       // 생성순으로 정렬
       orderBy: { createdAt: 'desc' },
-      // :FIXME user: {"userName" : "nickname"} --> "userName" : "nickname"
-      include: { user: { select: { userName: true } } },
     });
     return result;
   };
@@ -75,15 +72,6 @@ class PostsRepository {
   findDetailPost = async (postId: number) => {
     const result = await this.prisma.post.findUnique({
       where: { postId },
-      // :FIXME user: {"userName" : "nickname"} --> "userName" : "nickname"
-
-      include: {
-        user: {
-          select: {
-            userName: true,
-          },
-        },
-      },
     });
     return result;
   };
@@ -95,7 +83,6 @@ class PostsRepository {
     content?: string,
     category?: number,
     appointed?: Date,
-    updated?: number,
     isDeadLine?: number,
     location1?: string,
     location2?: string,
@@ -117,7 +104,7 @@ class PostsRepository {
         content,
         category,
         appointed,
-        updated,
+        updated: 1,
         isDeadLine,
         location1,
         location2,
@@ -125,13 +112,6 @@ class PostsRepository {
         imageUrl2,
         imageUrl3,
         tag,
-      },
-      include: {
-        user: {
-          select: {
-            userName: true,
-          },
-        },
       },
     });
     return result;
