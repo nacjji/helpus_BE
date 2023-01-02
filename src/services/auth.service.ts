@@ -69,6 +69,40 @@ class AuthService {
       state2: userInfo.state2,
     };
   };
+
+  public updateUser = async (userId: number, userName: string, state1: string, state2: string) => {
+    await this.authRepository.updateUser(userId, userName, state1, state2);
+  };
+
+  public wishlist = async (userId: number) => {
+    const posts = await this.authRepository.wishlist(userId);
+
+    console.log(posts);
+    const results = posts.map((v) => v.post);
+
+    return results;
+  };
+
+  public updateImage = async (userId: number, userImage: string) => {
+    const user = await this.authRepository.userInfo(userId);
+    if (!user) throw badRequest('해당 유저 없음');
+
+    await this.authRepository.updateImage(userId, userImage);
+    return user.userImage;
+  };
+
+  public changePassword = async (userId: number, newPw: string, oldPw: string) => {
+    const isUser = await this.authRepository.searchPassword(userId);
+    if (!isUser) throw badRequest('해당 유저 없음');
+    if (!isUser.password) throw badRequest('로컬 회원 아님');
+
+    const match = await bcrypt.compare(oldPw, isUser.password);
+
+    if (match) {
+      const hash = await bcrypt.hash(newPw, Number(salt));
+      await this.authRepository.updatePassword(userId, hash);
+    } else throw badRequest('요구사항에 맞지 않는 입력값');
+  };
 }
 
 export default AuthService;
