@@ -43,8 +43,14 @@ class PostsService {
     return result;
   };
 
+  // 전체 조회
   findAllPosts = async (q: number) => {
     const result = await this.postsRepository.findAllPosts(q);
+    return result;
+  };
+
+  public findByCategory = async (q: number, category: number) => {
+    const result = await this.postsRepository.findByCategory(q, category);
     return result;
   };
 
