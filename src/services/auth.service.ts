@@ -82,6 +82,14 @@ class AuthService {
 
     return results;
   };
+
+  public updateImage = async (userId: number, userImage: string) => {
+    const user = await this.authRepository.userInfo(userId);
+    if (!user) throw badRequest('해당 유저 없음');
+
+    await this.authRepository.updateImage(userId, userImage);
+    return user.userImage;
+  };
 }
 
 export default AuthService;

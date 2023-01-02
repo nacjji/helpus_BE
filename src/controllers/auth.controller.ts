@@ -91,6 +91,23 @@ class AuthController {
     }
   };
 
+  public updateImage: RequestHandler = async (req, res, next) => {
+    console.log('1');
+    const { location: userImage } = req.file as Express.MulterS3.File;
+    const fileUrl = userImage.split('/');
+
+    try {
+      const { userId } = res.locals;
+      const old = await this.authService.updateImage(userId, fileUrl[fileUrl.length - 1]);
+
+      if (old) deleteS3Image(old);
+      res.status(200).json({ userImage });
+    } catch (err) {
+      if (userImage) deleteS3Image(fileUrl[fileUrl.length - 1]);
+      next(err);
+    }
+  };
+
   public wishlist: RequestHandler = async (req, res, next) => {
     try {
       const results = await this.authService.wishlist(res.locals.userId);
