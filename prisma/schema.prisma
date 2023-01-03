@@ -11,53 +11,45 @@ datasource db {
 }
 
 model User {
-  userId    Int       @id @default(autoincrement())
+  userId    Int     @id @default(autoincrement())
   userName  String
-  email     String?
+  email     String? @unique
   password  String?
-  state     String?
+  state1    String?
+  state2    String?
   userImage String?
+  kakao     BigInt? @unique
   Post      Post[]
   Wish      Wish[]
-  Comment   Comment[]
-  Friend    Friend[]
-}
 
-model Friend {
-  id            Int  @id @default(autoincrement())
-  user          User @relation(fields: [userId], references: [userId])
-  requestFriend Int
-
-  userId Int
+  @@unique([userId, userName])
 }
 
 model Post {
-  postId    Int       @id @default(autoincrement())
-  userId    Int
-  user      User      @relation(fields: [userId], references: [userId], onDelete: Cascade)
-  location1 String?
-  location2 String?
-  imageUrl  String?
-  updated   Boolean
-  createdAt DateTime
-  Wish      Wish[]
-  Comment   Comment[]
-}
-
-model Comment {
-  commentId Int      @id @default(autoincrement())
-  post      Post     @relation(fields: [postId], references: [postId])
-  postId    Int
-  user      User     @relation(fields: [userId], references: [userId])
-  userId    Int
-  updated   Boolean
-  createdAt DateTime
+  postId     Int       @id @default(autoincrement())
+  userId     Int
+  userName   String
+  user       User      @relation(fields: [userId, userName], references: [userId, userName], onDelete: Cascade)
+  title      String
+  content    String
+  category   Int
+  appointed  DateTime? @default(now())
+  isDeadLine Int?      @default(0)
+  location1  String?
+  location2  String?
+  imageUrl1  String?
+  imageUrl2  String?
+  imageUrl3  String?
+  tag        String?
+  createdAt  DateTime  @default(now())
+  updated    Int       @default(0)
+  Wish       Wish[]
 }
 
 model Wish {
-  post   Post @relation(fields: [postId], references: [postId])
+  post   Post @relation(fields: [postId], references: [postId], onDelete: Cascade)
   postId Int
-  user   User @relation(fields: [userId], references: [userId])
+  user   User @relation(fields: [userId], references: [userId], onDelete: Cascade)
   userId Int
 
   @@id([postId, userId])
