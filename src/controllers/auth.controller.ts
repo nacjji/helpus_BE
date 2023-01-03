@@ -92,7 +92,6 @@ class AuthController {
   };
 
   public updateImage: RequestHandler = async (req, res, next) => {
-    console.log('1');
     const { location: userImage } = req.file as Express.MulterS3.File;
     const fileUrl = userImage.split('/');
 
@@ -139,7 +138,18 @@ class AuthController {
     } catch (err) {
       next(err);
     }
-  }
+  };
+
+  public deleteUser: RequestHandler = async (req, res, next) => {
+    try {
+      const { userId } = res.locals;
+      await this.authService.deleteUser(userId);
+
+      res.status(200).json({ message: '탈퇴 완료' });
+    } catch (err) {
+      next(err);
+    }
+  };
 }
 
 export default AuthController;

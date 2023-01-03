@@ -76,8 +76,8 @@ class AuthService {
 
   public wishlist = async (userId: number) => {
     const posts = await this.authRepository.wishlist(userId);
-    const results = posts.map((v) => v.post);
 
+    const results = posts.map((v) => v.post);
     return results;
   };
 
@@ -100,6 +100,10 @@ class AuthService {
       const hash = await bcrypt.hash(newPw, Number(salt));
       await this.authRepository.updatePassword(userId, hash);
     } else throw badRequest('요구사항에 맞지 않는 입력값');
+  };
+
+  public deleteUser = async (userId: number) => {
+    await this.authRepository.deleteUser(userId);
   };
 }
 

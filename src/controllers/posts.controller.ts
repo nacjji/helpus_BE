@@ -45,11 +45,10 @@ class PostsController {
 
   public searchPost = async (req: Request, res: Response, next: NextFunction) => {
     try {
-      console.log(1);
-
       if (!req.query.search) {
         return next();
       }
+      console.log('searchPost');
       const { userId } = res.locals;
       const search = req.query.search as string;
       const { q } = req.query;
@@ -60,12 +59,30 @@ class PostsController {
     }
   };
 
+  // 내 위치 게시글
+  public myLocation = async (req: Request, res: Response, next: NextFunction) => {
+    try {
+      const { userId } = res.locals;
+
+      const q = Number(req.query.q);
+      if (!userId) {
+        return next();
+      }
+      const result = await this.postsService.myLocation(q, userId);
+      return res.status(200).json({ result });
+    } catch (err) {
+      return next(err);
+    }
+  };
+
+  // 전체 게시글 조회
   public findAllPosts = async (req: Request, res: Response, next: NextFunction) => {
+    console.log('findAllPosts');
+
     if (req.query.category || req.query.search) {
       return next();
     }
     try {
-      console.log(2);
       // const category = Number(req.query.category);
       const q = Number(req.query.q);
       const result = await this.postsService.findAllPosts(q);
@@ -76,7 +93,8 @@ class PostsController {
   };
 
   public findByCategory = async (req: Request, res: Response, next: NextFunction) => {
-    console.log(3);
+    console.log('findByCategory');
+
     if (req.query.search) {
       return next();
     }
@@ -91,7 +109,7 @@ class PostsController {
   };
 
   public findDetailPost = async (req: Request, res: Response, next: NextFunction) => {
-    console.log(4);
+    console.log('findDetailPost');
 
     try {
       const postId = Number(req.params.postId);

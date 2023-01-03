@@ -1,7 +1,7 @@
 import { Router } from 'express';
 import { multeruploader } from '../middlewares/multer.uploader';
 import PostsController from '../controllers/posts.controller';
-import { requiredLogin } from '../middlewares/auth.middleware';
+import { requiredLogin, passAnyway } from '../middlewares/auth.middleware';
 
 const postsRouter = Router();
 const postsController = new PostsController();
@@ -14,6 +14,7 @@ postsRouter.post(
 );
 
 postsRouter.get('/', postsController.searchPost);
+postsRouter.get('/', passAnyway, postsController.myLocation);
 postsRouter.get('/', postsController.findAllPosts);
 postsRouter.get('/', postsController.findByCategory);
 postsRouter.get('/:postId', postsController.findDetailPost);

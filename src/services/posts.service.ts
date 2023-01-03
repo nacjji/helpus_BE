@@ -55,6 +55,12 @@ class PostsService {
     return result;
   };
 
+  // 내 위치 게시글
+  public myLocation = async (q: number, userId: number) => {
+    const result = await this.postsRepository.myLocation(q, userId);
+    return result;
+  };
+
   // 전체 조회
   public findAllPosts = async (q: number) => {
     const result = await this.postsRepository.findAllPosts(q);

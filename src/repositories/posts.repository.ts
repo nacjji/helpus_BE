@@ -65,6 +65,25 @@ class PostsRepository {
     return result;
   };
 
+  // 내 위치에 해당하는 글 조회 // 로그인이 되지 않으면 전체 게시글 조회
+  public myLocation = async (q: number, userId: number) => {
+    const userLocation = await this.prisma.user.findMany({ where: { userId } });
+    console.log(userLocation[0].state1);
+
+    const result = await this.prisma.post.findMany({
+      where: {
+        AND: [{ location1: userLocation[0].state1 }, { location2: userLocation[0].state2 }],
+      },
+      // 무한스크롤
+      skip: q || 0,
+      // FIXME : 2 to 30
+      take: 30,
+      // 생성순으로 정렬
+      orderBy: { createdAt: 'desc' },
+    });
+    return result;
+  };
+
   public findAllPosts = async (q: number) => {
     // 전체 조회
     const findAllResult = await this.prisma.post.findMany({
