@@ -29,6 +29,16 @@ class KakaoAuthController {
       next(err);
     }
   };
+
+  public kakaoDelete: RequestHandler = async (req, res, next) => {
+    try {
+      await this.kakaoAuthService.kakaoDelete(res.locals.userId);
+
+      res.status(200).json({ message: '탈퇴 완료' });
+    } catch (err) {
+      next(err);
+    }
+  };
 }
 
 export default KakaoAuthController;
