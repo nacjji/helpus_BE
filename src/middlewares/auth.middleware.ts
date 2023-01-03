@@ -53,6 +53,7 @@ const passAnyway: RequestHandler = (req, res, next) => {
 
         res.locals.userId = payload.userId;
         res.locals.userName = payload.userName;
+        next();
       } else next();
     }
   } catch (err) {
