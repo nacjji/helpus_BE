@@ -40,4 +40,24 @@ const requiredNoLogin: RequestHandler = (req, res, next) => {
   }
 };
 
-export { requiredLogin, requiredNoLogin };
+const passAnyway: RequestHandler = (req, res, next) => {
+  try {
+    const { authorization } = req.headers;
+
+    if (!authorization) next();
+    else {
+      const [tokenType, tokenValue] = authorization.split(' ');
+
+      if (tokenType === 'Bearer' && tokenValue) {
+        const payload: any = jwt.verify(tokenValue, JWT_SECRET_KEY);
+
+        res.locals.userId = payload.userId;
+        res.locals.userName = payload.userName;
+      } else next();
+    }
+  } catch (err) {
+    next();
+  }
+};
+
+export { requiredLogin, requiredNoLogin, passAnyway };
