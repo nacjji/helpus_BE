@@ -43,21 +43,44 @@ class PostsRepository {
     return result;
   };
 
+  public searchPost = async (userId: number, search: string, q?: number) => {
+    const result = await this.prisma.post.findMany({
+      where: {
+        OR: [
+          { title: { contains: search } },
+          { content: { contains: search } },
+          { userName: { contains: search } },
+          { location1: { contains: search } },
+          { location2: { contains: search } },
+          { tag: { contains: search } },
+        ],
+      },
+      skip: q || 0,
+      // FIXME : 2 to 30
+      take: 2,
+      // 생성순으로 정렬
+      orderBy: { createdAt: 'desc' },
+    });
+
+    return result;
+  };
+
   public findAllPosts = async (q: number) => {
     // 전체 조회
     const findAllResult = await this.prisma.post.findMany({
       // 무한스크롤
       skip: q || 0,
       // FIXME : 2 to 30
-      take: 30,
+      take: 5,
       // 생성순으로 정렬
       orderBy: { createdAt: 'desc' },
-      // :FIXME user: {"userName" : "nickname"} --> "userName" : "nickname"
     });
+
     const wishCount = await this.prisma.wish.aggregate({
       _count: true,
     });
-    const result = [...findAllResult, wishCount];
+
+    const result = [findAllResult, wishCount];
     return result;
   };
 
