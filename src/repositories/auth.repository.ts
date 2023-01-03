@@ -1,5 +1,4 @@
 import { PrismaClient } from '@prisma/client';
-import { string } from 'joi';
 
 class AuthRepository {
   prisma: PrismaClient;
@@ -108,6 +107,21 @@ class AuthRepository {
       where: { userId },
       data: { password },
     });
+  };
+
+  public deleteUser = async (userId: number) => {
+    await this.prisma.user.delete({
+      where: { userId },
+    });
+  };
+
+  public isKakao = async (userId: number) => {
+    const user = await this.prisma.user.findUnique({
+      where: { userId },
+      select: { kakao: true },
+    });
+
+    return user;
   };
 }
 
