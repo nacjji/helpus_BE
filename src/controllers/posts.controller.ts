@@ -1,3 +1,4 @@
+/* eslint-disable class-methods-use-this */
 import { Request, Response, NextFunction } from 'express';
 import PostsService from '../services/posts.service';
 import { postInputPattern, postIdPattern } from '../validations/posts.validation';
@@ -42,15 +43,32 @@ class PostsController {
     }
   };
 
+  public searchPost = async (req: Request, res: Response, next: NextFunction) => {
+    try {
+      console.log(1);
+
+      if (!req.query.search) {
+        return next();
+      }
+      const { userId } = res.locals;
+      const search = req.query.search as string;
+      const { q } = req.query;
+      const result = await this.postsService.searchPost(Number(userId), search, Number(q));
+      return res.status(200).json({ result });
+    } catch (err) {
+      return next(err);
+    }
+  };
+
   public findAllPosts = async (req: Request, res: Response, next: NextFunction) => {
-    if (req.query.category) {
+    if (req.query.category || req.query.search) {
       return next();
     }
     try {
+      console.log(2);
       // const category = Number(req.query.category);
       const q = Number(req.query.q);
       const result = await this.postsService.findAllPosts(q);
-      console.log(result);
       return res.status(200).json({ result });
     } catch (err) {
       return next(err);
@@ -58,6 +76,10 @@ class PostsController {
   };
 
   public findByCategory = async (req: Request, res: Response, next: NextFunction) => {
+    console.log(3);
+    if (req.query.search) {
+      return next();
+    }
     try {
       const category = Number(req.query.category);
       const q = Number(req.query.q);
@@ -69,8 +91,14 @@ class PostsController {
   };
 
   public findDetailPost = async (req: Request, res: Response, next: NextFunction) => {
+    console.log(4);
+
     try {
       const postId = Number(req.params.postId);
+
+      if (req.params.postId === 'mylocation') {
+        return next();
+      }
 
       const result = await this.postsService.findDetailPost(postId);
       return res.status(200).json({ result });

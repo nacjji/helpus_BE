@@ -1,9 +1,12 @@
 import { notFound } from '@hapi/boom';
 import PostsRepository from '../repositories/posts.repository';
+import AuthRepository from '../repositories/auth.repository';
 import prisma from '../config/database/prisma';
 
 class PostsService {
   postsRepository: PostsRepository;
+
+  authRepository: AuthRepository | undefined;
 
   constructor() {
     this.postsRepository = new PostsRepository(prisma);
@@ -46,9 +49,18 @@ class PostsService {
 
   // 에러가 났음에도 사진이 s3 에 업로드 됨
 
+  // 게시글 검색
+  public searchPost = async (userId: number, search: string, q: number) => {
+    const result = await this.postsRepository.searchPost(userId, search, q);
+    return result;
+  };
+
   // 전체 조회
   public findAllPosts = async (q: number) => {
     const result = await this.postsRepository.findAllPosts(q);
+    if (result.length === 1) {
+      // 게시글 없을 때 204
+    }
     return result;
   };
 
@@ -99,7 +111,6 @@ class PostsService {
       imageFileName3 ? imageFileName3[4] : undefined,
       tag
     );
-    console.log(result);
     if (!result) {
       throw notFound('게시글 없음');
     }
