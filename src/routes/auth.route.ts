@@ -32,4 +32,7 @@ authRouter.get('/wishlist', auth.requiredLogin, authController.wishlist);
 authRouter.patch('/password', auth.requiredLogin, authController.changePassword);
 authRouter.get('/:userId/detail', authController.getUserDetail);
 
+authRouter.delete('/delete', auth.requiredLogin, authController.deleteUser);
+authRouter.delete('/delete/kakao', auth.requiredLogin, kakaoAuthController.kakaoDelete);
+
 export default authRouter;
