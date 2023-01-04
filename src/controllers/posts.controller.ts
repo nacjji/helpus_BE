@@ -1,4 +1,5 @@
 /* eslint-disable class-methods-use-this */
+import { badRequest } from '@hapi/boom';
 import { Request, Response, NextFunction } from 'express';
 import PostsService from '../services/posts.service';
 import { postInputPattern, postIdPattern } from '../validations/posts.validation';
@@ -43,63 +44,45 @@ class PostsController {
     }
   };
 
-  // public searchPost = async (req: Request, res: Response, next: NextFunction) => {
-  //   try {
-  //     if (!req.query.search || req.query.category) {
-  //       return next();
-  //     }
-  //     console.log(req.query.search);
-  //     console.log('searchPost');
-  //     const { userId } = res.locals;
-  //     const search = req.query.search as string;
-  //     const { q } = req.query;
-  //     const result = await this.postsService.searchPost(Number(userId), search, Number(q));
-  //     return res.status(200).json({ result });
-  //   } catch (err) {
-  //     return next(err);
-  //   }
-  // };
-
-  // 전체 게시글 조회
-  public findAllPosts = async (req: Request, res: Response, next: NextFunction) => {
-    const { userId } = res.locals;
-    const mylocation = req.query.mylocation as string;
-    const category = Number(req.query.category);
-    const search = req.query.search as string;
-    console.log(userId);
-    console.log('findAllPosts');
+  // 내 위치 조회
+  public myLocationPosts = async (req: Request, res: Response, next: NextFunction) => {
+    const { userId, state1, state2 } = res.locals;
     try {
+      if (!userId) {
+        throw badRequest('내 위치 게시글 조회는 로그인 후 이용할 수 있는 기능입니다.');
+      }
+      const search = req.query.search as string;
+      const category = Number(req.query.category);
+      console.log('myLocationPosts');
       // const category = Number(req.query.category);
       const q = Number(req.query.q);
-      const result = await this.postsService.findAllPosts(userId, q, mylocation, category, search);
+      const result = await this.postsService.myLocationPosts(q, state1, state2, category, search);
       return res.status(200).json({ result });
     } catch (err) {
       return next(err);
     }
   };
 
-  // public findByCategory = async (req: Request, res: Response, next: NextFunction) => {
-  //   console.log('findByCategory');
-  //   const search = req.query.search as string;
-  //   // if (req.query.search) {
-  //   //   return next();
-  //   // }
-  //   try {
-  //     const category = Number(req.query.category);
-  //     const q = Number(req.query.q);
-  //     const result = await this.postsService.findByCategory(q, category, search);
-  //     return res.status(200).json({ result });
-  //   } catch (err) {
-  //     return next(err);
-  //   }
-  // };
+  // 전국 게시글 조회
+  public allLocationPosts = async (req: Request, res: Response, next: NextFunction) => {
+    const q = Number(req.query.q);
+    const search = req.query.search as string;
+
+    const category = Number(req.query.category);
+
+    try {
+      const result = await this.postsService.allLocationPosts(q, category, search);
+      return res.status(200).json({ result });
+    } catch (err) {
+      return next(err);
+    }
+  };
 
   public findDetailPost = async (req: Request, res: Response, next: NextFunction) => {
     console.log('findDetailPost');
 
     try {
       const postId = Number(req.params.postId);
-      const { userId } = res.locals;
 
       if (req.params.postId === 'mylocation') {
         return next();

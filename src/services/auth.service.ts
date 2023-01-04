@@ -42,9 +42,13 @@ class AuthService {
     const match = await bcrypt.compare(password, user.password);
     if (!match) throw badRequest('이메일/비밀번호 불일치');
 
-    const token = await jwt.sign({ userId: user.userId, userName: user.userName }, JWT_SECRET_KEY, {
-      expiresIn: '2h',
-    });
+    const token = await jwt.sign(
+      { userId: user.userId, userName: user.userName, state1: user.state1, state2: user.state2 },
+      JWT_SECRET_KEY,
+      {
+        expiresIn: '2h',
+      }
+    );
 
     return {
       userId: user.userId,
