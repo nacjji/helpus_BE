@@ -1,3 +1,4 @@
+/* eslint-disable no-lonely-if */
 /* eslint-disable no-param-reassign */
 /* eslint-disable no-plusplus */
 import { notFound } from '@hapi/boom';
@@ -86,29 +87,23 @@ class PostsService {
 
   // 에러가 났음에도 사진이 s3 에 업로드 됨
 
-  // 게시글 검색
-  // public searchPost = async (userId: number, search: string, q: number) => {
-  //   const result = await this.postsRepository.searchPost(userId, search, q);
-  //   return result;
-  // };
-
   // 전체 조회
-  public findAllPosts = async (
-    userId: number,
+  // eslint-disable-next-line class-methods-use-this
+  public myLocationPosts = async (
     q: number,
-    mylocation?: string,
+    state1?: string,
+    state2?: string,
     category?: number,
     search?: string
   ) => {
-    console.log(userId, 'in service logged in');
-    const result = await this.postsRepository.findAllPosts(userId, q, mylocation, category, search);
+    const result = await this.postsRepository.myLocationPosts(q, state1, state2, category, search);
     return result;
   };
 
-  // public findByCategory = async (q: number, category: number, search: string) => {
-  //   const result = await this.postsRepository.findByCategory(q, category, search);
-  //   return result;
-  // };
+  public allLocationPosts = async (q: number, category: number, search: string) => {
+    const result = await this.postsRepository.allLocationPosts(q, category, search);
+    return result;
+  };
 
   public findDetailPost = async (postId: number) => {
     const result = await this.postsRepository.findDetailPost(postId);
