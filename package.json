@@ -21,6 +21,7 @@
     "@aws-sdk/client-s3": "^3.231.0",
     "@hapi/boom": "^10.0.0",
     "@prisma/client": "^4.8.0",
+    "array-shuffle": "^3.0.0",
     "axios": "^1.2.2",
     "bcrypt": "^5.1.0",
     "compression": "^1.7.4",
