@@ -43,76 +43,63 @@ class PostsController {
     }
   };
 
-  public searchPost = async (req: Request, res: Response, next: NextFunction) => {
-    try {
-      if (!req.query.search) {
-        return next();
-      }
-      console.log('searchPost');
-      const { userId } = res.locals;
-      const search = req.query.search as string;
-      const { q } = req.query;
-      const result = await this.postsService.searchPost(Number(userId), search, Number(q));
-      return res.status(200).json({ result });
-    } catch (err) {
-      return next(err);
-    }
-  };
-
-  // 내 위치 게시글
-  public myLocation = async (req: Request, res: Response, next: NextFunction) => {
-    try {
-      const { userId } = res.locals;
-
-      const q = Number(req.query.q);
-      if (!userId) {
-        return next();
-      }
-      const result = await this.postsService.myLocation(q, userId);
-      return res.status(200).json({ result });
-    } catch (err) {
-      return next(err);
-    }
-  };
+  // public searchPost = async (req: Request, res: Response, next: NextFunction) => {
+  //   try {
+  //     if (!req.query.search || req.query.category) {
+  //       return next();
+  //     }
+  //     console.log(req.query.search);
+  //     console.log('searchPost');
+  //     const { userId } = res.locals;
+  //     const search = req.query.search as string;
+  //     const { q } = req.query;
+  //     const result = await this.postsService.searchPost(Number(userId), search, Number(q));
+  //     return res.status(200).json({ result });
+  //   } catch (err) {
+  //     return next(err);
+  //   }
+  // };
 
   // 전체 게시글 조회
   public findAllPosts = async (req: Request, res: Response, next: NextFunction) => {
+    const { userId } = res.locals;
+    const mylocation = req.query.mylocation as string;
+    const category = Number(req.query.category);
+    const search = req.query.search as string;
+    console.log(userId);
     console.log('findAllPosts');
-
-    if (req.query.category || req.query.search) {
-      return next();
-    }
     try {
       // const category = Number(req.query.category);
       const q = Number(req.query.q);
-      const result = await this.postsService.findAllPosts(q);
+      const result = await this.postsService.findAllPosts(userId, q, mylocation, category, search);
       return res.status(200).json({ result });
     } catch (err) {
       return next(err);
     }
   };
 
-  public findByCategory = async (req: Request, res: Response, next: NextFunction) => {
-    console.log('findByCategory');
-
-    if (req.query.search) {
-      return next();
-    }
-    try {
-      const category = Number(req.query.category);
-      const q = Number(req.query.q);
-      const result = await this.postsService.findByCategory(q, category);
-      return res.status(200).json({ result });
-    } catch (err) {
-      return next(err);
-    }
-  };
+  // public findByCategory = async (req: Request, res: Response, next: NextFunction) => {
+  //   console.log('findByCategory');
+  //   const search = req.query.search as string;
+  //   // if (req.query.search) {
+  //   //   return next();
+  //   // }
+  //   try {
+  //     const category = Number(req.query.category);
+  //     const q = Number(req.query.q);
+  //     const result = await this.postsService.findByCategory(q, category, search);
+  //     return res.status(200).json({ result });
+  //   } catch (err) {
+  //     return next(err);
+  //   }
+  // };
 
   public findDetailPost = async (req: Request, res: Response, next: NextFunction) => {
     console.log('findDetailPost');
 
     try {
       const postId = Number(req.params.postId);
+      const { userId } = res.locals;
 
       if (req.params.postId === 'mylocation') {
         return next();

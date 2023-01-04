@@ -1,4 +1,4 @@
-import { notFound } from '@hapi/boom';
+import { badRequest, notFound } from '@hapi/boom';
 import { PrismaClient } from '@prisma/client';
 
 class PostsRepository {
@@ -43,86 +43,155 @@ class PostsRepository {
     return result;
   };
 
-  public searchPost = async (userId: number, search: string, q?: number) => {
-    const result = await this.prisma.post.findMany({
-      where: {
-        OR: [
-          { title: { contains: search } },
-          { content: { contains: search } },
-          { userName: { contains: search } },
-          { location1: { contains: search } },
-          { location2: { contains: search } },
-          { tag: { contains: search } },
-        ],
-      },
-      skip: q || 0,
-      // FIXME : 2 to 30
-      take: 2,
-      // 생성순으로 정렬
-      orderBy: { createdAt: 'desc' },
-    });
+  // public searchPost = async (userId: number, search: string, q?: number) => {
+  //   const result = await this.prisma.post.findMany({
+  //     where: {
+  //       OR: [
+  //         { title: { contains: search } },
+  //         { content: { contains: search } },
+  //         { userName: { contains: search } },
+  //         { location1: { contains: search } },
+  //         { location2: { contains: search } },
+  //         { tag: { contains: search } },
+  //       ],
+  //     },
+  //     skip: q || 0,
+  //     // FIXME : 2 to 30
+  //     take: 30,
+  //     // 생성순으로 정렬
+  //     orderBy: { createdAt: 'desc' },
+  //   });
 
-    return result;
-  };
+  //   return result;
+  // };
 
-  // 내 위치에 해당하는 글 조회 // 로그인이 되지 않으면 전체 게시글 조회
-  public myLocation = async (q: number, userId: number) => {
+  public findAllPosts = async (
+    userId: number,
+    q: number,
+    mylocation?: string,
+    category?: number,
+    search?: string
+  ) => {
     const userLocation = await this.prisma.user.findMany({ where: { userId } });
-    console.log(userLocation[0].state1);
+    console.log(userId, 'in repo');
+    // mylocation query 가 'true' 일 경우
+    if (mylocation && category) {
+      if (!userId) {
+        throw badRequest('내 위치 게시글 찾기는 로그인 후 이용 가능한 기능입니다.');
+      }
+      const findAllMyLocation = await this.prisma.post.findMany({
+        where: {
+          AND: [{ location1: userLocation[0].state1 }, { location2: userLocation[0].state2 }],
+          category,
+        },
+        // 무한스크롤
+        skip: q || 0,
+        take: 30,
+        // 생성순으로 정렬
+        orderBy: { createdAt: 'desc' },
+      });
 
-    const result = await this.prisma.post.findMany({
-      where: {
-        AND: [{ location1: userLocation[0].state1 }, { location2: userLocation[0].state2 }],
-      },
+      const wishCount = await this.prisma.wish.aggregate({
+        _count: true,
+      });
+      const result = [findAllMyLocation, wishCount];
+      return result;
+    }
+    if (mylocation && !category) {
+      if (!userId) {
+        throw badRequest('내 위치 게시글 찾기는 로그인 후 이용 가능한 기능입니다.');
+      }
+      const findAllMyLocation = await this.prisma.post.findMany({
+        where: {
+          AND: [{ location1: userLocation[0].state1 }, { location2: userLocation[0].state2 }],
+        },
+        // 무한스크롤
+        skip: q || 0,
+        take: 30,
+        // 생성순으로 정렬
+        orderBy: { createdAt: 'desc' },
+      });
+
+      const wishCount = await this.prisma.wish.aggregate({
+        _count: true,
+      });
+      const result = [findAllMyLocation, wishCount];
+      return result;
+    }
+    if (category) {
+      const allPostsCategory = await this.prisma.post.findMany(
+        // 무한스크롤
+        {
+          where: { category },
+          skip: q || 0,
+          take: 30,
+          // 생성순으로 정렬
+          orderBy: { createdAt: 'desc' },
+        }
+      );
+      return allPostsCategory;
+    }
+    const allPosts = await this.prisma.post.findMany(
       // 무한스크롤
-      skip: q || 0,
-      // FIXME : 2 to 30
-      take: 30,
-      // 생성순으로 정렬
-      orderBy: { createdAt: 'desc' },
-    });
-    return result;
-  };
-
-  public findAllPosts = async (q: number) => {
-    // 전체 조회
-    const findAllResult = await this.prisma.post.findMany({
-      // 무한스크롤
-      skip: q || 0,
-      // FIXME : 2 to 30
-      take: 5,
-      // 생성순으로 정렬
-      orderBy: { createdAt: 'desc' },
-    });
-
-    const wishCount = await this.prisma.wish.aggregate({
-      _count: true,
-    });
-
-    const result = [findAllResult, wishCount];
-    return result;
+      {
+        skip: q || 0,
+        take: 30,
+        // 생성순으로 정렬
+        orderBy: { createdAt: 'desc' },
+      }
+    );
+    return allPosts;
   };
 
   // 카테고리 별로 조회
-  public findByCategory = async (q: number, category: number) => {
-    const findByCategoryResult = await this.prisma.post.findMany({
-      where: { category }, // 무한스크롤
-      skip: q || 0,
-      // FIXME : 2 to 30
-      take: 30,
-      // 생성순으로 정렬
-      orderBy: { createdAt: 'desc' },
-    });
-    const wishCount = await this.prisma.wish.aggregate({
-      _count: true,
-    });
-    // eslint-disable-next-line no-underscore-dangle
-    if (wishCount._count !== 0) {
-      const result = [...findByCategoryResult, wishCount];
-      return result;
-    }
-    return findByCategoryResult;
-  };
+  // public findByCategory = async (q: number, category: number, search: string) => {
+  //   if (!search) {
+  //     const findByCategoryResult = await this.prisma.post.findMany({
+  //       where: { category }, // 무한스크롤
+  //       skip: q || 0,
+  //       // FIXME : 2 to 30
+  //       take: 30,
+  //       // 생성순으로 정렬
+  //       orderBy: { createdAt: 'desc' },
+  //     });
+  //     const wishCount = await this.prisma.wish.aggregate({
+  //       _count: true,
+  //     });
+  //     // eslint-disable-next-line no-underscore-dangle
+  //     if (wishCount._count !== 0) {
+  //       const result = [...findByCategoryResult, wishCount];
+  //       return result;
+  //     }
+  //     return findByCategoryResult;
+  //   }
+  //   const findByCategoryResult = await this.prisma.post.findMany({
+  //     where: {
+  //       category,
+  //       OR: [
+  //         { title: { contains: search } },
+  //         { content: { contains: search } },
+  //         { userName: { contains: search } },
+  //         { location1: { contains: search } },
+  //         { location2: { contains: search } },
+  //         { tag: { contains: search } },
+  //       ],
+  //     }, // 무한스크롤
+  //     skip: q || 0,
+  //     // FIXME : 2 to 30
+  //     take: 30,
+  //     // 생성순으로 정렬
+  //     orderBy: { createdAt: 'desc' },
+  //   });
+  //   const wishCount = await this.prisma.wish.aggregate({
+  //     _count: true,
+  //   });
+  //   // eslint-disable-next-line no-underscore-dangle
+  //   if (wishCount._count !== 0) {
+  //     const result = [...findByCategoryResult, wishCount];
+  //     return result;
+  //   }
+  //   return findByCategoryResult;
+  // };
 
   public findDetailPost = async (postId: number) => {
     const findDetailResult = await this.prisma.post.findUnique({
