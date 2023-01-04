@@ -1,3 +1,4 @@
+import { notFound } from '@hapi/boom';
 import { PrismaClient } from '@prisma/client';
 
 class PostsRepository {
@@ -8,7 +9,7 @@ class PostsRepository {
     this.prisma = prisma;
   }
 
-  createPost = async (
+  public createPost = async (
     userId: number,
     userName: string,
     title: string,
@@ -42,41 +43,99 @@ class PostsRepository {
     return result;
   };
 
-  findAllPosts = async (q: number) => {
-    // 전체 조회
+  public searchPost = async (userId: number, search: string, q?: number) => {
     const result = await this.prisma.post.findMany({
+      where: {
+        OR: [
+          { title: { contains: search } },
+          { content: { contains: search } },
+          { userName: { contains: search } },
+          { location1: { contains: search } },
+          { location2: { contains: search } },
+          { tag: { contains: search } },
+        ],
+      },
+      skip: q || 0,
+      // FIXME : 2 to 30
+      take: 30,
+      // 생성순으로 정렬
+      orderBy: { createdAt: 'desc' },
+    });
+
+    return result;
+  };
+
+  // 내 위치에 해당하는 글 조회 // 로그인이 되지 않으면 전체 게시글 조회
+  public myLocation = async (q: number, userId: number) => {
+    const userLocation = await this.prisma.user.findMany({ where: { userId } });
+    console.log(userLocation[0].state1);
+
+    const result = await this.prisma.post.findMany({
+      where: {
+        AND: [{ location1: userLocation[0].state1 }, { location2: userLocation[0].state2 }],
+      },
       // 무한스크롤
       skip: q || 0,
       // FIXME : 2 to 30
-      take: 2,
+      take: 30,
       // 생성순으로 정렬
       orderBy: { createdAt: 'desc' },
-      // :FIXME user: {"userName" : "nickname"} --> "userName" : "nickname"
     });
+    return result;
+  };
+
+  public findAllPosts = async (q: number) => {
+    // 전체 조회
+    const findAllResult = await this.prisma.post.findMany({
+      // 무한스크롤
+      skip: q || 0,
+      // FIXME : 2 to 30
+      take: 30,
+      // 생성순으로 정렬
+      orderBy: { createdAt: 'desc' },
+    });
+
+    const wishCount = await this.prisma.wish.aggregate({
+      _count: true,
+    });
+
+    const result = [findAllResult, wishCount];
     return result;
   };
 
   // 카테고리 별로 조회
   public findByCategory = async (q: number, category: number) => {
-    const result = await this.prisma.post.findMany({
+    const findByCategoryResult = await this.prisma.post.findMany({
       where: { category }, // 무한스크롤
       skip: q || 0,
       // FIXME : 2 to 30
-      take: 2,
+      take: 30,
       // 생성순으로 정렬
       orderBy: { createdAt: 'desc' },
     });
-    return result;
+    const wishCount = await this.prisma.wish.aggregate({
+      _count: true,
+    });
+    // eslint-disable-next-line no-underscore-dangle
+    if (wishCount._count !== 0) {
+      const result = [...findByCategoryResult, wishCount];
+      return result;
+    }
+    return findByCategoryResult;
   };
 
-  findDetailPost = async (postId: number) => {
-    const result = await this.prisma.post.findUnique({
+  public findDetailPost = async (postId: number) => {
+    const findDetailResult = await this.prisma.post.findUnique({
       where: { postId },
     });
+    const wishCount = await this.prisma.wish.aggregate({
+      _count: true,
+    });
+    const result = [findDetailResult, wishCount];
     return result;
   };
 
-  updatePost = async (
+  public updatePost = async (
     postId?: number,
     userId?: number,
     title?: string,
@@ -91,10 +150,10 @@ class PostsRepository {
     imageUrl3?: string,
     tag?: string
   ) => {
-    // params 에 해당하는 게시글을 찾고, 없을 경우 에러를 반환함
-    // await this.prisma.post.findUniqueOrThrow({
-    //   where: { postId },
-    // });
+    const postExist = await this.prisma.post.findUnique({ where: { postId } });
+    if (!postExist) {
+      throw notFound('게시글 없음');
+    }
     const result = await this.prisma.post.update({
       where: { postId },
       data: {
@@ -117,7 +176,11 @@ class PostsRepository {
     return result;
   };
 
-  deletePost = async (postId: number) => {
+  public deletePost = async (postId: number) => {
+    const postExist = await this.prisma.post.findUnique({ where: { postId } });
+    if (!postExist) {
+      throw notFound('게시글 없음');
+    }
     await this.prisma.post.findUniqueOrThrow({ where: { postId } });
     const result = await this.prisma.post.delete({ where: { postId } });
     return result;

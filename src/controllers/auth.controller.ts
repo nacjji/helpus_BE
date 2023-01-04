@@ -92,7 +92,6 @@ class AuthController {
   };
 
   public updateImage: RequestHandler = async (req, res, next) => {
-    console.log('1');
     const { location: userImage } = req.file as Express.MulterS3.File;
     const fileUrl = userImage.split('/');
 
