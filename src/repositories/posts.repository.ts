@@ -57,7 +57,7 @@ class PostsRepository {
       },
       skip: q || 0,
       // FIXME : 2 to 30
-      take: 2,
+      take: 30,
       // 생성순으로 정렬
       orderBy: { createdAt: 'desc' },
     });
@@ -90,7 +90,7 @@ class PostsRepository {
       // 무한스크롤
       skip: q || 0,
       // FIXME : 2 to 30
-      take: 5,
+      take: 30,
       // 생성순으로 정렬
       orderBy: { createdAt: 'desc' },
     });

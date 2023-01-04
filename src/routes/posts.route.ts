@@ -14,7 +14,7 @@ postsRouter.post(
 );
 
 postsRouter.get('/', postsController.searchPost);
-postsRouter.get('/', passAnyway, postsController.myLocation);
+postsRouter.get('/mylocation', passAnyway, postsController.myLocation);
 postsRouter.get('/', postsController.findAllPosts);
 postsRouter.get('/', postsController.findByCategory);
 postsRouter.get('/:postId', postsController.findDetailPost);
