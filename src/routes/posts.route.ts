@@ -13,10 +13,9 @@ postsRouter.post(
   postsController.createPost
 );
 
-postsRouter.get('/', postsController.searchPost);
-postsRouter.get('/mylocation', passAnyway, postsController.myLocation);
-postsRouter.get('/', postsController.findAllPosts);
-postsRouter.get('/', postsController.findByCategory);
+// postsRouter.get('/', postsController.searchPost);
+postsRouter.get('/', passAnyway, postsController.findAllPosts);
+// postsRouter.get('/', passAnyway, postsController.findByCategory);
 postsRouter.get('/:postId', postsController.findDetailPost);
 
 postsRouter.put(
