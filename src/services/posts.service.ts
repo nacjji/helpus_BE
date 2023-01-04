@@ -87,30 +87,28 @@ class PostsService {
   // 에러가 났음에도 사진이 s3 에 업로드 됨
 
   // 게시글 검색
-  public searchPost = async (userId: number, search: string, q: number) => {
-    const result = await this.postsRepository.searchPost(userId, search, q);
-    return result;
-  };
-
-  // 내 위치 게시글
-  public myLocation = async (q: number, userId: number) => {
-    const result = await this.postsRepository.myLocation(q, userId);
-    return result;
-  };
+  // public searchPost = async (userId: number, search: string, q: number) => {
+  //   const result = await this.postsRepository.searchPost(userId, search, q);
+  //   return result;
+  // };
 
   // 전체 조회
-  public findAllPosts = async (q: number) => {
-    const result = await this.postsRepository.findAllPosts(q);
-    if (result.length === 1) {
-      // 게시글 없을 때 204
-    }
+  public findAllPosts = async (
+    userId: number,
+    q: number,
+    mylocation?: string,
+    category?: number,
+    search?: string
+  ) => {
+    console.log(userId, 'in service logged in');
+    const result = await this.postsRepository.findAllPosts(userId, q, mylocation, category, search);
     return result;
   };
 
-  public findByCategory = async (q: number, category: number) => {
-    const result = await this.postsRepository.findByCategory(q, category);
-    return result;
-  };
+  // public findByCategory = async (q: number, category: number, search: string) => {
+  //   const result = await this.postsRepository.findByCategory(q, category, search);
+  //   return result;
+  // };
 
   public findDetailPost = async (postId: number) => {
     const result = await this.postsRepository.findDetailPost(postId);
