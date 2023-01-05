@@ -12,6 +12,7 @@ export const postInputPattern = joi.object().keys({
   category: joi.string().description('1 : 헬피, 2 : 헬퍼, 3 : 헬퍼스'),
   isDeadLine: joi.number().description('0 : 모집중, 1 : 마감'),
   createdAt: joi.date() || string().description('작성일'),
+  appointed: joi.date() || string().description('마감일'),
 });
 
 export const postIdPattern = joi.number().integer().required().description('게시글번호');
