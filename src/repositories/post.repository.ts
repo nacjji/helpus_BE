@@ -21,7 +21,8 @@ class PostsRepository {
     imageUrl1?: string,
     imageUrl2?: string,
     imageUrl3?: string,
-    tag?: string
+    tag?: string,
+    createdAt?: Date
     // eslint-disable-next-line consistent-return
   ) => {
     const result = await this.prisma.post.create({
@@ -38,6 +39,7 @@ class PostsRepository {
         imageUrl2,
         imageUrl3,
         tag,
+        createdAt,
       },
     });
     return result;

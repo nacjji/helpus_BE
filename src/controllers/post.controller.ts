@@ -1,7 +1,7 @@
 /* eslint-disable class-methods-use-this */
 import { badRequest } from '@hapi/boom';
 import { Request, Response, NextFunction } from 'express';
-import PostsService from '../services/posts.service';
+import PostsService from '../services/post.service';
 import { postInputPattern, postIdPattern } from '../validations/posts.validation';
 
 class PostsController {
@@ -15,7 +15,7 @@ class PostsController {
   public createPost = async (req: Request, res: Response, next: NextFunction) => {
     try {
       const { userId, userName } = res.locals;
-      const { title, content, category, appointed, location1, location2, tag } =
+      const { title, content, category, appointed, location1, location2, tag, createdAt } =
         await postInputPattern.validateAsync(req.body);
       const filesArr = req.files! as Array<Express.MulterS3.File>;
 
@@ -36,7 +36,8 @@ class PostsController {
         imageUrl1,
         imageUrl2,
         imageUrl3,
-        tag
+        tag,
+        createdAt
       );
       return res.status(201).json({ result, tag: tagArr });
     } catch (err) {

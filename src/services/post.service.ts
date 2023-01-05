@@ -2,7 +2,7 @@
 /* eslint-disable no-param-reassign */
 /* eslint-disable no-plusplus */
 import { notFound } from '@hapi/boom';
-import PostsRepository from '../repositories/posts.repository';
+import PostsRepository from '../repositories/post.repository';
 import AuthRepository from '../repositories/auth.repository';
 import prisma from '../config/database/prisma';
 
@@ -43,7 +43,8 @@ class PostsService {
     imageUrl1?: string,
     imageUrl2?: string,
     imageUrl3?: string,
-    tag?: string
+    tag?: string,
+    createdAt?: Date
   ) => {
     const imageFileName1 = imageUrl1?.split('/');
     const imageFileName2 = imageUrl2?.split('/');
@@ -63,7 +64,8 @@ class PostsService {
         imageFileName1 ? imageFileName1[4] : shuffledImg[0],
         imageFileName2 ? imageFileName2[4] : shuffledImg[1],
         imageFileName3 ? imageFileName3[4] : shuffledImg[2],
-        tag
+        tag,
+        createdAt
       );
       return result;
     }
@@ -80,7 +82,8 @@ class PostsService {
       imageFileName1 ? imageFileName1[4] : undefined,
       imageFileName2 ? imageFileName2[4] : undefined,
       imageFileName3 ? imageFileName3[4] : undefined,
-      tag
+      tag,
+      createdAt
     );
     return result;
   };
