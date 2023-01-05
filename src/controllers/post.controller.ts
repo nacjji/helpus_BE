@@ -1,7 +1,7 @@
 /* eslint-disable class-methods-use-this */
 import { badRequest } from '@hapi/boom';
 import { Request, Response, NextFunction } from 'express';
-import PostsService from '../services/posts.service';
+import PostsService from '../services/post.service';
 import { postInputPattern, postIdPattern } from '../validations/posts.validation';
 
 class PostsController {

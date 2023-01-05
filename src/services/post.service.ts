@@ -2,7 +2,7 @@
 /* eslint-disable no-param-reassign */
 /* eslint-disable no-plusplus */
 import { notFound } from '@hapi/boom';
-import PostsRepository from '../repositories/posts.repository';
+import PostsRepository from '../repositories/post.repository';
 import AuthRepository from '../repositories/auth.repository';
 import prisma from '../config/database/prisma';
 
