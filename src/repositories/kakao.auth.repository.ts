@@ -35,6 +35,20 @@ class KakaoAuthRepository {
 
     return user;
   };
+
+  public findKakaoId = async (userId: number) => {
+    const user = await this.prisma.user.findUnique({
+      where: { userId },
+    });
+
+    return user;
+  };
+
+  public kakaeDelete = async (userId: number) => {
+    await this.prisma.user.delete({
+      where: { userId },
+    });
+  };
 }
 
 export default KakaoAuthRepository;

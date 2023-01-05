@@ -74,6 +74,55 @@ class AuthRepository {
 
     return results;
   };
+
+  public updateUser = async (userId: number, userName: string, state1: string, state2: string) => {
+    await this.prisma.user.update({
+      where: { userId },
+      data: {
+        userName,
+        state1,
+        state2,
+      },
+    });
+  };
+
+  public updateImage = async (userId: number, userImage: string) => {
+    await this.prisma.user.update({
+      where: { userId },
+      data: { userImage },
+    });
+  };
+
+  public searchPassword = async (userId: number) => {
+    const password = await this.prisma.user.findUnique({
+      where: { userId },
+      select: { password: true },
+    });
+
+    return password;
+  };
+
+  public updatePassword = async (userId: number, password: string) => {
+    await this.prisma.user.update({
+      where: { userId },
+      data: { password },
+    });
+  };
+
+  public deleteUser = async (userId: number) => {
+    await this.prisma.user.delete({
+      where: { userId },
+    });
+  };
+
+  public isKakao = async (userId: number) => {
+    const user = await this.prisma.user.findUnique({
+      where: { userId },
+      select: { kakao: true },
+    });
+
+    return user;
+  };
 }
 
 export default AuthRepository;

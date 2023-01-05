@@ -1,7 +1,7 @@
 import { Router } from 'express';
 import expressRateLimit from 'express-rate-limit';
 import authRouter from './auth.route';
-import postsRouter from './posts.route';
+import postsRouter from './post.route';
 import wishsRouter from './wish.route';
 
 const router = Router();

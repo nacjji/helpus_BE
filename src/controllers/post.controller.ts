@@ -1,5 +1,7 @@
+/* eslint-disable class-methods-use-this */
+import { badRequest } from '@hapi/boom';
 import { Request, Response, NextFunction } from 'express';
-import PostsService from '../services/posts.service';
+import PostsService from '../services/post.service';
 import { postInputPattern, postIdPattern } from '../validations/posts.validation';
 
 class PostsController {
@@ -42,25 +44,34 @@ class PostsController {
     }
   };
 
-  public findAllPosts = async (req: Request, res: Response, next: NextFunction) => {
-    if (req.query.category) {
-      return next();
-    }
+  // 내 위치 조회
+  public myLocationPosts = async (req: Request, res: Response, next: NextFunction) => {
+    const { userId, state1, state2 } = res.locals;
     try {
+      if (!userId) {
+        throw badRequest('내 위치 게시글 조회는 로그인 후 이용할 수 있는 기능입니다.');
+      }
+      const search = req.query.search as string;
+      const category = Number(req.query.category);
+      console.log('myLocationPosts');
       // const category = Number(req.query.category);
       const q = Number(req.query.q);
-      const result = await this.postsService.findAllPosts(q);
+      const result = await this.postsService.myLocationPosts(q, state1, state2, category, search);
       return res.status(200).json({ result });
     } catch (err) {
       return next(err);
     }
   };
 
-  public findByCategory = async (req: Request, res: Response, next: NextFunction) => {
+  // 전국 게시글 조회
+  public allLocationPosts = async (req: Request, res: Response, next: NextFunction) => {
+    const q = Number(req.query.q);
+    const search = req.query.search as string;
+
+    const category = Number(req.query.category);
+
     try {
-      const category = Number(req.query.category);
-      const q = Number(req.query.q);
-      const result = await this.postsService.findByCategory(q, category);
+      const result = await this.postsService.allLocationPosts(q, category, search);
       return res.status(200).json({ result });
     } catch (err) {
       return next(err);
@@ -68,8 +79,14 @@ class PostsController {
   };
 
   public findDetailPost = async (req: Request, res: Response, next: NextFunction) => {
+    console.log('findDetailPost');
+
     try {
       const postId = Number(req.params.postId);
+
+      if (req.params.postId === 'mylocation') {
+        return next();
+      }
 
       const result = await this.postsService.findDetailPost(postId);
       return res.status(200).json({ result });

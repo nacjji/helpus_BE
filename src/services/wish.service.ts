@@ -1,5 +1,5 @@
 import { notFound } from '@hapi/boom';
-import WishsRepository from '../repositories/wishs.repository';
+import WishsRepository from '../repositories/wish.repository';
 import prisma from '../config/database/prisma';
 
 class WishsService {

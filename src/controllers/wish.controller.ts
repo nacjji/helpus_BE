@@ -1,5 +1,5 @@
 import { Request, Response, NextFunction } from 'express';
-import WishsService from '../services/wishs.service';
+import WishsService from '../services/wish.service';
 
 class WishsController {
   wishsService: WishsService;

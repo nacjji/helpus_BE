@@ -42,9 +42,13 @@ class AuthService {
     const match = await bcrypt.compare(password, user.password);
     if (!match) throw badRequest('이메일/비밀번호 불일치');
 
-    const token = await jwt.sign({ userId: user.userId, userName: user.userName }, JWT_SECRET_KEY, {
-      expiresIn: '2h',
-    });
+    const token = await jwt.sign(
+      { userId: user.userId, userName: user.userName, state1: user.state1, state2: user.state2 },
+      JWT_SECRET_KEY,
+      {
+        expiresIn: '2h',
+      }
+    );
 
     return {
       userId: user.userId,
@@ -70,11 +74,40 @@ class AuthService {
     };
   };
 
+  public updateUser = async (userId: number, userName: string, state1: string, state2: string) => {
+    await this.authRepository.updateUser(userId, userName, state1, state2);
+  };
+
   public wishlist = async (userId: number) => {
     const posts = await this.authRepository.wishlist(userId);
-    const results = posts.map((v) => v.post);
 
+    const results = posts.map((v) => v.post);
     return results;
+  };
+
+  public updateImage = async (userId: number, userImage: string) => {
+    const user = await this.authRepository.userInfo(userId);
+    if (!user) throw badRequest('해당 유저 없음');
+
+    await this.authRepository.updateImage(userId, userImage);
+    return user.userImage;
+  };
+
+  public changePassword = async (userId: number, newPw: string, oldPw: string) => {
+    const isUser = await this.authRepository.searchPassword(userId);
+    if (!isUser) throw badRequest('해당 유저 없음');
+    if (!isUser.password) throw badRequest('로컬 회원 아님');
+
+    const match = await bcrypt.compare(oldPw, isUser.password);
+
+    if (match) {
+      const hash = await bcrypt.hash(newPw, Number(salt));
+      await this.authRepository.updatePassword(userId, hash);
+    } else throw badRequest('요구사항에 맞지 않는 입력값');
+  };
+
+  public deleteUser = async (userId: number) => {
+    await this.authRepository.deleteUser(userId);
   };
 }
 

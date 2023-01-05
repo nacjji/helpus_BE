@@ -2,7 +2,9 @@
 // learn more about it in the docs: https://pris.ly/d/prisma-schema
 
 generator client {
-  provider = "prisma-client-js"
+  provider        = "prisma-client-js"
+  // 검색에 사용되는 라이브러리
+  previewFeatures = ["fullTextSearch", "fullTextIndex"]
 }
 
 datasource db {

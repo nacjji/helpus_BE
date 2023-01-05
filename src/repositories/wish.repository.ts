@@ -9,16 +9,16 @@ class WishsRepository {
   }
 
   public wishPost = async (postId: number, userId: number) => {
-    const wishExist = await this.prisma.wish.findMany({ where: { userId } });
+    const wishExist = await this.prisma.wish.findMany({ where: { AND: [{ userId }, { postId }] } });
     const isPostExist = await this.prisma.post.findUnique({ where: { postId } });
     if (!isPostExist) {
       throw notFound('게시글 없음');
     }
     if (wishExist.length) {
-      const result = await this.prisma.wish.deleteMany({ where: { userId } });
+      await this.prisma.wish.deleteMany({ where: { userId } });
       return '찜 취소';
     }
-    const result = await this.prisma.wish.create({ data: { postId, userId } });
+    await this.prisma.wish.create({ data: { postId, userId } });
     return '찜';
   };
 }
