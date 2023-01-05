@@ -17,6 +17,9 @@ class PostsController {
       const { userId, userName } = res.locals;
       const { title, content, category, appointed, location1, location2, tag, createdAt } =
         await postInputPattern.validateAsync(req.body);
+      console.log(typeof createdAt);
+      console.log(createdAt);
+
       const filesArr = req.files! as Array<Express.MulterS3.File>;
 
       const imageUrl = filesArr.map((file) => file.location);

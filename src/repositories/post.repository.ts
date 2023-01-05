@@ -53,8 +53,6 @@ class PostsRepository {
     category?: number,
     search?: string
   ) => {
-    console.log(search);
-
     const result = await this.prisma.post.findMany({
       where: {
         AND: [
@@ -85,8 +83,6 @@ class PostsRepository {
   };
 
   public allLocationPosts = async (q: number, category: number, search?: string) => {
-    console.log('all posts');
-
     const result = await this.prisma.post.findMany({
       where: {
         OR: [
