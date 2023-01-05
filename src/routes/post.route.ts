@@ -1,6 +1,6 @@
 import { Router } from 'express';
 import { multeruploader } from '../middlewares/multer.uploader';
-import PostsController from '../controllers/posts.controller';
+import PostsController from '../controllers/post.controller';
 import { requiredLogin, passAnyway } from '../middlewares/auth.middleware';
 
 const postsRouter = Router();
