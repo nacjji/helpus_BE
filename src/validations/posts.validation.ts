@@ -1,5 +1,4 @@
 import * as joi from 'joi';
-import { string } from 'joi';
 
 export const postInputPattern = joi.object().keys({
   title: joi.string().required().description('제목'),
@@ -11,8 +10,8 @@ export const postInputPattern = joi.object().keys({
   tag: joi.string().description('해시태그'),
   category: joi.string().description('1 : 헬피, 2 : 헬퍼, 3 : 헬퍼스'),
   isDeadLine: joi.number().description('0 : 모집중, 1 : 마감'),
-  createdAt: joi.date() || string().description('작성일'),
-  appointed: joi.date() || string().description('마감일'),
+  createdAt: joi.date().description('작성일'),
+  appointed: joi.date() || joi.string(),
 });
 
 export const postIdPattern = joi.number().integer().required().description('게시글번호');
