@@ -1,0 +1,2 @@
+-- AlterTable
+ALTER TABLE `User` ADD COLUMN `score` DOUBLE NULL DEFAULT 5.0;
