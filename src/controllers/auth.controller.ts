@@ -150,6 +150,17 @@ class AuthController {
       next(err);
     }
   };
+
+  public score: RequestHandler = async (req, res, next) => {
+    try {
+      const { userId } = req.params;
+      const { score } = req.body;
+      const result = await this.authService.score(Number(userId), Number(score));
+      return res.status(201).json({ result });
+    } catch (err) {
+      return next(err);
+    }
+  };
 }
 
 export default AuthController;
