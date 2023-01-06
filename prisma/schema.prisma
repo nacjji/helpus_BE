@@ -2,7 +2,9 @@
 // learn more about it in the docs: https://pris.ly/d/prisma-schema
 
 generator client {
-  provider = "prisma-client-js"
+  provider        = "prisma-client-js"
+  // 검색에 사용되는 라이브러리
+  previewFeatures = ["fullTextSearch", "fullTextIndex"]
 }
 
 datasource db {
@@ -18,11 +20,20 @@ model User {
   state1    String?
   state2    String?
   userImage String?
+  score     Float   @default(0)
   kakao     BigInt? @unique
   Post      Post[]
   Wish      Wish[]
+  Score     Score[]
 
   @@unique([userId, userName])
+}
+
+model Score {
+  id     Int   @id @default(autoincrement())
+  userId Int
+  user   User  @relation(fields: [userId], references: [userId], onDelete: Cascade)
+  score  Float
 }
 
 model Post {
@@ -33,7 +44,7 @@ model Post {
   title      String
   content    String
   category   Int
-  appointed  DateTime? @default(now())
+  appointed  DateTime?
   isDeadLine Int?      @default(0)
   location1  String?
   location2  String?

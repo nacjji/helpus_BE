@@ -8,7 +8,7 @@ const authRouter = Router();
 const authController = new AuthController();
 const kakaoAuthController = new KakaoAuthController();
 
-authRouter.post('/kakao', kakaoAuthController.kakao);
+authRouter.get('/kakao', kakaoAuthController.kakao);
 authRouter.post('/kakao/state', kakaoAuthController.kakaoState);
 
 authRouter.post('/email', auth.requiredNoLogin, authController.emailCheck);
@@ -34,5 +34,6 @@ authRouter.get('/:userId/detail', authController.getUserDetail);
 
 authRouter.delete('/delete', auth.requiredLogin, authController.deleteUser);
 authRouter.delete('/delete/kakao', auth.requiredLogin, kakaoAuthController.kakaoDelete);
+authRouter.patch('/score/:userId', auth.requiredLogin, authController.score);
 
 export default authRouter;

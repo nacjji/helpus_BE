@@ -92,7 +92,6 @@ class AuthController {
   };
 
   public updateImage: RequestHandler = async (req, res, next) => {
-    console.log('1');
     const { location: userImage } = req.file as Express.MulterS3.File;
     const fileUrl = userImage.split('/');
 
@@ -149,6 +148,17 @@ class AuthController {
       res.status(200).json({ message: '탈퇴 완료' });
     } catch (err) {
       next(err);
+    }
+  };
+
+  public score: RequestHandler = async (req, res, next) => {
+    try {
+      const { userId } = req.params;
+      const { score } = req.body;
+      const result = await this.authService.score(Number(userId), Number(score));
+      return res.status(201).json({ result });
+    } catch (err) {
+      return next(err);
     }
   };
 }
