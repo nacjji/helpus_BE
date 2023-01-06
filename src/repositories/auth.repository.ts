@@ -1,3 +1,4 @@
+import { badRequest } from '@hapi/boom';
 import { PrismaClient } from '@prisma/client';
 
 class AuthRepository {
@@ -128,7 +129,8 @@ class AuthRepository {
 
   public score = async (userId: number, score: number) => {
     const allScores = await this.prisma.score.findMany();
-
+    const isExistUser = await this.prisma.user.findUnique({ where: { userId } });
+    if (!isExistUser) throw badRequest('존재하지 않는 사용자');
     const scoreRate = await this.prisma.score.create({ data: { userId, score } });
     return [scoreRate, ...allScores];
   };
