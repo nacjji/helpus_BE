@@ -4,10 +4,11 @@ import './config/env';
 
 const Socket = (server: http.Server) => {
   const io = new Server(server, {
-    cors: {
-      origin: '*',
-    },
+    cors: { origin: '*' },
+    path: '/socket.io',
   });
+
+  const chat1 = io.of('/chat1');
 
   io.on('connection', (socket) => {
     console.log('New client connected');
@@ -15,7 +16,9 @@ const Socket = (server: http.Server) => {
     socket.on('disconnect', () => console.log('user disconnect', socket.id));
 
     socket.on('new_chat', (data) => {
+      console.log(data);
       io.emit('update', data);
+      // io.emit('update', data);
     });
   });
 };
