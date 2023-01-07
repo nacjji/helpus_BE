@@ -63,27 +63,23 @@ class AuthService {
     const imageUrl = `${process.env.S3_BUCKET_URL}/profile/${userInfo?.userImage}`;
 
     if (!userInfo) throw badRequest('요구사항에 맞지 않는 입력값');
-    const scoreArr = userInfo.Score.map((v) => v.score);
-    console.log(scoreArr);
+    else {
+      const scoreAvg =
+        // eslint-disable-next-line no-unsafe-optional-chaining
+        userInfo.Score?.reduce((sum: number, curValue) => {
+          return sum + curValue.score;
+        }, 0) / userInfo.Score.length;
 
-    const scoreAvg =
-      // eslint-disable-next-line no-unsafe-optional-chaining
-      userInfo.Score?.reduce((sum: number, curValue) => {
-        return sum + curValue.score;
-      }, 0) / userInfo.Score.length;
-    console.log(scoreAvg);
-
-    return [
-      {
+      return {
         userId: userInfo.userId,
         userName: userInfo.userName,
         userImage: imageUrl,
         email: userInfo.email,
         state1: userInfo.state1,
         state2: userInfo.state2,
-        score: scoreAvg.toFixed(1),
-      },
-    ];
+        score: Number(scoreAvg.toFixed(1)),
+      };
+    }
   };
 
   public updateUser = async (userId: number, userName: string, state1: string, state2: string) => {
