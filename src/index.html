@@ -19,15 +19,17 @@
       <ul id="content"></ul>
     </div>
     <script>
-      const socket = io('ws://localhost:3002');
+      let roomId = '';
+      const socket = io('ws://localhost:3000');
 
       $('#room1-send').click(() => {
-        socket.emit('room1-send', $('#chat').val());
+        if (roomId !== '') socket.emit('send', { message: $('#chat').val(), roomId: 'room1' });
       });
 
       // 방 입장하기
       $('#room1').click(() => {
         socket.emit('join-room', '입장시켜줘');
+        roomId = 'room1';
         $('#content').append(
           '<li>' + socket.id + ' : ' + `${socket.id}님이 채팅방에 입장했습니다.` + '</li>'
         );

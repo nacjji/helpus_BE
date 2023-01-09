@@ -60,9 +60,10 @@ model Post {
 }
 
 model Chat {
-  roomId    Int      @id @default(autoincrement())
+  chatId    Int      @id @default(autoincrement())
   user      User     @relation(fields: [userId], references: [userId])
   post      Post     @relation(fields: [postId], references: [postId])
+  roomId    String
   content   String
   createdAt DateTime @default(now())
   userId    Int
