@@ -10,6 +10,9 @@
   </head>
   <body>
     <div>
+      userId <input id="userId" type="number" />
+      <p></p>
+      <p></p>
       <input id="chat" type="text" />
       <button id="room1">채팅방1 입장</button>
       <button id="room1-send">채팅방1 에서 채팅</button>
@@ -23,12 +26,13 @@
       const socket = io('ws://localhost:3000');
 
       $('#room1-send').click(() => {
-        if (roomId !== '') socket.emit('send', { message: $('#chat').val(), roomId: 'room1' });
+        if (roomId !== '')
+          socket.emit('send', { message: $('#chat').val(), roomId: 'room1', test: 5 });
       });
 
       // 방 입장하기
       $('#room1').click(() => {
-        socket.emit('join-room', '입장시켜줘');
+        socket.emit('join', { userId: $('#userId').val(), postId: 2 });
         roomId = 'room1';
         $('#content').append(
           '<li>' + socket.id + ' : ' + `${socket.id}님이 채팅방에 입장했습니다.` + '</li>'
