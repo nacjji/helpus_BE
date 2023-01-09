@@ -15,8 +15,11 @@ class PostsController {
   public createPost = async (req: Request, res: Response, next: NextFunction) => {
     try {
       const { userId, userName } = res.locals;
-      const { title, content, category, appointed, location1, location2, tag } =
+      const { title, content, category, appointed, location1, location2, tag, createdAt } =
         await postInputPattern.validateAsync(req.body);
+      console.log(typeof createdAt);
+      console.log(createdAt);
+
       const filesArr = req.files! as Array<Express.MulterS3.File>;
 
       const imageUrl = filesArr.map((file) => file.location);
@@ -36,7 +39,8 @@ class PostsController {
         imageUrl1,
         imageUrl2,
         imageUrl3,
-        tag
+        tag,
+        createdAt
       );
       return res.status(201).json({ result, tag: tagArr });
     } catch (err) {
