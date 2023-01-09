@@ -1,6 +1,6 @@
 /* eslint-disable class-methods-use-this */
 import { badRequest, unauthorized } from '@hapi/boom';
-import { Request, Response, NextFunction } from 'express';
+import { Request, Response, NextFunction, RequestHandler } from 'express';
 import PostsService from '../services/post.service';
 import { postInputPattern, postIdPattern } from '../validations/posts.validation';
 
@@ -131,7 +131,7 @@ class PostsController {
     }
   };
 
-  public deletePost = async (req: Request, res: Response, next: NextFunction) => {
+  public deletePost: RequestHandler = async (req, res, next) => {
     try {
       const postId = Number(req.params.postId);
       await this.postsService.deletePost(postId);
