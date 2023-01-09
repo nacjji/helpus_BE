@@ -1,3 +1,4 @@
+import { badRequest } from '@hapi/boom';
 import { PrismaClient } from '@prisma/client';
 
 class AuthRepository {
@@ -29,6 +30,7 @@ class AuthRepository {
   };
 
   public userInfo = async (userId: number) => {
+    // const userScore = await this.prisma.score.findMany({ where: { userId } });
     const user = await this.prisma.user.findUnique({
       where: { userId },
       select: {
@@ -38,6 +40,7 @@ class AuthRepository {
         userImage: true,
         state1: true,
         state2: true,
+        Score: true,
       },
     });
 
@@ -122,6 +125,14 @@ class AuthRepository {
     });
 
     return user;
+  };
+
+  public score = async (userId: number, score: number) => {
+    const allScores = await this.prisma.score.findMany();
+    const isExistUser = await this.prisma.user.findUnique({ where: { userId } });
+    if (!isExistUser) throw badRequest('존재하지 않는 사용자');
+    const scoreRate = await this.prisma.score.create({ data: { userId, score } });
+    return [scoreRate, ...allScores];
   };
 }
 
