@@ -31,3 +31,7 @@ export const updatePattern = joi.object().keys({
   state1: joi.string().required().description('기본 주소지'),
   state2: joi.string().required().description('상세 기본 주소지'),
 });
+
+export const scorePattern = joi.object().keys({
+  score: joi.string().required(),
+});

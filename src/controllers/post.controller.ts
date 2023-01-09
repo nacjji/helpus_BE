@@ -1,5 +1,5 @@
 /* eslint-disable class-methods-use-this */
-import { badRequest } from '@hapi/boom';
+import { badRequest, unauthorized } from '@hapi/boom';
 import { Request, Response, NextFunction } from 'express';
 import PostsService from '../services/post.service';
 import { postInputPattern, postIdPattern } from '../validations/posts.validation';
@@ -17,8 +17,6 @@ class PostsController {
       const { userId, userName } = res.locals;
       const { title, content, category, appointed, location1, location2, tag, createdAt } =
         await postInputPattern.validateAsync(req.body);
-      console.log(typeof createdAt);
-      console.log(createdAt);
 
       const filesArr = req.files! as Array<Express.MulterS3.File>;
 
@@ -53,7 +51,7 @@ class PostsController {
     const { userId, state1, state2 } = res.locals;
     try {
       if (!userId) {
-        throw badRequest('내 위치 게시글 조회는 로그인 후 이용할 수 있는 기능입니다.');
+        throw unauthorized('내 위치 게시글 조회는 로그인 후 사용 가능한 기능입니다.');
       }
       const search = req.query.search as string;
       const category = Number(req.query.category);
