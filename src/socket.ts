@@ -20,7 +20,7 @@ const Socket = (server: http.Server) => {
       try {
         const { userId, postId } = data;
 
-        const roomId: string = await chatService.searchRoom(Number(userId), postId);
+        const roomId: string = await chatService.searchRoom(Number(userId), Number(postId));
 
         socket.emit('roomId', roomId);
         socket.join(roomId);
