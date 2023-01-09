@@ -20,11 +20,21 @@ model User {
   state1    String?
   state2    String?
   userImage String?
+  score     Float   @default(0)
   kakao     BigInt? @unique
   Post      Post[]
   Wish      Wish[]
+  Score     Score[]
+  Chat      Chat[]
 
   @@unique([userId, userName])
+}
+
+model Score {
+  id     Int   @id @default(autoincrement())
+  userId Int
+  user   User  @relation(fields: [userId], references: [userId], onDelete: Cascade)
+  score  Float
 }
 
 model Post {
@@ -46,6 +56,17 @@ model Post {
   createdAt  DateTime  @default(now())
   updated    Int       @default(0)
   Wish       Wish[]
+  Chat       Chat[]
+}
+
+model Chat {
+  roomId    Int      @id @default(autoincrement())
+  user      User     @relation(fields: [userId], references: [userId])
+  post      Post     @relation(fields: [postId], references: [postId])
+  content   String
+  createdAt DateTime @default(now())
+  userId    Int
+  postId    Int
 }
 
 model Wish {
