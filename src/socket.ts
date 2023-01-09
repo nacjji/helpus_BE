@@ -30,10 +30,20 @@ const Socket = (server: http.Server) => {
     });
 
     // 입장한 방에 메시지 보내기
-    socket.on('send', (data) => {
-      const { message, roomId, test } = data;
-      console.log(data);
-      io.to(roomId).emit('broadcast', message);
+    socket.on('send', async (data) => {
+      try {
+        const { content, roomId, userId, postId } = data;
+        const createdAt = await chatService.sendMessage(
+          Number(userId),
+          Number(postId),
+          roomId,
+          content
+        );
+
+        io.to(roomId).emit('broadcast', { userId, content, createdAt });
+      } catch (err) {
+        console.log(err);
+      }
     });
   });
 };

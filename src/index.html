@@ -10,8 +10,11 @@
   </head>
   <body>
     <div>
-      userId <input id="userId" type="number" /> pistId <input id="postId" type="number" />
+      userId <input id="userId" type="number" />
       <p></p>
+      postId <input id="postId" type="number" />
+      <p></p>
+      roomId <input id="roomId" type="text" />
       <p></p>
       <input id="chat" type="text" />
       <button id="room1">채팅방1 입장</button>
@@ -22,12 +25,16 @@
       <ul id="content"></ul>
     </div>
     <script>
-      let roomId = '';
       const socket = io('ws://localhost:3000');
 
       $('#room1-send').click(() => {
         if (roomId !== '')
-          socket.emit('send', { message: $('#chat').val(), roomId: 'room1', test: 5 });
+          socket.emit('send', {
+            content: $('#chat').val(),
+            roomId: $('#roomId').val(),
+            userId: $('#userId').val(),
+            postId: $('#postId').val(),
+          });
       });
 
       // 방 입장 이벤트 전달
@@ -46,7 +53,8 @@
       // broadcast 라는 이벤트를 발생시킴
       socket.on('broadcast', (data) => {
         console.log(data);
-        $('#content').append('<li>' + socket.id + ' : ' + data + '</li>');
+        $('#content').append(`<li>${data.userId} : ${data.content}
+          <P> ${data.createdAt}</li>`);
       });
     </script>
   </body>

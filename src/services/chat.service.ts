@@ -14,6 +14,12 @@ class ChatService {
     if (result) return result.roomId;
     return shortId.generate();
   };
+
+  public sendMessage = async (userId: number, postId: number, roomId: string, content: string) => {
+    const result = await this.chatRepository.sendMessage(userId, postId, roomId, content);
+
+    return result.createdAt;
+  };
 }
 
 export default ChatService;

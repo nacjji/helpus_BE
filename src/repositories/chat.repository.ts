@@ -14,6 +14,19 @@ class ChatRepository {
 
     return result;
   };
+
+  public sendMessage = async (userId: number, postId: number, roomId: string, content: string) => {
+    const result = await this.prisma.chat.create({
+      data: {
+        userId,
+        postId,
+        roomId,
+        content,
+      },
+    });
+
+    return result;
+  };
 }
 
 export default ChatRepository;
