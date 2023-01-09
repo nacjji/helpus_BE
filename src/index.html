@@ -10,7 +10,7 @@
   </head>
   <body>
     <div>
-      userId <input id="userId" type="number" />
+      userId <input id="userId" type="number" /> pistId <input id="postId" type="number" />
       <p></p>
       <p></p>
       <input id="chat" type="text" />
@@ -30,13 +30,17 @@
           socket.emit('send', { message: $('#chat').val(), roomId: 'room1', test: 5 });
       });
 
-      // 방 입장하기
+      // 방 입장 이벤트 전달
       $('#room1').click(() => {
-        socket.emit('join', { userId: $('#userId').val(), postId: 2 });
-        roomId = 'room1';
+        socket.emit('join', { userId: $('#userId').val(), postId: $('#postId').val() });
+      });
+
+      //방 입장 이벤트 수신
+      socket.on('roomId', (data) => {
         $('#content').append(
           '<li>' + socket.id + ' : ' + `${socket.id}님이 채팅방에 입장했습니다.` + '</li>'
         );
+        roomId = data;
       });
 
       // broadcast 라는 이벤트를 발생시킴
