@@ -10,25 +10,35 @@
   </head>
   <body>
     <div>
-      userId <input id="userId" type="number" />
-      <p></p>
-      postId <input id="postId" type="number" />
-      <p></p>
-      roomId <input id="roomId" type="text" />
-      <p></p>
+      userId <input id="userId" type="number" /> <br /><br />
+      postId <input id="postId" type="number" /> <br /><br />
+      roomId <input id="roomId" type="text" /> <br /><br />
+      <!-- 채팅 내용 입력 -->
       <input id="chat" type="text" />
+      <!-- join 이벤트 발생시키는 버튼 -->
       <button id="room1">채팅방1 입장</button>
+      <!-- send 이벤트 발생시키는 버튼 -->
       <button id="room1-send">채팅방1 에서 채팅</button>
     </div>
 
-    <div id="content">
-      <ul id="content"></ul>
+    <div>
+      <ul id="chat-history">
+        <!-- 여기에 새로고침시 이전 채팅내역이 추가됩니다. -->
+      </ul>
+      <ul id="real-time-chat">
+        <!-- 여기에 실시간 채팅 내역이 추가됩니다. -->
+      </ul>
     </div>
     <script>
-      const socket = io('ws://localhost:3000');
+      // socket.io 3001 포트로 연결
+      const socket = io('ws://localhost:3001');
 
+      // room1-send 버튼을 누르면 send 이벤트가 발생됨
       $('#room1-send').click(() => {
+        // roomId 가 없다면 채팅을 발생?
+        // 사실 클라이언트 부분이 전반적으로 이해가 잘 안가용
         if (roomId !== '')
+          // 채팅내용, roomId, userId, postId의 입력값을 담아 send 네임스페이스를 가진 서버에게 전송한다.
           socket.emit('send', {
             content: $('#chat').val(),
             roomId: $('#roomId').val(),
@@ -37,22 +47,24 @@
           });
       });
 
-      // 방 입장 이벤트 전달
+      // 방 입장 이벤트 전송
+      // room1 id 버튼을 누르면 join 이벤트 발생
       $('#room1').click(() => {
+        // join 이벤트 발생, 입력한 userId, postId 를 객체 형태로 서버에 전달
         socket.emit('join', { userId: $('#userId').val(), postId: $('#postId').val() });
       });
 
       //방 입장 이벤트 수신
       socket.on('roomId', (data) => {
-        $('#content').append(
-          '<li>' + socket.id + ' : ' + `${socket.id}님이 채팅방에 입장했습니다.` + '</li>'
+        console.log(data); <!-- roomId -->
+        $('#real-time-chat').append(
+          '<li>' + data + ' : ' + `${socket.id}님이 채팅방에 입장했습니다.` + '</li>'
         );
         roomId = data;
       });
 
       // broadcast 라는 이벤트를 발생시킴
       socket.on('broadcast', (data) => {
-        console.log(data);
         $('#content').append(`<li>${data.userId} : ${data.content}
           <P> ${data.createdAt}</li>`);
       });
