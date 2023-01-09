@@ -21,7 +21,7 @@ class App {
   }
 
   private setMiddlewares() {
-    this.app.use(cors()); // TODO: 프론트앤드 서버 배포 후 해당 도메인만 연결하도록 설정
+    this.app.use(cors({ origin: '*', credentials: true })); // TODO: 프론트앤드 서버 배포 후 해당 도메인만 연결하도록 설정
     this.app.use(helmet());
     this.app.use(compression());
     this.app.use(express.json());
