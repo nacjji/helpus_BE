@@ -75,7 +75,7 @@ class PostsRepository {
       },
       // 무한스크롤
       skip: q || 0,
-      take: 30,
+      take: 12,
       // 생성순으로 정렬
       orderBy: { createdAt: 'desc' },
     });
@@ -101,7 +101,7 @@ class PostsRepository {
       },
       // 무한스크롤
       skip: q || 0,
-      take: 30,
+      take: 12,
       // 생성순으로 정렬
       orderBy: { createdAt: 'desc' },
     });
