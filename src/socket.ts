@@ -9,16 +9,21 @@ const Socket = (server: http.Server) => {
   });
 
   const chat1 = io.of('/chat1');
-
   io.on('connection', (socket) => {
     console.log('New client connected');
 
     socket.on('disconnect', () => console.log('user disconnect', socket.id));
+    // 방 입장하기
+    socket.on('join-room', () => {
+      socket.join('room1');
+    });
 
-    socket.on('new_chat', (data) => {
-      console.log(data);
-      io.emit('update', data);
-      // io.emit('update', data);
+    const li: string[] = [];
+    // 입장한 방에 메시지 보내기
+    socket.on('room1-send', (data) => {
+      li.push(`${data} , 작성자 : ${socket.id} , 작성시간 : ${Date()}`);
+      io.to('room1').emit('broadcast', data);
+      console.log(li);
     });
   });
 };
