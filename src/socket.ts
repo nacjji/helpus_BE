@@ -13,13 +13,12 @@ const Socket = (server: http.Server) => {
 
   // socket.io 연결
   io.on('connection', (socket) => {
-    socket.on('login', (userId) => {
-      // try {
-      //   await chatService.saveSocket(Number(userId), socket.id);
-      // } catch (err) {
-      //   console.log(err);
-      // }
-      socket.emit('test', userId);
+    socket.on('login', async (userId) => {
+      try {
+        await chatService.saveSocket(Number(userId), socket.id);
+      } catch (err) {
+        console.log(err);
+      }
     });
 
     socket.on('test', () => {
