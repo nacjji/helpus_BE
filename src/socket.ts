@@ -16,7 +16,14 @@ const Socket = (server: http.Server) => {
     console.log('New client connected');
 
     // user disconnect 시 채팅 내역이 사라지므로 함수 실행부에 채팅내역을 find 해서 클라이언트에 전달하는 코드가 필요할 듯
-    socket.on('disconnect', () => console.log('user disconnect', socket.id));
+    socket.on('disconnect', async () => {
+      // 클라이언트에서 disconnect가 발생함과 동시에 데이터를 emit 해야 함
+      // 보내줄 데이터는 service의 chatHistory 메소드의 반환값이다.
+      // chatHistory의 반환값을 가져오기 위해 roomId가 필요한데, 이는 searchRoom의 반환값이다.
+      // searchRoom의 반환값을 가져오려면 userId 와 postId가 필요하다.
+
+      console.log('user disconnect', socket.id);
+    });
     // 방 입장하기
     // join 이벤트 발생시 동작하는 이벤트 핸들러
     socket.on('join', async (data) => {
@@ -27,12 +34,16 @@ const Socket = (server: http.Server) => {
         // searchRoom의 반환값은 userId와 postId를 가진 칼럼을 찾아와 shortId 로 암호화 시킨것
         // 암호화 시킨 roomId 를 변수로 선언
         const roomId: string = await chatService.searchRoom(Number(userId), Number(postId));
-
+        await chatService.chatHistory(roomId);
         // 암호화 된 roomId를 "roomId"라는 이름을 가진 클라이언트 이벤트에게 전송한다.
         socket.emit('roomId', roomId);
 
         // 암호화 된 roomId 의 이름을 가진 방에 입장한다.
         socket.join(roomId);
+
+        const chatHistory = await chatService.chatHistory(roomId);
+
+        socket.emit('chat-history', chatHistory);
       } catch (err) {
         console.log(err);
       }
@@ -67,3 +78,6 @@ const Socket = (server: http.Server) => {
 // userId를 db에 저장하고 있지만, 클라이언트에 보내줘야 할 정보는 userName 일듯
 
 export default Socket;
+
+// 새로고침 할 때마다 disconnect가 됨
+// 그럼 새로고침 할 때마다 roomId 에 해당하는 데이터를 가져와서 클라이언트에 전달하면 되겠구나 !

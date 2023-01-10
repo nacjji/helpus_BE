@@ -20,7 +20,6 @@ class App {
     this.app = express();
     this.httpServer = createServer(this.app);
     this.io = Socket(this.httpServer);
-    console.log(this.io);
     this.app.set('io', this.io);
   }
 

@@ -55,8 +55,6 @@ class PostsController {
       }
       const search = req.query.search as string;
       const category = Number(req.query.category);
-      console.log('myLocationPosts');
-      // const category = Number(req.query.category);
       const q = Number(req.query.q);
       const result = await this.postsService.myLocationPosts(q, state1, state2, category, search);
       return res.status(200).json({ result });
@@ -81,8 +79,6 @@ class PostsController {
   };
 
   public findDetailPost = async (req: Request, res: Response, next: NextFunction) => {
-    console.log('findDetailPost');
-
     try {
       const postId = Number(req.params.postId);
 

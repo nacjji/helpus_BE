@@ -23,7 +23,7 @@
 
     <div>
       <ul id="chat-history">
-        <!-- 여기에 새로고침시 이전 채팅내역이 추가됩니다. -->
+        <!-- 여기에 방 입장시 이전 채팅내역이 추가됩니다. -->
       </ul>
       <ul id="real-time-chat">
         <!-- 여기에 실시간 채팅 내역이 추가됩니다. -->
@@ -35,8 +35,6 @@
 
       // room1-send 버튼을 누르면 send 이벤트가 발생됨
       $('#room1-send').click(() => {
-        // roomId 가 없다면 채팅을 발생?
-        // 사실 클라이언트 부분이 전반적으로 이해가 잘 안가용
         if (roomId !== '')
           // 채팅내용, roomId, userId, postId의 입력값을 담아 send 네임스페이스를 가진 서버에게 전송한다.
           socket.emit('send', {
@@ -56,17 +54,21 @@
 
       //방 입장 이벤트 수신
       socket.on('roomId', (data) => {
-        console.log(data); <!-- roomId -->
-        $('#real-time-chat').append(
-          '<li>' + data + ' : ' + `${socket.id}님이 채팅방에 입장했습니다.` + '</li>'
-        );
+        socket.on('chat-history', async (data) => {
+          data.forEach((v) => {
+            $('#chat-history').append(
+              '<li>' + `${v.userId} : ${v.content} ,[${v.createdAt}]` + '</li>'
+            );
+          });
+        });
         roomId = data;
       });
 
       // broadcast 라는 이벤트를 발생시킴
       socket.on('broadcast', (data) => {
-        $('#content').append(`<li>${data.userId} : ${data.content}
-          <P> ${data.createdAt}</li>`);
+        $('#real-time-chat').append(
+          `<li>${data.userId} : ${data.content},[ ${data.createdAt}]</li>`
+        );
       });
     </script>
   </body>
