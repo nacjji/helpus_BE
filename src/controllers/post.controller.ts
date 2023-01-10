@@ -57,6 +57,7 @@ class PostsController {
       const category = Number(req.query.category);
 
       // const category = Number(req.query.category);
+
       const q = Number(req.query.q);
       const result = await this.postsService.myLocationPosts(q, state1, state2, category, search);
       return res.status(200).json({ result });

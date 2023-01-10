@@ -6,8 +6,6 @@ class ChatController {
     const { userId } = req.body;
 
     const io = req.app.get('io');
-    console.log(io);
-
     res.send(200);
   };
 }
