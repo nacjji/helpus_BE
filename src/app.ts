@@ -14,10 +14,13 @@ class App {
 
   private httpServer;
 
+  private io;
+
   constructor() {
     this.app = express();
     this.httpServer = createServer(this.app);
-    Socket(this.httpServer);
+    this.io = Socket(this.httpServer);
+    this.app.set('io', this.io);
   }
 
   private setMiddlewares() {
