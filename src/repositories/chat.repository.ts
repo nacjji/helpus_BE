@@ -50,6 +50,15 @@ class ChatRepository {
       where: { socketId },
     });
   };
+
+  public chatHistory = async (roomId: string) => {
+    const result = await this.prisma.chat.findMany({
+      where: { roomId },
+      select: { content: true, userId: true, createdAt: true },
+    });
+
+    return result;
+  };
 }
 
 export default ChatRepository;

@@ -20,6 +20,10 @@ const Socket = (server: http.Server) => {
       }
     });
 
+    socket.on('test', () => {
+      socket.emit('test', socket.id);
+    });
+
     socket.on('disconnect', async () => {
       try {
         await chatService.deleteSocket(socket.id);
@@ -36,6 +40,10 @@ const Socket = (server: http.Server) => {
 
         socket.emit('roomId', roomId);
         socket.join(roomId);
+
+        const chatHistory = await chatService.chatHistory(roomId);
+
+        socket.emit('chat-history', chatHistory);
       } catch (err) {
         console.log(err);
       }
