@@ -1,29 +1,61 @@
 import * as http from 'http';
 import { Server } from 'socket.io';
 import './config/env';
+import ChatService from './services/chat.service';
 
 const Socket = (server: http.Server) => {
+  const chatService = new ChatService();
+
   const io = new Server(server, {
     cors: { origin: '*' },
     path: '/socket.io',
   });
 
-  const chat1 = io.of('/chat1');
   io.on('connection', (socket) => {
-    console.log('New client connected');
-
-    socket.on('disconnect', () => console.log('user disconnect', socket.id));
-    // 방 입장하기
-    socket.on('join-room', () => {
-      socket.join('room1');
+    socket.on('login', async (userId) => {
+      try {
+        await chatService.saveSocket(Number(userId), socket.id);
+      } catch (err) {
+        console.log(err);
+      }
     });
 
-    const li: string[] = [];
+    socket.on('disconnect', async () => {
+      try {
+        await chatService.deleteSocket(socket.id);
+      } catch (err) {
+        console.log(err);
+      }
+    });
+    // 방 입장하기
+    socket.on('join', async (data) => {
+      try {
+        const { userId, postId } = data;
+
+        const roomId: string = await chatService.searchRoom(Number(userId), Number(postId));
+
+        socket.emit('roomId', roomId);
+        socket.join(roomId);
+      } catch (err) {
+        console.log(err);
+      }
+    });
+
     // 입장한 방에 메시지 보내기
-    socket.on('room1-send', (data) => {
-      li.push(`${data} , 작성자 : ${socket.id} , 작성시간 : ${Date()}`);
-      io.to('room1').emit('broadcast', data);
-      console.log(li);
+    socket.on('send', async (data) => {
+      try {
+        const { content, roomId, userId, postId } = data;
+        const createdAt = await chatService.sendMessage(
+          Number(userId),
+          Number(postId),
+          roomId,
+          content
+        );
+
+        io.to(roomId).emit('broadcast', { userId, content, createdAt });
+      } catch (err) {
+        console.log(err);
+      }
     });
   });
 };

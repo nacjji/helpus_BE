@@ -10,33 +10,56 @@
   </head>
   <body>
     <div>
+      userId <input id="userId" type="number" />
+      <p></p>
+      postId <input id="postId" type="number" />
+      <p></p>
+      roomId <input id="roomId" type="text" />
+      <p></p>
       <input id="chat" type="text" />
       <button id="room1">채팅방1 입장</button>
       <button id="room1-send">채팅방1 에서 채팅</button>
+      <button id="login">login</button>
     </div>
 
     <div id="content">
       <ul id="content"></ul>
     </div>
     <script>
-      const socket = io('ws://localhost:3002');
+      const socket = io('ws://localhost:3000');
 
       $('#room1-send').click(() => {
-        socket.emit('room1-send', $('#chat').val());
+        if (roomId !== '')
+          socket.emit('send', {
+            content: $('#chat').val(),
+            roomId: $('#roomId').val(),
+            userId: $('#userId').val(),
+            postId: $('#postId').val(),
+          });
       });
 
-      // 방 입장하기
+      $('#login').click(() => {
+        socket.emit('login', $('#userId').val());
+      });
+
+      // 방 입장 이벤트 전달
       $('#room1').click(() => {
-        socket.emit('join-room', '입장시켜줘');
+        socket.emit('join', { userId: $('#userId').val(), postId: $('#postId').val() });
+      });
+
+      //방 입장 이벤트 수신
+      socket.on('roomId', (data) => {
         $('#content').append(
           '<li>' + socket.id + ' : ' + `${socket.id}님이 채팅방에 입장했습니다.` + '</li>'
         );
+        roomId = data;
       });
 
       // broadcast 라는 이벤트를 발생시킴
       socket.on('broadcast', (data) => {
         console.log(data);
-        $('#content').append('<li>' + socket.id + ' : ' + data + '</li>');
+        $('#content').append(`<li>${data.userId} : ${data.content}
+          <P> ${data.createdAt}</li>`);
       });
     </script>
   </body>
