@@ -150,6 +150,28 @@ class AuthController {
       next(err);
     }
   };
+
+  public score: RequestHandler = async (req, res, next) => {
+    try {
+      const { userId } = req.params;
+      const { score } = req.body;
+      const result = await this.authService.score(Number(userId), Number(score));
+      return res.status(201).json({ result });
+    } catch (err) {
+      return next(err);
+    }
+  };
+
+  public myPosts: RequestHandler = async (req, res, next) => {
+    try {
+      const { userId } = res.locals;
+
+      const result = await this.authService.myPosts(userId);
+      return res.status(200).json({ result });
+    } catch (err) {
+      return next(err);
+    }
+  };
 }
 
 export default AuthController;
