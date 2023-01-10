@@ -28,7 +28,15 @@ class ChatService {
   };
 
   public deleteSocket = async (socketId: string) => {
-    await this.chatRepository.deleteSocket(socketId);
+    const result = await this.chatRepository.searchSocket(socketId);
+
+    if (result) await this.chatRepository.deleteSocket(socketId);
+  };
+
+  public chatHistory = async (roomId: string) => {
+    const result = await this.chatRepository.chatHistory(roomId);
+
+    return result;
   };
 }
 
