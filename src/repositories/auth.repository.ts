@@ -134,6 +134,13 @@ class AuthRepository {
     const scoreRate = await this.prisma.score.create({ data: { userId, score } });
     return [scoreRate, ...allScores];
   };
+
+  // eslint-disable-next-line class-methods-use-this
+  public myPosts = async (userId: number) => {
+    const myPosts = await this.prisma.post.findMany({ where: { userId } });
+
+    return myPosts;
+  };
 }
 
 export default AuthRepository;

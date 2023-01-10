@@ -15,6 +15,8 @@ class ChatRepository {
     return result;
   };
 
+
+  // repository 단에서 Chat 테이블에 채팅 내역을 한줄씩 저장한다.
   public sendMessage = async (userId: number, postId: number, roomId: string, content: string) => {
     const result = await this.prisma.chat.create({
       data: {
@@ -27,6 +29,7 @@ class ChatRepository {
 
     return result;
   };
+
 
   public saveSocket = async (userId: number, socketId: string) => {
     await this.prisma.socketTable.create({
@@ -50,6 +53,7 @@ class ChatRepository {
       where: { socketId },
     });
   };
+
 
   public chatHistory = async (roomId: string) => {
     const result = await this.prisma.chat.findMany({

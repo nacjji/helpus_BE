@@ -122,6 +122,11 @@ class AuthService {
     const scoreRate = await this.authRepository.score(userId, score);
     return scoreRate;
   };
+
+  public myPosts = async (userId: number) => {
+    const myPosts = await this.authRepository.myPosts(userId);
+    return myPosts;
+  };
 }
 
 export default AuthService;
