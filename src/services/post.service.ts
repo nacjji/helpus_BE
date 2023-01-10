@@ -2,6 +2,7 @@
 /* eslint-disable no-param-reassign */
 /* eslint-disable no-plusplus */
 import { notFound } from '@hapi/boom';
+import { env } from 'process';
 import PostsRepository from '../repositories/post.repository';
 import AuthRepository from '../repositories/auth.repository';
 import prisma from '../config/database/prisma';
@@ -100,12 +101,54 @@ class PostsService {
     search?: string
   ) => {
     const result = await this.postsRepository.myLocationPosts(q, state1, state2, category, search);
-    return result;
+
+    // eslint-disable-next-line no-underscore-dangle
+    const _result = result.map((v) => {
+      return {
+        postId: v.postId,
+        userId: v.userId,
+        userName: v.userName,
+        title: v.title,
+        content: v.content,
+        category: v.category,
+        appointed: v.appointed,
+        isDeadLine: v.isDeadLine,
+        location1: v.location1,
+        location2: v.location2,
+        imageUrl1: v.imageUrl2 && `${process.env.S3_BUCKET_URL}/${v.imageUrl1}`,
+        imageUrl2: v.imageUrl2 && `${process.env.S3_BUCKET_URL}/${v.imageUrl2}`,
+        imageUrl3: v.imageUrl2 && `${process.env.S3_BUCKET_URL}/${v.imageUrl3}`,
+        tag: v.tag,
+        createdAt: v.createdAt,
+        updated: v.updated,
+      };
+    });
+    return _result;
   };
 
   public allLocationPosts = async (q: number, category: number, search: string) => {
     const result = await this.postsRepository.allLocationPosts(q, category, search);
-    return result;
+    // eslint-disable-next-line no-underscore-dangle
+    const _result = result.map((v) => {
+      return {
+        postId: v.postId,
+        userId: v.userId,
+        userName: v.userName,
+        title: v.title,
+        content: v.content,
+        category: v.category,
+        appointed: v.appointed,
+        isDeadLine: v.isDeadLine,
+        location1: v.location1,
+        location2: v.location2,
+        imageUrl1: `${process.env.S3_BUCKET_URL}/${v.imageUrl1}`,
+
+        tag: v.tag,
+        createdAt: v.createdAt,
+        updated: v.updated,
+      };
+    });
+    return _result;
   };
 
   public findDetailPost = async (postId: number) => {
@@ -113,7 +156,28 @@ class PostsService {
     if (!result) {
       throw notFound('게시글 없음');
     }
-    return result;
+
+    // eslint-disable-next-line no-underscore-dangle
+    return {
+      postId: result.postId,
+      userId: result.userId,
+      userName: result.userName,
+      title: result.title,
+      content: result.content,
+      category: result.category,
+      appointed: result.appointed,
+      isDeadLine: result.isDeadLine,
+      location1: result.location1,
+      location2: result.location2,
+      imageUrl1: `${process.env.S3_BUCKET_URL}/${result.imageUrl1}`,
+      imageUrl2: result.imageUrl2 && `${process.env.S3_BUCKET_URL}/${result.imageUrl2}`,
+      imageUrl3: result.imageUrl3 && `${process.env.S3_BUCKET_URL}/${result.imageUrl3}`,
+      tag: result.tag,
+      createdAt: result.createdAt,
+      updated: result.updated,
+      // eslint-disable-next-line no-underscore-dangle
+      Wish: result._count.Wish,
+    };
   };
 
   public updatePost = async (

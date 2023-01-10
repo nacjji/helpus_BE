@@ -73,12 +73,14 @@ class PostsRepository {
           },
         ],
       },
+
       // 무한스크롤
       skip: q || 0,
       take: 12,
       // 생성순으로 정렬
       orderBy: { createdAt: 'desc' },
     });
+
     return result;
   };
 
@@ -109,13 +111,10 @@ class PostsRepository {
   };
 
   public findDetailPost = async (postId: number) => {
-    const findDetailResult = await this.prisma.post.findUnique({
+    const result = await this.prisma.post.findUnique({
       where: { postId },
+      include: { _count: { select: { Wish: true } } },
     });
-    const wishCount = await this.prisma.wish.aggregate({
-      _count: true,
-    });
-    const result = [findDetailResult, wishCount];
     return result;
   };
 
