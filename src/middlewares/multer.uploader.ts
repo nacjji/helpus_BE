@@ -69,4 +69,11 @@ const deleteS3Image = (profileImage: string) => {
   });
 };
 
-export { multeruploader, profileUploader, deleteS3Image };
+const deleteS3ImagePost = (imageUrl1: string, imageUrl2: string, imageUrl3: string) => {
+  s3.deleteObject({
+    Bucket: process.env.S3_BUCKET_NAME as string,
+    Key: `helpus/${{ imageUrl1, imageUrl2, imageUrl3 }}`,
+  });
+};
+
+export { multeruploader, profileUploader, deleteS3Image, deleteS3ImagePost };
