@@ -20,6 +20,16 @@ class ChatService {
 
     return result.createdAt;
   };
+
+  public saveSocket = async (userId: number, socketId: string) => {
+    const result = await this.chatRepository.searchSocket(socketId);
+
+    if (!result) await this.chatRepository.saveSocket(userId, socketId);
+  };
+
+  public deleteSocket = async (socketId: string) => {
+    await this.chatRepository.deleteSocket(socketId);
+  };
 }
 
 export default ChatService;

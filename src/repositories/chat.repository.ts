@@ -27,6 +27,29 @@ class ChatRepository {
 
     return result;
   };
+
+  public saveSocket = async (userId: number, socketId: string) => {
+    await this.prisma.socketTable.create({
+      data: {
+        userId,
+        socketId,
+      },
+    });
+  };
+
+  public searchSocket = async (socketId: string) => {
+    const result = await this.prisma.socketTable.findUnique({
+      where: { socketId },
+    });
+
+    return result;
+  };
+
+  public deleteSocket = async (socketId: string) => {
+    await this.prisma.socketTable.delete({
+      where: { socketId },
+    });
+  };
 }
 
 export default ChatRepository;

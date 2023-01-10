@@ -19,6 +19,7 @@
       <input id="chat" type="text" />
       <button id="room1">채팅방1 입장</button>
       <button id="room1-send">채팅방1 에서 채팅</button>
+      <button id="login">login</button>
     </div>
 
     <div id="content">
@@ -35,6 +36,10 @@
             userId: $('#userId').val(),
             postId: $('#postId').val(),
           });
+      });
+
+      $('#login').click(() => {
+        socket.emit('login', $('#userId').val());
       });
 
       // 방 입장 이벤트 전달

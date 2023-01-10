@@ -12,9 +12,21 @@ const Socket = (server: http.Server) => {
   });
 
   io.on('connection', (socket) => {
-    console.log('New client connected');
+    socket.on('login', async (userId) => {
+      try {
+        await chatService.saveSocket(Number(userId), socket.id);
+      } catch (err) {
+        console.log(err);
+      }
+    });
 
-    socket.on('disconnect', () => console.log('user disconnect', socket.id));
+    socket.on('disconnect', async () => {
+      try {
+        await chatService.deleteSocket(socket.id);
+      } catch (err) {
+        console.log(err);
+      }
+    });
     // 방 입장하기
     socket.on('join', async (data) => {
       try {
