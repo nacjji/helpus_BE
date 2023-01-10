@@ -21,6 +21,8 @@ authRouter.post(
 authRouter.post('/login', auth.requiredNoLogin, authController.localLogin);
 
 authRouter.get('/detail', auth.requiredLogin, authController.detailUser);
+authRouter.get('/myposts', auth.requiredLogin, authController.myPosts);
+
 authRouter.patch('/detail', auth.requiredLogin, authController.updateUser);
 authRouter.patch(
   '/image',

@@ -13,28 +13,32 @@ const Socket = (server: http.Server) => {
 
   // socket.io 연결
   io.on('connection', (socket) => {
-    console.log('New client connected');
+    socket.on('login', async (userId) => {
+      try {
+        await chatService.saveSocket(Number(userId), socket.id);
+      } catch (err) {
+        console.log(err);
+      }
+    });
 
-    // user disconnect 시 채팅 내역이 사라지므로 함수 실행부에 채팅내역을 find 해서 클라이언트에 전달하는 코드가 필요할 듯
+    socket.on('test', () => {
+      socket.emit('test', socket.id);
+    });
+
     socket.on('disconnect', async () => {
-      // 클라이언트에서 disconnect가 발생함과 동시에 데이터를 emit 해야 함
-      // 보내줄 데이터는 service의 chatHistory 메소드의 반환값이다.
-      // chatHistory의 반환값을 가져오기 위해 roomId가 필요한데, 이는 searchRoom의 반환값이다.
-      // searchRoom의 반환값을 가져오려면 userId 와 postId가 필요하다.
-
-      console.log('user disconnect', socket.id);
+      try {
+        await chatService.deleteSocket(socket.id);
+      } catch (err) {
+        console.log(err);
+      }
     });
     // 방 입장하기
-    // join 이벤트 발생시 동작하는 이벤트 핸들러
+
     socket.on('join', async (data) => {
       try {
-        // 클라이언트에서 보낸 data 속 userId, postId를 가져옴
         const { userId, postId } = data;
-        // roomId는 servcie 단의 searchRoom 메소드의 반환값으로 갖는다.
-        // searchRoom의 반환값은 userId와 postId를 가진 칼럼을 찾아와 shortId 로 암호화 시킨것
-        // 암호화 시킨 roomId 를 변수로 선언
+
         const roomId: string = await chatService.searchRoom(Number(userId), Number(postId));
-        await chatService.chatHistory(roomId);
         // 암호화 된 roomId를 "roomId"라는 이름을 가진 클라이언트 이벤트에게 전송한다.
         socket.emit('roomId', roomId);
 
@@ -50,11 +54,8 @@ const Socket = (server: http.Server) => {
     });
 
     // 입장한 방에 메시지 보내기
-    // 클라이언트에서 보낸 send 네임스페이스를 가진 이벤트를 수신한다.
     socket.on('send', async (data) => {
       try {
-        // data 속 content, roomId, userId, postId 를 각각의 변수로 선언한다.
-        // 여기서 data 속 roomId 를 바로 보내는게 아니라 db에서 roomId 를 찾고 그 값을 보내야 함
         const { content, userId, postId } = data;
         const roomId: string = await chatService.searchRoom(Number(userId), Number(postId));
 
@@ -66,7 +67,6 @@ const Socket = (server: http.Server) => {
           content
         );
 
-        // 암호화 된 roomId에 참여하고 있는 모든 구성원들에게 작성자, 채팅 내용, 작성시간을 전송한다.
         io.to(roomId).emit('broadcast', { userId, content, createdAt });
       } catch (err) {
         console.log(err);
@@ -76,8 +76,4 @@ const Socket = (server: http.Server) => {
 };
 
 // userId를 db에 저장하고 있지만, 클라이언트에 보내줘야 할 정보는 userName 일듯
-
 export default Socket;
-
-// 새로고침 할 때마다 disconnect가 됨
-// 그럼 새로고침 할 때마다 roomId 에 해당하는 데이터를 가져와서 클라이언트에 전달하면 되겠구나 !

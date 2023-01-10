@@ -19,6 +19,7 @@
       <button id="room1">채팅방1 입장</button>
       <!-- send 이벤트 발생시키는 버튼 -->
       <button id="room1-send">채팅방1 에서 채팅</button>
+      <button id="login">login</button>
     </div>
 
     <div>
@@ -30,13 +31,10 @@
       </ul>
     </div>
     <script>
-      // socket.io 3001 포트로 연결
       const socket = io('ws://localhost:3001');
 
-      // room1-send 버튼을 누르면 send 이벤트가 발생됨
       $('#room1-send').click(() => {
         if (roomId !== '')
-          // 채팅내용, roomId, userId, postId의 입력값을 담아 send 네임스페이스를 가진 서버에게 전송한다.
           socket.emit('send', {
             content: $('#chat').val(),
             roomId: $('#roomId').val(),
@@ -46,9 +44,12 @@
       });
 
       // 방 입장 이벤트 전송
-      // room1 id 버튼을 누르면 join 이벤트 발생
+      $('#login').click(() => {
+        socket.emit('login', $('#userId').val());
+      });
+
+      // 방 입장 이벤트 전달
       $('#room1').click(() => {
-        // join 이벤트 발생, 입력한 userId, postId 를 객체 형태로 서버에 전달
         socket.emit('join', { userId: $('#userId').val(), postId: $('#postId').val() });
       });
 

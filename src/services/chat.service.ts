@@ -36,6 +36,18 @@ class ChatService {
     return result.createdAt;
   };
 
+  public saveSocket = async (userId: number, socketId: string) => {
+    const result = await this.chatRepository.searchSocket(socketId);
+
+    if (!result) await this.chatRepository.saveSocket(userId, socketId);
+  };
+
+  public deleteSocket = async (socketId: string) => {
+    const result = await this.chatRepository.searchSocket(socketId);
+
+    if (result) await this.chatRepository.deleteSocket(socketId);
+  };
+
   public chatHistory = async (roomId: string) => {
     const result = await this.chatRepository.chatHistory(roomId);
 

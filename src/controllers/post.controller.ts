@@ -1,6 +1,6 @@
 /* eslint-disable class-methods-use-this */
 import { badRequest, unauthorized } from '@hapi/boom';
-import { Request, Response, NextFunction } from 'express';
+import { Request, Response, NextFunction, RequestHandler } from 'express';
 import PostsService from '../services/post.service';
 import { postInputPattern, postIdPattern } from '../validations/posts.validation';
 
@@ -55,6 +55,9 @@ class PostsController {
       }
       const search = req.query.search as string;
       const category = Number(req.query.category);
+
+      // const category = Number(req.query.category);
+
       const q = Number(req.query.q);
       const result = await this.postsService.myLocationPosts(q, state1, state2, category, search);
       return res.status(200).json({ result });
@@ -127,7 +130,7 @@ class PostsController {
     }
   };
 
-  public deletePost = async (req: Request, res: Response, next: NextFunction) => {
+  public deletePost: RequestHandler = async (req, res, next) => {
     try {
       const postId = Number(req.params.postId);
       await this.postsService.deletePost(postId);

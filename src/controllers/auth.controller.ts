@@ -161,6 +161,17 @@ class AuthController {
       return next(err);
     }
   };
+
+  public myPosts: RequestHandler = async (req, res, next) => {
+    try {
+      const { userId } = res.locals;
+
+      const result = await this.authService.myPosts(userId);
+      return res.status(200).json({ result });
+    } catch (err) {
+      return next(err);
+    }
+  };
 }
 
 export default AuthController;

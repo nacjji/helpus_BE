@@ -13,19 +13,20 @@ datasource db {
 }
 
 model User {
-  userId    Int     @id @default(autoincrement())
-  userName  String
-  email     String? @unique
-  password  String?
-  state1    String?
-  state2    String?
-  userImage String?
-  score     Float   @default(0)
-  kakao     BigInt? @unique
-  Post      Post[]
-  Wish      Wish[]
-  Score     Score[]
-  Chat      Chat[]
+  userId      Int           @id @default(autoincrement())
+  userName    String
+  email       String?       @unique
+  password    String?
+  state1      String?
+  state2      String?
+  userImage   String?
+  score       Float         @default(0)
+  kakao       BigInt?       @unique
+  Post        Post[]
+  Wish        Wish[]
+  Score       Score[]
+  Chat        Chat[]
+  SocketTable SocketTable[]
 
   @@unique([userId, userName])
 }
@@ -68,6 +69,12 @@ model Chat {
   createdAt DateTime @default(now())
   userId    Int
   postId    Int
+}
+
+model SocketTable {
+  socketId String @id
+  user     User   @relation(fields: [userId], references: [userId])
+  userId   Int
 }
 
 model Wish {

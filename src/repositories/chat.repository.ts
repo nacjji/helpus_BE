@@ -29,13 +29,34 @@ class ChatRepository {
     return result;
   };
 
+  public saveSocket = async (userId: number, socketId: string) => {
+    await this.prisma.socketTable.create({
+      data: {
+        userId,
+        socketId,
+      },
+    });
+  };
+
+  public searchSocket = async (socketId: string) => {
+    const result = await this.prisma.socketTable.findUnique({
+      where: { socketId },
+    });
+
+    return result;
+  };
+
+  public deleteSocket = async (socketId: string) => {
+    await this.prisma.socketTable.delete({
+      where: { socketId },
+    });
+  };
+
   public chatHistory = async (roomId: string) => {
     const result = await this.prisma.chat.findMany({
       where: { roomId },
       select: { content: true, userId: true, createdAt: true },
     });
-    console.log(result, 'repo');
-
     return result;
   };
 }
