@@ -26,8 +26,9 @@ model User {
   Wish        Wish[]
   Score       Score[]
   SocketTable SocketTable[]
-  Chat        Chat[]        @relation("Sender")
-  Owner       Chat[]        @relation("Owner")
+  Chat        Chat[]
+  Sender      Room[]        @relation("Sender")
+  Owner       Room[]        @relation("Owner")
 
   @@unique([userId, userName])
 }
@@ -58,20 +59,28 @@ model Post {
   createdAt  DateTime  @default(now())
   updated    Int       @default(0)
   Wish       Wish[]
-  Chat       Chat[]
+  Room       Room[]
 }
 
 model Chat {
   chatId    Int      @id @default(autoincrement())
-  user      User     @relation("Sender", fields: [userId], references: [userId])
-  owner     User     @relation("Owner", fields: [ownerId], references: [userId])
-  post      Post     @relation(fields: [postId], references: [postId])
+  user      User     @relation(fields: [userId], references: [userId])
+  Room      Room     @relation(fields: [roomId], references: [roomId])
   roomId    String
   content   String
   createdAt DateTime @default(now())
   userId    Int
-  postId    Int
-  ownerId   Int
+}
+
+model Room {
+  roomId   String @id
+  sender   User   @relation("Sender", fields: [senderId], references: [userId])
+  owner    User   @relation("Owner", fields: [ownerId], references: [userId])
+  Post     Post   @relation(fields: [postId], references: [postId])
+  ownerId  Int
+  senderId Int
+  postId   Int
+  Chat     Chat[]
 }
 
 model SocketTable {
