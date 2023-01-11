@@ -41,6 +41,7 @@ class AuthRepository {
         state1: true,
         state2: true,
         Score: true,
+        kakao: true,
       },
     });
 
