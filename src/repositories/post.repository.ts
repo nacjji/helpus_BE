@@ -73,6 +73,7 @@ class PostsRepository {
           },
         ],
       },
+      include: { user: { select: { userImage: true } } },
 
       // 무한스크롤
       skip: q || 0,
@@ -101,6 +102,7 @@ class PostsRepository {
           },
         ],
       },
+      include: { user: { select: { userImage: true } } },
       // 무한스크롤
       skip: q || 0,
       take: 12,
@@ -113,8 +115,14 @@ class PostsRepository {
   public findDetailPost = async (postId: number) => {
     const result = await this.prisma.post.findUnique({
       where: { postId },
-      include: { _count: { select: { Wish: true } } },
+      include: {
+        _count: {
+          select: { Wish: true },
+        },
+        user: { select: { userImage: true } },
+      },
     });
+
     return result;
   };
 

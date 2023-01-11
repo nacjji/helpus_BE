@@ -108,6 +108,7 @@ class PostsService {
         postId: v.postId,
         userId: v.userId,
         userName: v.userName,
+        userImage: `${process.env.S3_BUCKET_URL}/profile/${v.user.userImage}`,
         title: v.title,
         content: v.content,
         category: v.category,
@@ -134,6 +135,7 @@ class PostsService {
         postId: v.postId,
         userId: v.userId,
         userName: v.userName,
+        userImage: `${process.env.S3_BUCKET_URL}/profile/${v.user.userImage}`,
         title: v.title,
         content: v.content,
         category: v.category,
@@ -153,6 +155,7 @@ class PostsService {
 
   public findDetailPost = async (postId: number) => {
     const result = await this.postsRepository.findDetailPost(postId);
+
     if (!result) {
       throw notFound('게시글 없음');
     }
@@ -162,6 +165,7 @@ class PostsService {
       postId: result.postId,
       userId: result.userId,
       userName: result.userName,
+      userImage: `${process.env.S3_BUCKET_URL}/profile/${result.user.userImage}`,
       title: result.title,
       content: result.content,
       category: result.category,
