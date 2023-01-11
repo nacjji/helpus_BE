@@ -11,6 +11,7 @@ const Socket = (server: http.Server) => {
     path: '/socket.io',
   });
 
+  // socket.io 연결
   io.on('connection', (socket) => {
     socket.on('login', async (userId) => {
       try {
@@ -32,13 +33,18 @@ const Socket = (server: http.Server) => {
       }
     });
     // 방 입장하기
+
     socket.on('join', async (data) => {
       try {
-        const { userId, postId } = data;
+        const { senderId, postId, ownerId } = data;
 
-        const roomId: string = await chatService.searchRoom(Number(userId), Number(postId));
-
+        const roomId: string = await chatService.searchRoom(
+          Number(senderId),
+          Number(postId),
+          Number(ownerId)
+        );
         socket.emit('roomId', roomId);
+
         socket.join(roomId);
 
         const chatHistory = await chatService.chatHistory(roomId);
@@ -52,13 +58,9 @@ const Socket = (server: http.Server) => {
     // 입장한 방에 메시지 보내기
     socket.on('send', async (data) => {
       try {
-        const { content, roomId, userId, postId } = data;
-        const createdAt = await chatService.sendMessage(
-          Number(userId),
-          Number(postId),
-          roomId,
-          content
-        );
+        const { roomId, content, userId } = data;
+
+        const createdAt = await chatService.sendMessageAt(roomId, Number(userId), content);
 
         io.to(roomId).emit('broadcast', { userId, content, createdAt });
       } catch (err) {
@@ -68,4 +70,5 @@ const Socket = (server: http.Server) => {
   });
 };
 
+// userId를 db에 저장하고 있지만, 클라이언트에 보내줘야 할 정보는 userName 일듯
 export default Socket;

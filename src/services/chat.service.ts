@@ -8,15 +8,20 @@ class ChatService {
     this.chatRepository = new ChatRepository();
   }
 
-  public searchRoom = async (userId: number, postId: number) => {
-    const [result] = await this.chatRepository.searchRoom(userId, postId);
+  public searchRoom = async (senderId: number, postId: number, ownerId: number) => {
+    const result = await this.chatRepository.searchRoom(senderId, postId);
 
-    if (result) return result.roomId;
-    return shortId.generate();
+    if (result) {
+      return result.roomId;
+    }
+
+    const roomId = shortId.generate();
+    await this.chatRepository.createRoom(senderId, postId, roomId, ownerId);
+    return roomId;
   };
 
-  public sendMessage = async (userId: number, postId: number, roomId: string, content: string) => {
-    const result = await this.chatRepository.sendMessage(userId, postId, roomId, content);
+  public sendMessageAt = async (roomId: string, userId: number, content: string) => {
+    const result = await this.chatRepository.sendMessage(roomId, userId, content);
 
     return result.createdAt;
   };
