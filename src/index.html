@@ -1,0 +1,76 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Document</title>
+    <script src="http://code.jquery.com/jquery-3.3.1.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/4.5.4/socket.io.js"></script>
+  </head>
+  <body>
+    <div>
+      userId <input id="userId" type="number" /> <br /><br />
+      postId <input id="postId" type="number" /> <br /><br />
+      roomId <input id="roomId" type="text" /> <br /><br />
+      <!-- 채팅 내용 입력 -->
+      <input id="chat" type="text" />
+      <!-- join 이벤트 발생시키는 버튼 -->
+      <button id="room1">채팅방1 입장</button>
+      <!-- send 이벤트 발생시키는 버튼 -->
+      <button id="room1-send">채팅방1 에서 채팅</button>
+      <button id="login">login</button>
+    </div>
+
+    <div>
+      <ul id="chat-history">
+        <!-- 여기에 방 입장시 이전 채팅내역이 추가됩니다. -->
+      </ul>
+      <ul id="real-time-chat">
+        <!-- 여기에 실시간 채팅 내역이 추가됩니다. -->
+      </ul>
+    </div>
+    <script>
+      const socket = io('ws://localhost:3001');
+
+      $('#room1-send').click(() => {
+        if (roomId !== '')
+          socket.emit('send', {
+            content: $('#chat').val(),
+            roomId: $('#roomId').val(),
+            userId: $('#userId').val(),
+            postId: $('#postId').val(),
+          });
+      });
+
+      // 방 입장 이벤트 전송
+      $('#login').click(() => {
+        socket.emit('login', $('#userId').val());
+      });
+
+      // 방 입장 이벤트 전달
+      $('#room1').click(() => {
+        socket.emit('join', { userId: $('#userId').val(), postId: $('#postId').val() });
+      });
+
+      //방 입장 이벤트 수신
+      socket.on('roomId', (data) => {
+        socket.on('chat-history', async (data) => {
+          data.forEach((v) => {
+            $('#chat-history').append(
+              '<li>' + `${v.userId} : ${v.content} ,[${v.createdAt}]` + '</li>'
+            );
+          });
+        });
+        roomId = data;
+      });
+
+      // broadcast 라는 이벤트를 발생시킴
+      socket.on('broadcast', (data) => {
+        $('#real-time-chat').append(
+          `<li>${data.userId} : ${data.content},[ ${data.createdAt}]</li>`
+        );
+      });
+    </script>
+  </body>
+</html>

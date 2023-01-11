@@ -21,6 +21,8 @@ authRouter.post(
 authRouter.post('/login', auth.requiredNoLogin, authController.localLogin);
 
 authRouter.get('/detail', auth.requiredLogin, authController.detailUser);
+authRouter.get('/myposts', auth.requiredLogin, authController.myPosts);
+
 authRouter.patch('/detail', auth.requiredLogin, authController.updateUser);
 authRouter.patch(
   '/image',
@@ -34,5 +36,6 @@ authRouter.get('/:userId/detail', authController.getUserDetail);
 
 authRouter.delete('/delete', auth.requiredLogin, authController.deleteUser);
 authRouter.delete('/delete/kakao', auth.requiredLogin, kakaoAuthController.kakaoDelete);
+authRouter.patch('/score/:userId', auth.requiredLogin, authController.score);
 
 export default authRouter;

@@ -21,7 +21,8 @@ class PostsRepository {
     imageUrl1?: string,
     imageUrl2?: string,
     imageUrl3?: string,
-    tag?: string
+    tag?: string,
+    createdAt?: Date
     // eslint-disable-next-line consistent-return
   ) => {
     const result = await this.prisma.post.create({
@@ -38,6 +39,7 @@ class PostsRepository {
         imageUrl2,
         imageUrl3,
         tag,
+        createdAt,
       },
     });
     return result;
@@ -51,8 +53,6 @@ class PostsRepository {
     category?: number,
     search?: string
   ) => {
-    console.log(search);
-
     const result = await this.prisma.post.findMany({
       where: {
         AND: [
@@ -73,18 +73,19 @@ class PostsRepository {
           },
         ],
       },
+      include: { user: { select: { userImage: true } } },
+
       // 무한스크롤
       skip: q || 0,
-      take: 30,
+      take: 12,
       // 생성순으로 정렬
       orderBy: { createdAt: 'desc' },
     });
+
     return result;
   };
 
   public allLocationPosts = async (q: number, category: number, search?: string) => {
-    console.log('all posts');
-
     const result = await this.prisma.post.findMany({
       where: {
         OR: [
@@ -101,9 +102,10 @@ class PostsRepository {
           },
         ],
       },
+      include: { user: { select: { userImage: true } } },
       // 무한스크롤
       skip: q || 0,
-      take: 30,
+      take: 12,
       // 생성순으로 정렬
       orderBy: { createdAt: 'desc' },
     });
@@ -111,13 +113,16 @@ class PostsRepository {
   };
 
   public findDetailPost = async (postId: number) => {
-    const findDetailResult = await this.prisma.post.findUnique({
+    const result = await this.prisma.post.findUnique({
       where: { postId },
+      include: {
+        _count: {
+          select: { Wish: true },
+        },
+        user: { select: { userImage: true } },
+      },
     });
-    const wishCount = await this.prisma.wish.aggregate({
-      _count: true,
-    });
-    const result = [findDetailResult, wishCount];
+
     return result;
   };
 

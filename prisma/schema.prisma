@@ -13,18 +13,31 @@ datasource db {
 }
 
 model User {
-  userId    Int     @id @default(autoincrement())
-  userName  String
-  email     String? @unique
-  password  String?
-  state1    String?
-  state2    String?
-  userImage String?
-  kakao     BigInt? @unique
-  Post      Post[]
-  Wish      Wish[]
+  userId      Int           @id @default(autoincrement())
+  userName    String
+  email       String?       @unique
+  password    String?
+  state1      String?
+  state2      String?
+  userImage   String?
+  score       Float         @default(0)
+  kakao       BigInt?       @unique
+  Post        Post[]
+  Wish        Wish[]
+  Score       Score[]
+  SocketTable SocketTable[]
+  Chat        Chat[]
+  Sender      Room[]        @relation("Sender")
+  Owner       Room[]        @relation("Owner")
 
   @@unique([userId, userName])
+}
+
+model Score {
+  id     Int   @id @default(autoincrement())
+  userId Int
+  user   User  @relation(fields: [userId], references: [userId], onDelete: Cascade)
+  score  Float
 }
 
 model Post {
@@ -35,7 +48,7 @@ model Post {
   title      String
   content    String
   category   Int
-  appointed  DateTime? @default(now())
+  appointed  DateTime?
   isDeadLine Int?      @default(0)
   location1  String?
   location2  String?
@@ -46,6 +59,34 @@ model Post {
   createdAt  DateTime  @default(now())
   updated    Int       @default(0)
   Wish       Wish[]
+  Room       Room[]
+}
+
+model Chat {
+  chatId    Int      @id @default(autoincrement())
+  user      User     @relation(fields: [userId], references: [userId])
+  Room      Room     @relation(fields: [roomId], references: [roomId])
+  roomId    String
+  content   String
+  createdAt DateTime @default(now())
+  userId    Int
+}
+
+model Room {
+  roomId   String @id
+  sender   User   @relation("Sender", fields: [senderId], references: [userId])
+  owner    User   @relation("Owner", fields: [ownerId], references: [userId])
+  Post     Post   @relation(fields: [postId], references: [postId])
+  ownerId  Int
+  senderId Int
+  postId   Int
+  Chat     Chat[]
+}
+
+model SocketTable {
+  socketId String @id
+  user     User   @relation(fields: [userId], references: [userId])
+  userId   Int
 }
 
 model Wish {
