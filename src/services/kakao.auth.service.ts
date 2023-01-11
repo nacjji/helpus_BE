@@ -64,7 +64,7 @@ class KakaoAuthService {
     return {
       userid: isUser.userId,
       userName: isUser.userName,
-      profileImage: isUser.userImage,
+      userImage: isUser.userImage,
       token,
     };
   };

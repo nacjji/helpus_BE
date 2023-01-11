@@ -28,26 +28,21 @@ class AuthController {
   };
 
   public localSignup: RequestHandler = async (req, res, next) => {
-    const { location: userImage } = req.file as Express.MulterS3.File;
-    const fileUrl = userImage.split('/');
-
     try {
       const { email, password, userName, state1, state2 } = await signupPattern.validateAsync(
         req.body
       );
 
-      await this.authService.localSignup(
-        email,
-        password,
-        userName,
-        state1,
-        state2,
-        fileUrl[fileUrl.length - 1]
-      );
+      let fileUrl = '';
+      if (req.file) {
+        const { location: userImage } = req.file as Express.MulterS3.File;
+        fileUrl = userImage.split('/')[fileUrl.length - 1];
+      }
+
+      await this.authService.localSignup(email, password, userName, state1, state2, fileUrl);
 
       res.status(201).json({ message: '가입 완료' });
     } catch (err) {
-      if (userImage) deleteS3Image(fileUrl[fileUrl.length - 1]);
       next(err);
     }
   };

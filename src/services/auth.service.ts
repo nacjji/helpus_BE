@@ -60,10 +60,11 @@ class AuthService {
 
   public detailUser = async (userId: number) => {
     const userInfo = await this.authRepository.userInfo(userId);
-    const imageUrl = `${process.env.S3_BUCKET_URL}/profile/${userInfo?.userImage}`;
 
     if (!userInfo) throw badRequest('요구사항에 맞지 않는 입력값');
     else {
+      let imageUrl = userInfo.userImage;
+      if (!userInfo.kakao) imageUrl = `${process.env.S3_BUCKET_URL}/profile/${userInfo?.userImage}`;
       const scoreAvg =
         // eslint-disable-next-line no-unsafe-optional-chaining
         userInfo.Score?.reduce((sum: number, curValue) => {
