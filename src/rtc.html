@@ -1,0 +1,80 @@
+<html>
+  <head>
+    <meta charset="utf-8" />
+    <title>WebRtc tutorial</title>
+  </head>
+
+  <body>
+    <div>userId <input id="userId" type="number" /> <br /><br /></div>
+    <button id="login">login</button>
+
+    <div style="border: solid 1px black">
+      <video id="localVideo" autoplay width="480px"></video>
+      <video id="remoteVideo" width="480px" autoplay></video>
+    </div>
+
+    <script src="http://code.jquery.com/jquery-3.3.1.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/4.5.4/socket.io.js"></script>
+
+    <script>
+      const socket = io('ws://localhost:3001');
+      const localVideo = document.getElementById('localVideo');
+      const remoteVideo = document.getElementById('remoteVideo');
+      console.log(localVideo, remoteVideo);
+      let localStream;
+
+      navigator.mediaDevices
+        .getUserMedia({
+          video: true,
+          audio: false,
+        })
+        .then(gotStream)
+        .catch((error) => console.error(error));
+
+      function gotStream(stream) {
+        console.log('Adding local stream');
+        localStream = stream;
+        localVideo.srcObject = stream;
+        if (isInitiator) {
+          maybeStart();
+        }
+      }
+
+      function createPeerConnection() {
+        try {
+          pc = new RTCPeerConnection(null);
+          pc.onicecandidate = handleIceCandidate;
+          pc.onaddstream = handleRemoteStreamAdded;
+          console.log('Created RTCPeerConnection');
+        } catch (e) {
+          alert('connot create RTCPeerConnection object');
+          return;
+        }
+      }
+
+      function handleIceCandidate(event) {
+        console.log('iceCandidateEvent', event);
+        if (event.candidate) {
+          sendMessage({
+            type: 'candidate',
+            label: event.candidate.sdpMLineIndex,
+            id: event.candidate.sdpMid,
+            candidate: event.candidate.candidate,
+          });
+        } else {
+          console.log('end of candidates');
+        }
+      }
+
+      function handleCreateOfferError(event) {
+        console.log('createOffer() error: ', event);
+      }
+
+      function handleRemoteStreamAdded(event) {
+        console.log('remote stream added');
+        remoteStream = event.stream;
+        remoteVideo.srcObject = remoteStream;
+      }
+    </script>
+  </body>
+</html>
