@@ -36,13 +36,15 @@ const Socket = (server: http.Server) => {
 
     socket.on('join', async (data) => {
       try {
-        const { userId, postId } = data;
+        const { senderId, postId, ownerId } = data;
 
-        const roomId: string = await chatService.searchRoom(Number(userId), Number(postId));
-        // 암호화 된 roomId를 "roomId"라는 이름을 가진 클라이언트 이벤트에게 전송한다.
+        const roomId: string = await chatService.searchRoom(
+          Number(senderId),
+          Number(postId),
+          Number(ownerId)
+        );
         socket.emit('roomId', roomId);
 
-        // 암호화 된 roomId 의 이름을 가진 방에 입장한다.
         socket.join(roomId);
 
         const chatHistory = await chatService.chatHistory(roomId);
@@ -56,16 +58,9 @@ const Socket = (server: http.Server) => {
     // 입장한 방에 메시지 보내기
     socket.on('send', async (data) => {
       try {
-        const { content, userId, postId } = data;
-        const roomId: string = await chatService.searchRoom(Number(userId), Number(postId));
+        const { roomId, content, userId } = data;
 
-        //  chatService의 sendMessage 메소드를 실행시킨 결과를 createdAt 변수로 선언한다.
-        const createdAt = await chatService.sendMessageAt(
-          Number(userId),
-          Number(postId),
-          roomId,
-          content
-        );
+        const createdAt = await chatService.sendMessageAt(roomId, Number(userId), content);
 
         io.to(roomId).emit('broadcast', { userId, content, createdAt });
       } catch (err) {
