@@ -29,6 +29,7 @@ model User {
   Chat        Chat[]
   Sender      Room[]        @relation("Sender")
   Owner       Room[]        @relation("Owner")
+  Alarm       Alarm[]
 
   @@unique([userId, userName])
 }
@@ -60,6 +61,7 @@ model Post {
   updated    Int       @default(0)
   Wish       Wish[]
   Room       Room[]
+  Alarm      Alarm[]
 }
 
 model Chat {
@@ -96,4 +98,14 @@ model Wish {
   userId Int
 
   @@id([postId, userId])
+}
+
+model Alarm {
+  alarmId   Int  @id @default(autoincrement())
+  user      User @relation(fields: [userId], references: [userId])
+  userId    Int
+  eventType Int
+  post      Post @relation(fields: [postId], references: [postId])
+  postId    Int
+  checked   Int  @default(0)
 }
