@@ -46,6 +46,7 @@ class ChatService {
       createdAt: result.createdAt,
       side: socketId,
       senderName,
+      postId: roomInfo.postId,
       title: roomInfo.Post.title,
       receiverId,
     };
