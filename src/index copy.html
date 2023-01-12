@@ -38,7 +38,7 @@
           socket.emit('send', {
             content: $('#chat').val(),
             roomId: 'test',
-            userId: 6,
+            userId: 1,
           });
       });
 
@@ -72,6 +72,7 @@
       });
 
       socket.on('new-chat', () => {
+        console.log(socket.Id);
         console.log('here');
       });
     </script>
