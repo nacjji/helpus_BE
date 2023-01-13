@@ -10,7 +10,8 @@ class ChatRepository {
 
   public alarmList = async (ownerId: number) => {
     const results = await this.prisma.alarm.findMany({
-      where: { ownerId },
+      where: { ownerId, NOT: { count: 0 } },
+      include: { post: true, sender: true },
     });
 
     return results;
@@ -28,6 +29,11 @@ class ChatRepository {
     const results = await this.prisma.room.findMany({
       where: {
         OR: [{ ownerId: userId }, { senderId: userId }],
+      },
+      include: {
+        Post: { select: { title: true } },
+        sender: { select: { userName: true, userImage: true } },
+        owner: { select: { userName: true, userImage: true } },
       },
     });
 
