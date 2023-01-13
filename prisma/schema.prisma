@@ -27,8 +27,10 @@ model User {
   Score       Score[]
   SocketTable SocketTable[]
   Chat        Chat[]
-  Sender      Room[]        @relation("Sender")
-  Owner       Room[]        @relation("Owner")
+  alarmSender Alarm[]       @relation("Sender")
+  alarmOwner  Alarm[]       @relation("Owner")
+  roomSender  Room[]        @relation("Sender")
+  roomOwner   Room[]        @relation("Owner")
 
   @@unique([userId, userName])
 }
@@ -60,6 +62,7 @@ model Post {
   updated    Int       @default(0)
   Wish       Wish[]
   Room       Room[]
+  Alarm      Alarm[]
 }
 
 model Chat {
@@ -70,6 +73,7 @@ model Chat {
   content   String
   createdAt DateTime @default(now())
   userId    Int
+  isRead    Int      @default(0)
 }
 
 model Room {
@@ -96,4 +100,16 @@ model Wish {
   userId Int
 
   @@id([postId, userId])
+}
+
+model Alarm {
+  sender   User @relation("Sender", fields: [senderId], references: [userId])
+  user     User @relation("Owner", fields: [ownerId], references: [userId])
+  senderId Int
+  ownerId  Int
+  post     Post @relation(fields: [postId], references: [postId])
+  postId   Int
+  count    Int  @default(0)
+
+  @@id([postId, ownerId, senderId])
 }
