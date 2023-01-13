@@ -8,6 +8,14 @@ class ChatRepository {
     this.prisma = new PrismaClient();
   }
 
+  public alarmList = async (ownerId: number) => {
+    const results = await this.prisma.alarm.findMany({
+      where: { ownerId },
+    });
+
+    return results;
+  };
+
   public searchRoom = async (senderId: number, postId: number) => {
     const [result] = await this.prisma.room.findMany({
       where: { senderId, postId },
