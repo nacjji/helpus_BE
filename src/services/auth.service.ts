@@ -61,7 +61,7 @@ class AuthService {
     return {
       userId: user.userId,
       userName: user.userName,
-      userImage: user.userImage,
+      userImage: `${process.env.S3_BUCKET_URL}/profile/${user.userImage}`,
       token,
     };
   };
