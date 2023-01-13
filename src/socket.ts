@@ -55,6 +55,19 @@ const Socket = (server: http.Server) => {
       }
     });
 
+    socket.on('enter', async (data) => {
+      try {
+        const { roomId } = data;
+        socket.emit('roomId', roomId);
+
+        socket.join(roomId);
+        const chatHistory = await chatService.chatHistory(roomId);
+        socket.emit('chat-history', chatHistory);
+      } catch (err) {
+        socket.emit('error', 'enter 이벤트 실패');
+      }
+    });
+
     // 입장한 방에 메시지 보내기
     socket.on('send', async (data) => {
       try {
