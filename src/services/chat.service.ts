@@ -20,6 +20,12 @@ class ChatService {
     return roomId;
   };
 
+  public roomList = async (userId: number) => {
+    const results = await this.chatRepository.roomList(userId);
+
+    return { list: results };
+  };
+
   public sendMessageAt = async (roomId: string, userId: number, content: string) => {
     const roomInfo = await this.chatRepository.searchRoomId(roomId);
     if (!roomInfo) {
