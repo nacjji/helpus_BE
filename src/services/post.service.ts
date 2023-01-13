@@ -116,7 +116,7 @@ class PostsService {
         isDeadLine: v.isDeadLine,
         location1: v.location1,
         location2: v.location2,
-        imageUrl1: v.imageUrl2 && `${process.env.S3_BUCKET_URL}/${v.imageUrl1}`,
+        imageUrl1: v.imageUrl2 || `${process.env.S3_BUCKET_URL}/${v.imageUrl1}`,
         imageUrl2: v.imageUrl2 && `${process.env.S3_BUCKET_URL}/${v.imageUrl2}`,
         imageUrl3: v.imageUrl2 && `${process.env.S3_BUCKET_URL}/${v.imageUrl3}`,
         tag: v.tag,
@@ -124,6 +124,8 @@ class PostsService {
         updated: v.updated,
       };
     });
+    console.log(_result);
+
     return _result;
   };
 
