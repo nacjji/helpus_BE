@@ -15,6 +15,12 @@ class AuthController {
     this.authService = new AuthService();
   }
 
+  public test: RequestHandler = async (req, res, next) => {
+    const { userId } = res.locals;
+    await this.authService.test(userId);
+    res.status(200);
+  };
+
   public emailCheck: RequestHandler = async (req, res, next) => {
     try {
       const { email } = await emailPattern.validateAsync(req.body);

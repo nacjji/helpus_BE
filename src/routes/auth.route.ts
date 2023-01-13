@@ -8,6 +8,8 @@ const authRouter = Router();
 const authController = new AuthController();
 const kakaoAuthController = new KakaoAuthController();
 
+authRouter.get('/test', auth.requiredLogin, authController.test);
+
 authRouter.get('/kakao', kakaoAuthController.kakao);
 authRouter.post('/kakao/state', kakaoAuthController.kakaoState);
 
