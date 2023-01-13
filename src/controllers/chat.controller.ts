@@ -18,6 +18,17 @@ class ChatController {
       next(err);
     }
   };
+
+  public roomList: RequestHandler = async (req, res, next) => {
+    try {
+      const { userId } = res.locals;
+      const results = await this.chatService.roomList(userId);
+
+      res.status(200).json(results);
+    } catch (err) {
+      next(err);
+    }
+  };
 }
 
 export default ChatController;
