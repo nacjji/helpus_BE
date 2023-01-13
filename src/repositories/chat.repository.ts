@@ -1,4 +1,5 @@
 import { PrismaClient } from '@prisma/client';
+import { number } from 'joi';
 
 class ChatRepository {
   private prisma: PrismaClient;
@@ -6,6 +7,14 @@ class ChatRepository {
   constructor() {
     this.prisma = new PrismaClient();
   }
+
+  public alarmList = async (ownerId: number) => {
+    const results = await this.prisma.alarm.findMany({
+      where: { ownerId },
+    });
+
+    return results;
+  };
 
   public searchRoom = async (senderId: number, postId: number) => {
     const [result] = await this.prisma.room.findMany({
@@ -26,13 +35,65 @@ class ChatRepository {
     });
   };
 
-  // repository 단에서 Chat 테이블에 채팅 내역을 한줄씩 저장한다.
+  public searchRoomId = async (roomId: string) => {
+    const result = await this.prisma.room.findUnique({
+      where: { roomId },
+      include: { Post: true, sender: true },
+    });
+
+    return result;
+  };
+
   public sendMessage = async (roomId: string, userId: number, content: string) => {
     const result = await this.prisma.chat.create({
       data: {
         roomId,
         userId,
         content,
+      },
+    });
+
+    return result;
+  };
+
+  public readMessage = async (roomId: string) => {
+    await this.prisma.chat.updateMany({
+      where: { roomId, isRead: 0 },
+      data: { isRead: 1 },
+    });
+  };
+
+  public isReadMessage = async (chatId: number) => {
+    const result = await this.prisma.chat.findUnique({
+      where: { chatId },
+    });
+
+    return result;
+  };
+
+  public isNew = async (postId: number, userId: number) => {
+    const [result] = await this.prisma.alarm.findMany({
+      where: { postId, senderId: userId },
+    });
+
+    return result;
+  };
+
+  public createAlarm = async (postId: number, ownerId: number, senderId: number) => {
+    await this.prisma.alarm.create({
+      data: { postId, ownerId, senderId },
+    });
+  };
+
+  public updateAlarm = async (postId: number, ownerId: number, senderId: number) => {
+    const result = await this.prisma.alarm.updateMany({
+      where: {
+        postId,
+        ownerId,
+        senderId,
+      },
+      data: {
+        count: { increment: 1 },
       },
     });
 
@@ -54,6 +115,15 @@ class ChatRepository {
     });
 
     return result;
+  };
+
+  public searchSockets = async (userId: number) => {
+    const results = await this.prisma.socketTable.findMany({
+      where: { userId },
+      select: { socketId: true },
+    });
+
+    return results;
   };
 
   public deleteSocket = async (socketId: string) => {
