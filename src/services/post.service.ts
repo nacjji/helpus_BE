@@ -130,6 +130,8 @@ class PostsService {
   public allLocationPosts = async (q: number, category: number, search: string) => {
     const result = await this.postsRepository.allLocationPosts(q, category, search);
     // eslint-disable-next-line no-underscore-dangle
+
+    // eslint-disable-next-line no-underscore-dangle
     const _result = result.map((v) => {
       return {
         postId: v.postId,

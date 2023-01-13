@@ -22,11 +22,12 @@ class AuthRepository {
     password: string,
     state1: string,
     state2: string,
-    userImage?: string
+    profileImage?: string
   ) => {
-    await this.prisma.user.create({
-      data: { email, userName, password, state1, state2, userImage },
+    const result = await this.prisma.user.create({
+      data: { email, userName, password, state1, state2, userImage: profileImage },
     });
+    return result;
   };
 
   public userInfo = async (userId: number) => {

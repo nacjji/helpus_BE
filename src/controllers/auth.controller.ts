@@ -36,11 +36,10 @@ class AuthController {
       let fileUrl = '';
       if (req.file) {
         const { location: userImage } = req.file as Express.MulterS3.File;
-        fileUrl = userImage.split('/')[fileUrl.length - 1];
+        fileUrl = userImage.split('/')[userImage.split('/').length - 1];
       }
 
       await this.authService.localSignup(email, password, userName, state1, state2, fileUrl);
-
       res.status(201).json({ message: '가입 완료' });
     } catch (err) {
       next(err);
