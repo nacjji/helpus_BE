@@ -2,6 +2,7 @@ import { badRequest } from '@hapi/boom';
 import * as jwt from 'jsonwebtoken';
 import * as bcrypt from 'bcrypt';
 import AuthRepository from '../repositories/auth.repository';
+import randomImage from '../modules/randomImage.module';
 
 const { JWT_SECRET_KEY } = process.env as { JWT_SECRET_KEY: string };
 const { salt } = process.env as { salt: string };
@@ -12,6 +13,10 @@ class AuthService {
   constructor() {
     this.authRepository = new AuthRepository();
   }
+
+  public test = async (userId: number) => {
+    await console.log(randomImage(userId));
+  };
 
   public emailCheck = async (email: string) => {
     const check = await this.authRepository.emailCheck(email);

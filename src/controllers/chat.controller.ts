@@ -1,12 +1,33 @@
 import { RequestHandler } from 'express';
-import chatRouter from 'routes/chat.route';
+import ChatService from '../services/chat.service';
 
 class ChatController {
-  public enterChatRoom: RequestHandler = (req, res, next) => {
-    const { userId } = req.body;
+  private chatService;
 
-    const io = req.app.get('io');
-    res.send(200);
+  constructor() {
+    this.chatService = new ChatService();
+  }
+
+  public alarmList: RequestHandler = async (req, res, next) => {
+    try {
+      const { userId } = res.locals;
+      const results = await this.chatService.alarmList(userId);
+
+      res.status(200).json({ list: results });
+    } catch (err) {
+      next(err);
+    }
+  };
+
+  public roomList: RequestHandler = async (req, res, next) => {
+    try {
+      const { userId } = res.locals;
+      const results = await this.chatService.roomList(userId);
+
+      res.status(200).json(results);
+    } catch (err) {
+      next(err);
+    }
   };
 }
 
