@@ -109,6 +109,8 @@ class PostsRepository {
       // 생성순으로 정렬
       orderBy: { createdAt: 'desc' },
     });
+    console.log(result);
+
     return result;
   };
 

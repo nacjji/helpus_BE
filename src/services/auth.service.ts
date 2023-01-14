@@ -66,7 +66,7 @@ class AuthService {
     return {
       userId: user.userId,
       userName: user.userName,
-      userImage: user.userImage,
+      userImage: `${process.env.S3_BUCKET_URL}/profile/${user.userImage}`,
       token,
     };
   };
@@ -79,7 +79,7 @@ class AuthService {
       let imageUrl = userInfo.userImage;
       if (!userInfo.userImage) imageUrl = null;
       else if (!userInfo.kakao)
-        imageUrl = `${process.env.S3_BUCKET_URL}profile/${userInfo?.userImage}`;
+        imageUrl = `${process.env.S3_BUCKET_URL}/profile/${userInfo?.userImage}`;
 
       const scoreAvg =
         // eslint-disable-next-line no-unsafe-optional-chaining
