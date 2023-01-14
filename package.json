@@ -19,6 +19,8 @@
   "license": "MIT",
   "dependencies": {
     "@aws-sdk/client-s3": "^3.231.0",
+    "@dicebear/collection": "^5.0.2",
+    "@dicebear/core": "^5.0.2",
     "@hapi/boom": "^10.0.0",
     "@prisma/client": "^4.8.0",
     "array-shuffle": "^3.0.0",
@@ -38,6 +40,7 @@
     "multer-s3": "^3.0.1",
     "shortid": "^2.2.16",
     "socket.io": "^4.5.4",
+    "webrtc": "^1.14.1",
     "winston": "^3.8.2"
   },
   "devDependencies": {

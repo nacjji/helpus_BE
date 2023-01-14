@@ -13,6 +13,8 @@ const Socket = (server: http.Server) => {
 
   // socket.io 연결
   io.on('connection', (socket) => {
+    console.log('connected');
+
     socket.on('login', async (userId) => {
       try {
         await chatService.saveSocket(Number(userId), socket.id);
@@ -36,6 +38,8 @@ const Socket = (server: http.Server) => {
 
     socket.on('join', async (data) => {
       try {
+        console.log('joined');
+
         const { senderId, postId, ownerId } = data;
 
         const roomId: string = await chatService.searchRoom(
@@ -50,6 +54,21 @@ const Socket = (server: http.Server) => {
         const chatHistory = await chatService.chatHistory(roomId);
 
         socket.emit('chat-history', chatHistory);
+
+        socket.on('startVideoCall', () => {
+          socket.to(roomId).emit('startVideo');
+        });
+
+        socket.on('offer', (offer) => {
+          socket.to(roomId).emit('offer', offer);
+        });
+        socket.on('answer', (answer) => {
+          socket.to(roomId).emit('answer', answer);
+        });
+
+        socket.on('ice', (ice) => {
+          socket.to(roomId).emit('ice', ice);
+        });
       } catch (err) {
         console.log(err);
       }
