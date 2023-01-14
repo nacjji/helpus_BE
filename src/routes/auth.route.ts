@@ -8,8 +8,6 @@ const authRouter = Router();
 const authController = new AuthController();
 const kakaoAuthController = new KakaoAuthController();
 
-authRouter.get('/test', auth.requiredLogin, authController.test);
-
 authRouter.get('/kakao', kakaoAuthController.kakao);
 authRouter.post('/kakao/state', kakaoAuthController.kakaoState);
 
@@ -32,6 +30,7 @@ authRouter.patch(
   profileUploader.single('userImage'),
   authController.updateImage
 );
+authRouter.delete('/image', auth.requiredLogin, authController.deleteImage);
 authRouter.get('/wishlist', auth.requiredLogin, authController.wishlist);
 authRouter.patch('/password', auth.requiredLogin, authController.changePassword);
 authRouter.get('/:userId/detail', authController.getUserDetail);

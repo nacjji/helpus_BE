@@ -19,9 +19,6 @@
   "license": "MIT",
   "dependencies": {
     "@aws-sdk/client-s3": "^3.231.0",
-    "@dicebear/avatars": "^4.10.8",
-    "@dicebear/collection": "^5.0.2",
-    "@dicebear/core": "^5.0.2",
     "@hapi/boom": "^10.0.0",
     "@prisma/client": "^4.8.0",
     "@resvg/resvg-js": "^2.0.0",
