@@ -15,12 +15,6 @@ class AuthController {
     this.authService = new AuthService();
   }
 
-  public test: RequestHandler = async (req, res, next) => {
-    const { userId } = res.locals;
-    await this.authService.test(userId);
-    res.status(200);
-  };
-
   public emailCheck: RequestHandler = async (req, res, next) => {
     try {
       const { email } = await emailPattern.validateAsync(req.body);
@@ -103,6 +97,18 @@ class AuthController {
       res.status(200).json({ userImage });
     } catch (err) {
       if (userImage) deleteS3Image(fileUrl[fileUrl.length - 1]);
+      next(err);
+    }
+  };
+
+  public deleteImage: RequestHandler = async (req, res, next) => {
+    try {
+      const { userId } = res.locals;
+      const { old, now } = await this.authService.deleteImage(userId);
+      if (old) deleteS3Image(old);
+
+      res.status(200).json({ userImage: now });
+    } catch (err) {
       next(err);
     }
   };

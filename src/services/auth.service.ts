@@ -2,10 +2,10 @@ import { badRequest } from '@hapi/boom';
 import * as jwt from 'jsonwebtoken';
 import * as bcrypt from 'bcrypt';
 import AuthRepository from '../repositories/auth.repository';
-import randomImage from '../modules/randomImage.module';
 
 const { JWT_SECRET_KEY } = process.env as { JWT_SECRET_KEY: string };
 const { salt } = process.env as { salt: string };
+const { S3_BUCKET_URL } = process.env as { S3_BUCKET_URL: string };
 
 class AuthService {
   authRepository: AuthRepository;
@@ -13,11 +13,6 @@ class AuthService {
   constructor() {
     this.authRepository = new AuthRepository();
   }
-
-  // eslint-disable-next-line class-methods-use-this
-  public test = async (userId: number) => {
-    await console.log(randomImage(userId));
-  };
 
   public emailCheck = async (email: string) => {
     const check = await this.authRepository.emailCheck(email);
@@ -36,6 +31,9 @@ class AuthService {
     const check = await this.authRepository.emailCheck(email);
     if (check) throw badRequest('사용 중인 이메일');
 
+    const date = new Date();
+    const seed = Number(date) % 20;
+
     const hash = await bcrypt.hash(password, Number(salt));
     const result = await this.authRepository.createUser(
       email,
@@ -43,7 +41,7 @@ class AuthService {
       hash,
       state1,
       state2,
-      profileImage
+      profileImage || `random/${seed}.png`
     );
     return result;
   };
@@ -116,6 +114,17 @@ class AuthService {
     if (!user) throw badRequest('해당 유저 없음');
     await this.authRepository.updateImage(userId, userImage);
     return user.userImage;
+  };
+
+  public deleteImage = async (userId: number) => {
+    const user = await this.authRepository.userInfo(userId);
+    if (!user) throw badRequest('해당 유저 없음');
+
+    const date = new Date();
+    const seed = Number(date) % 20;
+
+    const result = await this.authRepository.updateImage(userId, `random/${seed}.png`);
+    return { old: user.userImage, now: `${S3_BUCKET_URL}/profile/${result.userImage}` };
   };
 
   public changePassword = async (userId: number, newPw: string, oldPw: string) => {

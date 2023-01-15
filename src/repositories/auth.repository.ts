@@ -92,10 +92,12 @@ class AuthRepository {
   };
 
   public updateImage = async (userId: number, userImage: string) => {
-    await this.prisma.user.update({
+    const result = await this.prisma.user.update({
       where: { userId },
       data: { userImage },
     });
+
+    return result;
   };
 
   public searchPassword = async (userId: number) => {
