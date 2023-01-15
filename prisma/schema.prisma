@@ -103,7 +103,6 @@ model Wish {
 }
 
 model Alarm {
-  alarmId  Int  @id @default(autoincrement())
   sender   User @relation("Sender", fields: [senderId], references: [userId])
   user     User @relation("Owner", fields: [ownerId], references: [userId])
   senderId Int
@@ -111,4 +110,6 @@ model Alarm {
   post     Post @relation(fields: [postId], references: [postId])
   postId   Int
   count    Int  @default(0)
+
+  @@id([postId, ownerId, senderId])
 }

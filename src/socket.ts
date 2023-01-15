@@ -19,7 +19,7 @@ const Socket = (server: http.Server) => {
       try {
         await chatService.saveSocket(Number(userId), socket.id);
       } catch (err) {
-        console.log(err);
+        socket.emit('error', 'login 이벤트 실패');
       }
     });
 
@@ -31,7 +31,7 @@ const Socket = (server: http.Server) => {
       try {
         await chatService.deleteSocket(socket.id);
       } catch (err) {
-        console.log(err);
+        socket.emit('error', 'test 이벤트 실패');
       }
     });
     // 방 입장하기
@@ -70,7 +70,20 @@ const Socket = (server: http.Server) => {
           socket.to(roomId).emit('ice', ice);
         });
       } catch (err) {
-        console.log(err);
+        socket.emit('error', 'join 이벤트 실패');
+      }
+    });
+
+    socket.on('enter', async (data) => {
+      try {
+        const { roomId } = data;
+        socket.emit('roomId', roomId);
+
+        socket.join(roomId);
+        const chatHistory = await chatService.chatHistory(roomId);
+        socket.emit('chat-history', chatHistory);
+      } catch (err) {
+        socket.emit('error', 'enter 이벤트 실패');
       }
     });
 
@@ -79,11 +92,34 @@ const Socket = (server: http.Server) => {
       try {
         const { roomId, content, userId } = data;
 
-        const createdAt = await chatService.sendMessageAt(roomId, Number(userId), content);
+        const { chatId, createdAt, side, senderName, postId, title, receiverId } =
+          await chatService.sendMessageAt(roomId, userId, content);
 
-        io.to(roomId).emit('broadcast', { userId, content, createdAt });
+        if (chatId) {
+          io.to(roomId).emit('broadcast', { userId, content, createdAt });
+
+          setTimeout(async () => {
+            const readYet = await chatService.isReadMessage(postId, userId, receiverId);
+
+            if (readYet !== 0) {
+              // eslint-disable-next-line no-restricted-syntax
+              for (const list of side) {
+                io.to(list.socketId).emit('new-chat', { senderName, title, readYet });
+              }
+            }
+          }, 500);
+        }
       } catch (err) {
-        console.log(err);
+        socket.emit('error', 'send 이벤트 실패');
+      }
+    });
+
+    socket.on('read', async (data) => {
+      try {
+        const { roomId } = data;
+        await chatService.readMessage(roomId);
+      } catch (err) {
+        socket.emit('error', 'read 이벤트 실패');
       }
     });
   });
