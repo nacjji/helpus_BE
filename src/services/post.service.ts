@@ -196,16 +196,17 @@ class PostsService {
     isDeadLine?: number,
     location1?: string,
     location2?: string,
-    imageUrl1?: string,
-    imageUrl2?: string,
-    imageUrl3?: string,
+    imageUrls?: string,
     tag?: string
   ) => {
-    const imageFileName1 = imageUrl1?.split('/');
-    const imageFileName2 = imageUrl2?.split('/');
-    const imageFileName3 = imageUrl3?.split('/');
-    const shuffledImg = shuffle(imgs);
-    if (!imageFileName1 && !imageFileName2 && !imageFileName3) {
+    const { imageUrl1 } = JSON.parse(JSON.stringify(imageUrls));
+    const { imageUrl2 } = JSON.parse(JSON.stringify(imageUrls));
+    const { imageUrl3 } = JSON.parse(JSON.stringify(imageUrls));
+
+    const imageFileName1 = imageUrl1 ? imageUrl1[0].location.split('/') : imageUrl1;
+    const imageFileName2 = imageUrl2 ? imageUrl2[0].location.split('/') : imageUrl2;
+    const imageFileName3 = imageUrl3 ? imageUrl3[0].location.split('/') : imageUrl3;
+    if (!imageUrl1 && !imageUrl2 && !imageUrl3) {
       const result = await this.postsRepository.updatePost(
         Number(postId),
         Number(userId),
@@ -216,9 +217,9 @@ class PostsService {
         Number(isDeadLine),
         location1 || undefined,
         location2 || undefined,
-        imageFileName1 ? imageFileName1[4] : '',
-        imageFileName2 ? imageFileName2[4] : '',
-        imageFileName3 ? imageFileName3[4] : '',
+        imageFileName1 && imageFileName1[4],
+        imageFileName2 && imageFileName2[4],
+        imageFileName3 && imageFileName3[4],
         tag
       );
       if (!result) {
@@ -226,7 +227,6 @@ class PostsService {
       }
       return result;
     }
-
     const result = await this.postsRepository.updatePost(
       Number(postId),
       Number(userId),
@@ -237,9 +237,9 @@ class PostsService {
       Number(isDeadLine),
       location1 || undefined,
       location2 || undefined,
-      imageFileName1 ? imageFileName1[4] : '',
-      imageFileName2 ? imageFileName2[4] : '',
-      imageFileName3 ? imageFileName3[4] : '',
+      imageFileName1 ? imageFileName1[4] : imageFileName1,
+      imageFileName2 ? imageFileName2[4] : imageFileName2,
+      imageFileName3 ? imageFileName3[4] : imageFileName3,
       tag
     );
     if (!result) {

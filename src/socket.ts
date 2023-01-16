@@ -34,7 +34,6 @@ const Socket = (server: http.Server) => {
         socket.emit('error', 'test 이벤트 실패');
       }
     });
-    // 방 입장하기
 
     socket.on('join', async (data) => {
       try {

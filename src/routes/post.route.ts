@@ -21,7 +21,12 @@ postsRouter.get('/:postId', postsController.findDetailPost);
 postsRouter.put(
   '/:postId',
   requiredLogin,
-  [multeruploader.array('post-image', 3)],
+  // 지정된 사진을 수정하기 위해 하나씩 세번.. 다른 좋은 방법이 있을까
+  multeruploader.fields([
+    { name: 'imageUrl1', maxCount: 3 },
+    { name: 'imageUrl2' },
+    { name: 'imageUrl3' },
+  ]),
   postsController.updatePost
 );
 postsRouter.delete('/:postId', requiredLogin, postsController.deletePost);
