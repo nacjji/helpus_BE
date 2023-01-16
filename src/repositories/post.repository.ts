@@ -1,5 +1,6 @@
 import { badRequest, notFound } from '@hapi/boom';
 import { PrismaClient } from '@prisma/client';
+import { number } from 'joi';
 
 class PostsRepository {
   prisma: PrismaClient;
@@ -190,7 +191,6 @@ class PostsRepository {
         tag,
       },
     });
-
     return result;
   };
 
