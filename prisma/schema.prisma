@@ -51,7 +51,7 @@ model Post {
   content    String
   category   Int
   appointed  DateTime?
-  isDeadLine Int?      @default(0)
+  isDeadLine Int?      @default(1)
   location1  String?
   location2  String?
   imageUrl1  String?
