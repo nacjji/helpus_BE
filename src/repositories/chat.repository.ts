@@ -31,7 +31,7 @@ class ChatRepository {
         OR: [{ ownerId: userId }, { senderId: userId }],
       },
       include: {
-        Post: { select: { title: true } },
+        Post: { select: { title: true, appointed: true } },
         sender: { select: { userName: true, userImage: true } },
         owner: { select: { userName: true, userImage: true } },
       },
