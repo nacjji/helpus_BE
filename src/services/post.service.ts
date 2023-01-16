@@ -2,7 +2,6 @@
 /* eslint-disable no-param-reassign */
 /* eslint-disable no-plusplus */
 import { notFound } from '@hapi/boom';
-import { env } from 'process';
 import PostsRepository from '../repositories/post.repository';
 import AuthRepository from '../repositories/auth.repository';
 import prisma from '../config/database/prisma';
@@ -217,9 +216,9 @@ class PostsService {
         Number(isDeadLine),
         location1 || undefined,
         location2 || undefined,
-        imageFileName1 ? imageFileName1[4] : shuffledImg[0],
-        imageFileName2 ? imageFileName2[4] : shuffledImg[1],
-        imageFileName3 ? imageFileName3[4] : shuffledImg[2],
+        imageFileName1 ? imageFileName1[4] : '',
+        imageFileName2 ? imageFileName2[4] : '',
+        imageFileName3 ? imageFileName3[4] : '',
         tag
       );
       if (!result) {
