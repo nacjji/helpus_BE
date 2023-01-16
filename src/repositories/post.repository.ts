@@ -109,8 +109,6 @@ class PostsRepository {
       // 생성순으로 정렬
       orderBy: { createdAt: 'desc' },
     });
-    console.log(result);
-
     return result;
   };
 
@@ -144,6 +142,8 @@ class PostsRepository {
     tag?: string
   ) => {
     const postExist = await this.prisma.post.findUnique({ where: { postId } });
+
+    console.log(postExist?.content);
     if (!postExist) {
       throw notFound('게시글 없음');
     }
@@ -157,10 +157,10 @@ class PostsRepository {
         userId,
         title,
         content,
-        category,
+        category: category || postExist.category,
         appointed,
         updated: 1,
-        isDeadLine,
+        isDeadLine: isDeadLine || postExist.isDeadLine,
         location1,
         location2,
         imageUrl1,
