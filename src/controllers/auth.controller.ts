@@ -6,7 +6,6 @@ import {
   loginPattenrn,
   updatePattern,
 } from '../validations/auth.validations';
-import { deleteS3Image } from '../middlewares/multer.uploader';
 
 class AuthController {
   authService: AuthService;
@@ -93,10 +92,19 @@ class AuthController {
       const { userId } = res.locals;
       const old = await this.authService.updateImage(userId, fileUrl[fileUrl.length - 1]);
 
-      if (old) deleteS3Image(old);
       res.status(200).json({ userImage });
     } catch (err) {
-      if (userImage) deleteS3Image(fileUrl[fileUrl.length - 1]);
+      next(err);
+    }
+  };
+
+  public deleteImage: RequestHandler = async (req, res, next) => {
+    try {
+      const { userId } = res.locals;
+      const userImage = await this.authService.deleteImage(userId);
+
+      res.status(200).json({ userImage });
+    } catch (err) {
       next(err);
     }
   };

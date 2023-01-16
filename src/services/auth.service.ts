@@ -2,9 +2,11 @@ import { badRequest } from '@hapi/boom';
 import * as jwt from 'jsonwebtoken';
 import * as bcrypt from 'bcrypt';
 import AuthRepository from '../repositories/auth.repository';
+import { deleteS3Image } from '../middlewares/multer.uploader';
 
 const { JWT_SECRET_KEY } = process.env as { JWT_SECRET_KEY: string };
 const { salt } = process.env as { salt: string };
+const { S3_BUCKET_URL } = process.env as { S3_BUCKET_URL: string };
 
 class AuthService {
   authRepository: AuthRepository;
@@ -30,6 +32,9 @@ class AuthService {
     const check = await this.authRepository.emailCheck(email);
     if (check) throw badRequest('사용 중인 이메일');
 
+    const date = new Date();
+    const seed = Number(date) % 20;
+
     const hash = await bcrypt.hash(password, Number(salt));
     const result = await this.authRepository.createUser(
       email,
@@ -37,7 +42,7 @@ class AuthService {
       hash,
       state1,
       state2,
-      profileImage
+      profileImage || `random/${seed}.png`
     );
     return result;
   };
@@ -72,9 +77,7 @@ class AuthService {
     if (!userInfo) throw badRequest('요구사항에 맞지 않는 입력값');
     else {
       let imageUrl = userInfo.userImage;
-      if (!userInfo.userImage) imageUrl = null;
-      else if (!userInfo.kakao)
-        imageUrl = `${process.env.S3_BUCKET_URL}/profile/${userInfo?.userImage}`;
+      if (!userInfo.kakao) imageUrl = `${process.env.S3_BUCKET_URL}/profile/${userInfo?.userImage}`;
 
       const scoreAvg =
         // eslint-disable-next-line no-unsafe-optional-chaining
@@ -107,9 +110,25 @@ class AuthService {
 
   public updateImage = async (userId: number, userImage: string) => {
     const user = await this.authRepository.userInfo(userId);
-    if (!user) throw badRequest('해당 유저 없음');
+    if (!user) {
+      if (!userImage.includes('/')) deleteS3Image(userImage);
+      throw badRequest('해당 유저 없음');
+    }
     await this.authRepository.updateImage(userId, userImage);
-    return user.userImage;
+    if (!user.userImage.includes('/')) deleteS3Image(user.userImage);
+  };
+
+  public deleteImage = async (userId: number) => {
+    const user = await this.authRepository.userInfo(userId);
+    if (!user) throw badRequest('해당 유저 없음');
+
+    const date = new Date();
+    const seed = Number(date) % 20;
+
+    const result = await this.authRepository.updateImage(userId, `random/${seed}.png`);
+
+    if (!user.userImage.includes('/')) deleteS3Image(user.userImage);
+    return `${S3_BUCKET_URL}/profile/${result.userImage}`;
   };
 
   public changePassword = async (userId: number, newPw: string, oldPw: string) => {

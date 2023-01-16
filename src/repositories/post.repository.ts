@@ -142,8 +142,34 @@ class PostsRepository {
     tag?: string
   ) => {
     const postExist = await this.prisma.post.findUnique({ where: { postId } });
+
     if (!postExist) {
       throw notFound('게시글 없음');
+    }
+    if (postExist.userId !== userId) {
+      throw badRequest('해당 글의 작성자가 아닙니다.');
+    }
+    if (!imageUrl1 && !imageUrl2 && !imageUrl3) {
+      const result = await this.prisma.post.update({
+        where: { postId },
+        data: {
+          postId,
+          userId,
+          title,
+          content,
+          category: category || postExist.category,
+          appointed,
+          updated: 1,
+          isDeadLine: isDeadLine || postExist.isDeadLine,
+          location1,
+          location2,
+          imageUrl1: postExist.imageUrl1,
+          imageUrl2: postExist.imageUrl2,
+          imageUrl3: postExist.imageUrl3,
+          tag,
+        },
+      });
+      return result;
     }
     const result = await this.prisma.post.update({
       where: { postId },
@@ -152,10 +178,10 @@ class PostsRepository {
         userId,
         title,
         content,
-        category,
+        category: category || postExist.category,
         appointed,
         updated: 1,
-        isDeadLine,
+        isDeadLine: isDeadLine || postExist.isDeadLine,
         location1,
         location2,
         imageUrl1,
@@ -164,6 +190,7 @@ class PostsRepository {
         tag,
       },
     });
+
     return result;
   };
 

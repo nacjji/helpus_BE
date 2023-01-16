@@ -19,7 +19,7 @@ model User {
   password    String?
   state1      String?
   state2      String?
-  userImage   String?
+  userImage   String
   score       Float         @default(0)
   kakao       BigInt?       @unique
   Post        Post[]
@@ -51,7 +51,7 @@ model Post {
   content    String
   category   Int
   appointed  DateTime?
-  isDeadLine Int?      @default(0)
+  isDeadLine Int?      @default(1)
   location1  String?
   location2  String?
   imageUrl1  String?

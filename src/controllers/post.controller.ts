@@ -1,8 +1,8 @@
 /* eslint-disable class-methods-use-this */
-import { badRequest, unauthorized } from '@hapi/boom';
+import { unauthorized } from '@hapi/boom';
 import { Request, Response, NextFunction, RequestHandler } from 'express';
 import PostsService from '../services/post.service';
-import { postInputPattern, postIdPattern } from '../validations/posts.validation';
+import { postInputPattern } from '../validations/posts.validation';
 
 class PostsController {
   postsService: PostsService;
@@ -19,8 +19,7 @@ class PostsController {
         await postInputPattern.validateAsync(req.body);
 
       const filesArr = req.files! as Array<Express.MulterS3.File>;
-
-      const imageUrl = filesArr.map((file) => file.location);
+      const imageUrl = filesArr.map((files) => files.location);
       const imageUrl1 = imageUrl[0];
       const imageUrl2 = imageUrl[1];
       const imageUrl3 = imageUrl[2];
@@ -46,7 +45,7 @@ class PostsController {
     }
   };
 
-  // 내 위치 조회
+  // 내 위치 게시글 조회
   public myLocationPosts = async (req: Request, res: Response, next: NextFunction) => {
     const { userId, state1, state2 } = res.locals;
     try {

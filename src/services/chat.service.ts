@@ -8,6 +8,13 @@ class ChatService {
     this.chatRepository = new ChatRepository();
   }
 
+  public alarmList = async (ownerId: number) => {
+    const list = await this.chatRepository.alarmList(ownerId);
+    console.log(list);
+
+    return list;
+  };
+
   public searchRoom = async (senderId: number, postId: number, ownerId: number) => {
     const result = await this.chatRepository.searchRoom(senderId, postId);
 

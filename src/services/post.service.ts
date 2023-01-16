@@ -2,7 +2,6 @@
 /* eslint-disable no-param-reassign */
 /* eslint-disable no-plusplus */
 import { notFound } from '@hapi/boom';
-import { env } from 'process';
 import PostsRepository from '../repositories/post.repository';
 import AuthRepository from '../repositories/auth.repository';
 import prisma from '../config/database/prisma';
@@ -124,7 +123,6 @@ class PostsService {
         updated: v.updated,
       };
     });
-    console.log(_result);
 
     return _result;
   };
@@ -206,6 +204,28 @@ class PostsService {
     const imageFileName1 = imageUrl1?.split('/');
     const imageFileName2 = imageUrl2?.split('/');
     const imageFileName3 = imageUrl3?.split('/');
+    const shuffledImg = shuffle(imgs);
+    if (!imageFileName1 && !imageFileName2 && !imageFileName3) {
+      const result = await this.postsRepository.updatePost(
+        Number(postId),
+        Number(userId),
+        title,
+        content,
+        Number(category),
+        appointed,
+        Number(isDeadLine),
+        location1 || undefined,
+        location2 || undefined,
+        imageFileName1 ? imageFileName1[4] : '',
+        imageFileName2 ? imageFileName2[4] : '',
+        imageFileName3 ? imageFileName3[4] : '',
+        tag
+      );
+      if (!result) {
+        throw notFound('게시글 없음');
+      }
+      return result;
+    }
 
     const result = await this.postsRepository.updatePost(
       Number(postId),
@@ -217,14 +237,15 @@ class PostsService {
       Number(isDeadLine),
       location1 || undefined,
       location2 || undefined,
-      imageFileName1 ? imageFileName1[4] : 'luca-bravo-XJXWbfSo2f0-unsplash.jpg',
-      imageFileName2 ? imageFileName2[4] : 'markus-spiske-70Rir5vB96U-unsplash.jpg',
-      imageFileName3 ? imageFileName3[4] : 'markus-spiske-Fa0pTKuoDVY-unsplash.jpg',
+      imageFileName1 ? imageFileName1[4] : '',
+      imageFileName2 ? imageFileName2[4] : '',
+      imageFileName3 ? imageFileName3[4] : '',
       tag
     );
     if (!result) {
       throw notFound('게시글 없음');
     }
+
     return result;
   };
 
