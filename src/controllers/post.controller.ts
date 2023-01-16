@@ -1,6 +1,7 @@
 /* eslint-disable class-methods-use-this */
-import { unauthorized } from '@hapi/boom';
+import { badRequest, unauthorized } from '@hapi/boom';
 import { Request, Response, NextFunction, RequestHandler } from 'express';
+import { multeruploader } from '../middlewares/multer.uploader';
 import PostsService from '../services/post.service';
 import { postInputPattern } from '../validations/posts.validation';
 
@@ -101,13 +102,16 @@ class PostsController {
       const { title, content, location1, category, appointed, isDeadLine, location2, tag } =
         req.body;
       const { userId } = res.locals;
-      await postInputPattern.validateAsync(req.body);
-      const filesArr = req.files! as Array<Express.MulterS3.File>;
-      const imageUrl = filesArr.map((file) => file.location);
-      const imageUrl1 = imageUrl[0];
-      const imageUrl2 = imageUrl[1];
-      const imageUrl3 = imageUrl[2];
 
+      if (!postInputPattern.validateAsync) {
+        throw badRequest('수정사항이 없습니다.');
+      }
+      await postInputPattern.validateAsync(req.body);
+      // req.files 가 undefined 면 기존 이미지 넣기
+
+      // req.files 가 하나라도 undefined 면 에러 발생
+
+      const imageUrls = JSON.parse(JSON.stringify(req.files)) || '';
       const result = await this.postsService.updatePost(
         postId,
         userId,
@@ -118,13 +122,13 @@ class PostsController {
         isDeadLine,
         location1,
         location2,
-        imageUrl1,
-        imageUrl2,
-        imageUrl3,
+        imageUrls,
         tag
       );
       return res.status(201).json({ result });
     } catch (err) {
+      console.log(err);
+
       return next(err);
     }
   };
