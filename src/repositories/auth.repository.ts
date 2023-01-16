@@ -22,7 +22,7 @@ class AuthRepository {
     password: string,
     state1: string,
     state2: string,
-    profileImage?: string
+    profileImage: string
   ) => {
     const result = await this.prisma.user.create({
       data: { email, userName, password, state1, state2, userImage: profileImage },
