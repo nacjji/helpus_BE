@@ -39,9 +39,9 @@ class ChatService {
         title: v.Post.title,
         appointed: v.Post.appointed,
         senderName: v.sender.userName,
-        senderImage: `${process.env.S3_BUCKET_URL}${v.sender.userImage}`,
+        senderImage: `${process.env.S3_BUCKET_URL}/profile/${v.sender.userImage}`,
         ownerName: v.owner.userName,
-        ownerImage: `${process.env.S3_BUCKET_URL}${v.owner.userImage}`,
+        ownerImage: `${process.env.S3_BUCKET_URL}/profile/${v.owner.userImage}`,
       };
     });
     return { list: _results };
