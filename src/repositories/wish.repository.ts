@@ -16,10 +16,10 @@ class WishsRepository {
     }
     if (wishExist.length) {
       await this.prisma.wish.deleteMany({ where: { userId } });
-      return '찜 취소';
+      return ['찜 취소', postId];
     }
     await this.prisma.wish.create({ data: { postId, userId } });
-    return '찜';
+    return ['찜', postId];
   };
 }
 

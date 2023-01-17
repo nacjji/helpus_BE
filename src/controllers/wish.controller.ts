@@ -15,7 +15,7 @@ class WishsController {
 
       const { userId } = res.locals;
       const result = await this.wishsService.wishPost(Number(postId), userId);
-      return res.status(201).json({ message: result });
+      return res.status(201).json({ message: result.message, postId: result.postId });
     } catch (err) {
       return next(err);
     }
