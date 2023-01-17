@@ -29,8 +29,22 @@ class ChatService {
 
   public roomList = async (userId: number) => {
     const results = await this.chatRepository.roomList(userId);
-
-    return { list: results };
+    // eslint-disable-next-line no-underscore-dangle
+    const _results = results.map((v) => {
+      return {
+        roomId: v.roomId,
+        ownerId: v.ownerId,
+        senderId: v.senderId,
+        postId: v.postId,
+        title: v.Post.title,
+        appointed: v.Post.appointed,
+        senderName: v.sender.userName,
+        senderImage: `${process.env.S3_BUCKET_URL}/profile/${v.sender.userImage}`,
+        ownerName: v.owner.userName,
+        ownerImage: `${process.env.S3_BUCKET_URL}/profile/${v.owner.userImage}`,
+      };
+    });
+    return { list: _results };
   };
 
   public sendMessageAt = async (roomId: string, userId: number, content: string) => {
@@ -93,7 +107,6 @@ class ChatService {
 
   public chatHistory = async (roomId: string) => {
     const result = await this.chatRepository.chatHistory(roomId);
-
     return result;
   };
 }
