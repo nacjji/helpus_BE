@@ -4,18 +4,49 @@ import * as jwt from 'jsonwebtoken';
 
 const { JWT_SECRET_KEY } = process.env as { JWT_SECRET_KEY: string };
 
+const checkToken = (token: string) => {
+  try {
+    const userInfo: any = jwt.verify(token, JWT_SECRET_KEY);
+    return userInfo;
+  } catch (err) {
+    return false;
+  }
+};
+
+const makeToken = (userInfo) => {};
+
 const requiredLogin: RequestHandler = (req, res, next) => {
+  const refreshToken = req.cookies.helpus_cookie;
   const { authorization } = req.headers;
 
   try {
-    if (!authorization) throw unauthorized('로그인 필요');
+    if (!authorization || !refreshToken) throw unauthorized('로그인 필요');
     const [tokenType, tokenValue] = authorization.split(' ');
 
-    if (tokenType === 'Bearer' && tokenValue) {
-      const payload: any = jwt.verify(tokenValue, JWT_SECRET_KEY);
+    const userInfo = checkToken(refreshToken);
 
-      res.locals.userId = payload.userId;
-      res.locals.userName = payload.userName;
+    if (!userInfo) throw unauthorized('로그인 필요');
+
+    if (tokenType === 'Bearer' && tokenValue) {
+      const payload = checkToken(tokenValue);
+
+      if (payload) {
+        res.locals.userId = payload.userId;
+        res.locals.userName = payload.userName;
+      } else {
+        jwt.sign(
+          {
+            userId: user.userId,
+            userName: user.userName,
+            state1: user.state1,
+            state2: user.state2,
+          },
+          JWT_SECRET_KEY,
+          {
+            expiresIn: '30m',
+          }
+        );
+      }
     }
     next();
   } catch (err) {

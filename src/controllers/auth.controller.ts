@@ -50,11 +50,14 @@ class AuthController {
       const { email, password } = await loginPattenrn.validateAsync(req.body);
       const result = await this.authService.localLogin(email, password);
 
+      //TODO: 프론트까지 배포 완료 이후 쿠키 보안 설정
+      res.cookie('helpus_cookie', result.refreshToken, { sameSite: 'none', secure: false });
+
       res.status(200).json({
         userId: result.userId,
         userName: result.userName,
         userImage: result.userImage,
-        token: result.token,
+        token: result.accessToken,
       });
     } catch (err) {
       next(err);

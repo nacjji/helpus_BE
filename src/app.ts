@@ -1,4 +1,6 @@
 import * as express from 'express';
+import session = require('express-session');
+import cookieParser = require('cookie-parser');
 import * as cors from 'cors';
 import helmet from 'helmet';
 import * as compression from 'compression';
@@ -8,6 +10,8 @@ import router from './routes';
 import errorHandler from './middlewares/errorHandler';
 import logger from './config/logger';
 import Socket from './socket';
+
+const { COOKIE } = process.env as { COOKIE: string };
 
 class App {
   private app;
@@ -32,6 +36,15 @@ class App {
     this.app.use(morgan);
     this.app.use('/api', router);
     this.app.use(errorHandler);
+    //TODO: 프론트까지 배포 완료 이후 쿠키 보안 설정
+    this.app.use(
+      session({
+        saveUninitialized: false,
+        resave: false,
+        secret: COOKIE,
+      })
+    );
+    this.app.use(cookieParser(COOKIE));
   }
 
   public listen(port: number) {
