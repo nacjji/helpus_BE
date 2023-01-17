@@ -13,8 +13,6 @@ const checkToken = (token: string) => {
   }
 };
 
-const makeToken = (userInfo) => {};
-
 const requiredLogin: RequestHandler = (req, res, next) => {
   const refreshToken = req.cookies.helpus_cookie;
   const { authorization } = req.headers;
@@ -33,19 +31,6 @@ const requiredLogin: RequestHandler = (req, res, next) => {
       if (payload) {
         res.locals.userId = payload.userId;
         res.locals.userName = payload.userName;
-      } else {
-        jwt.sign(
-          {
-            userId: user.userId,
-            userName: user.userName,
-            state1: user.state1,
-            state2: user.state2,
-          },
-          JWT_SECRET_KEY,
-          {
-            expiresIn: '30m',
-          }
-        );
       }
     }
     next();
