@@ -93,6 +93,7 @@ class AuthService {
         state1: userInfo.state1,
         state2: userInfo.state2,
         score: Number(scoreAvg.toFixed(1)),
+        reportCount: userInfo.Report.length,
       };
     }
   };
