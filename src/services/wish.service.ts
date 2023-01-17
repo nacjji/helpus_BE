@@ -11,7 +11,8 @@ class WishsService {
 
   public wishPost = async (postId: number, userId: number) => {
     const result = await this.wishsRepository.wishPost(Number(postId), userId);
-    return result;
+    console.log(result);
+    return { message: result[0], postId };
   };
 }
 
