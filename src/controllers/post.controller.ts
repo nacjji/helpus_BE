@@ -1,7 +1,6 @@
 /* eslint-disable class-methods-use-this */
 import { badRequest, unauthorized } from '@hapi/boom';
 import { Request, Response, NextFunction, RequestHandler } from 'express';
-import { multeruploader } from '../middlewares/multer.uploader';
 import PostsService from '../services/post.service';
 import { postInputPattern } from '../validations/posts.validation';
 
