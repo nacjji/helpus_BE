@@ -64,7 +64,6 @@
         roomId = data;
       });
 
-      // broadcast 라는 이벤트를 발생시킴
       socket.on('broadcast', (data) => {
         $('#real-time-chat').append(
           `<li>${data.userId} : ${data.content},[ ${data.createdAt}]</li>`

@@ -101,7 +101,7 @@ class AuthController {
 
     try {
       const { userId } = res.locals;
-      const old = await this.authService.updateImage(userId, fileUrl[fileUrl.length - 1]);
+      await this.authService.updateImage(userId, fileUrl[fileUrl.length - 1]);
 
       res.status(200).json({ userImage });
     } catch (err) {
