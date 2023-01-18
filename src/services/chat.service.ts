@@ -42,6 +42,7 @@ class ChatService {
         senderImage: `${process.env.S3_BUCKET_URL}/profile/${v.sender.userImage}`,
         ownerName: v.owner.userName,
         ownerImage: `${process.env.S3_BUCKET_URL}/profile/${v.owner.userImage}`,
+        leave: v.leave,
       };
     });
     return { list: _results };
