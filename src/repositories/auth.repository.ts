@@ -39,33 +39,13 @@ class AuthRepository {
   };
 
   public wishlist = async (userId: number) => {
-    interface Wish {
-      postId: number;
-      userId: number;
-      post?: object;
-    }
-
-    const results: Wish[] = await this.prisma.wish.findMany({
+    const results = await this.prisma.wish.findMany({
       where: { userId },
       include: {
-        post: {
-          select: {
-            postId: true,
-            userName: true,
-            title: true,
-            content: true,
-            category: true,
-            location1: true,
-            location2: true,
-            imageUrl1: true,
-            tag: true,
-            createdAt: true,
-            updated: true,
-          },
-        },
+        user: { select: { userImage: true } },
+        post: true,
       },
     });
-
     return results;
   };
 
