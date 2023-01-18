@@ -29,6 +29,7 @@ class ChatRepository {
     const results = await this.prisma.room.findMany({
       where: {
         OR: [{ ownerId: userId }, { senderId: userId }],
+        AND: { NOT: { leave: userId } },
       },
       include: {
         Post: { select: { title: true, appointed: true } },
@@ -48,6 +49,19 @@ class ChatRepository {
         roomId,
         ownerId,
       },
+    });
+  };
+
+  public leaveRoom = async (userId: number, roomId: string) => {
+    await this.prisma.room.update({
+      where: { roomId },
+      data: { leave: userId },
+    });
+  };
+
+  public deleteRoom = async (roomId: string) => {
+    await this.prisma.room.delete({
+      where: { roomId },
     });
   };
 

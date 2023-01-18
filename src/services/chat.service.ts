@@ -109,6 +109,11 @@ class ChatService {
     const result = await this.chatRepository.chatHistory(roomId);
     return result;
   };
+
+  public leaveRoom = async (userId: number, roomId: string, leave: number) => {
+    if (!leave) await this.chatRepository.leaveRoom(userId, roomId);
+    else await this.chatRepository.deleteRoom(roomId);
+  };
 }
 
 export default ChatService;
