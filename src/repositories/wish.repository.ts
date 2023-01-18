@@ -15,7 +15,7 @@ class WishsRepository {
       throw notFound('게시글 없음');
     }
     if (wishExist.length) {
-      await this.prisma.wish.deleteMany({ where: { userId } });
+      await this.prisma.wish.deleteMany({ where: { userId, postId } });
       return ['찜 취소', postId];
     }
     await this.prisma.wish.create({ data: { postId, userId } });
