@@ -87,6 +87,7 @@ model Room {
   ownerId  Int
   senderId Int
   postId   Int
+  leave    Int    @default(0)
   Chat     Chat[]
 }
 
