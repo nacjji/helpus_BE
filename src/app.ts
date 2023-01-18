@@ -42,6 +42,10 @@ class App {
         saveUninitialized: false,
         resave: false,
         secret: COOKIE,
+        cookie: {
+          httpOnly: true,
+          secure: false,
+        },
       })
     );
     this.app.use(cookieParser(COOKIE));
