@@ -92,7 +92,7 @@ class AuthService {
         email: userInfo.email,
         state1: userInfo.state1,
         state2: userInfo.state2,
-        score: Number(scoreAvg.toFixed(1)),
+        score: Number(scoreAvg.toFixed(0)),
         reportCount: userInfo.Report.length,
       };
     }
