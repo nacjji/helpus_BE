@@ -4,7 +4,6 @@ import { PrismaClient } from '@prisma/client';
 class PostsRepository {
   prisma: PrismaClient;
 
-  // prisma 스키마를 생성자로 받는다.
   constructor(prisma: any) {
     this.prisma = prisma;
   }

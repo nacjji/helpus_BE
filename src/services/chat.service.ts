@@ -10,8 +10,6 @@ class ChatService {
 
   public alarmList = async (ownerId: number) => {
     const list = await this.chatRepository.alarmList(ownerId);
-    console.log(list);
-
     return list;
   };
 
