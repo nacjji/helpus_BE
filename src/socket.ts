@@ -121,6 +121,15 @@ const Socket = (server: http.Server) => {
         socket.emit('error', 'read 이벤트 실패');
       }
     });
+
+    socket.on('leave', async (data) => {
+      try {
+        const { roomId } = data;
+        socket.leave(roomId);
+      } catch (err) {
+        socket.emit('error', 'leave 이벤트 실패');
+      }
+    });
   });
 };
 
