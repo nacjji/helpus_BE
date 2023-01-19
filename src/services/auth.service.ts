@@ -55,7 +55,7 @@ class AuthService {
     const match = await bcrypt.compare(password, user.password);
     if (!match) throw badRequest('이메일/비밀번호 불일치');
 
-    const accessToken = await jwt.sign(
+    const token = await jwt.sign(
       { userId: user.userId, userName: user.userName, state1: user.state1, state2: user.state2 },
       JWT_SECRET_KEY,
       {
@@ -75,7 +75,7 @@ class AuthService {
       userId: user.userId,
       userName: user.userName,
       userImage: `${process.env.S3_BUCKET_URL}/profile/${user.userImage}`,
-      accessToken,
+      token,
       refreshToken,
     };
   };
