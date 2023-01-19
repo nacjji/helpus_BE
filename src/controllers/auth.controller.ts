@@ -1,4 +1,5 @@
 import { RequestHandler } from 'express';
+import * as requestIp from 'request-ip';
 import AuthService from '../services/auth.service';
 import {
   emailPattern,
@@ -13,6 +14,11 @@ class AuthController {
   constructor() {
     this.authService = new AuthService();
   }
+
+  public test: RequestHandler = (req, res, next) => {
+    const ip = req.headers['X-Forwarded-For'];
+    res.status(200).json({ message: ip });
+  };
 
   public emailCheck: RequestHandler = async (req, res, next) => {
     try {
