@@ -1,6 +1,4 @@
-/* eslint-disable no-lonely-if */
 /* eslint-disable no-param-reassign */
-/* eslint-disable no-plusplus */
 import { notFound } from '@hapi/boom';
 import PostsRepository from '../repositories/post.repository';
 import AuthRepository from '../repositories/auth.repository';
@@ -9,6 +7,7 @@ import prisma from '../config/database/prisma';
 const shuffle = ([...image]) => {
   let imgLength = image.length;
   while (imgLength) {
+    // eslint-disable-next-line no-plusplus
     const imgIndex = Math.floor(Math.random() * imgLength--);
     [image[imgLength], image[imgIndex]] = [image[imgIndex], image[imgLength]];
   }
@@ -69,7 +68,7 @@ class PostsService {
       );
       return result;
     }
-    // 동작은 되지만 리팩토링이 필요할 거 같네요...
+    // FIXME : Refectoring 시 중복 코드 제거 필요
     const result = await this.postsRepository.createPost(
       userId,
       userName,
@@ -87,8 +86,6 @@ class PostsService {
     );
     return result;
   };
-
-  // 에러가 났음에도 사진이 s3 에 업로드 됨
 
   // 전체 조회
   // eslint-disable-next-line class-methods-use-this

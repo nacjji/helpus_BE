@@ -1,4 +1,4 @@
-import * as shortId from 'shortid';
+import { nanoid } from 'nanoid';
 import ChatRepository from '../repositories/chat.repository';
 
 class ChatService {
@@ -10,8 +10,6 @@ class ChatService {
 
   public alarmList = async (ownerId: number) => {
     const list = await this.chatRepository.alarmList(ownerId);
-    console.log(list);
-
     return list;
   };
 
@@ -22,7 +20,7 @@ class ChatService {
       return result.roomId;
     }
 
-    const roomId = shortId.generate();
+    const roomId = nanoid();
     await this.chatRepository.createRoom(senderId, postId, roomId, ownerId);
     return roomId;
   };
@@ -42,6 +40,7 @@ class ChatService {
         senderImage: `${process.env.S3_BUCKET_URL}/profile/${v.sender.userImage}`,
         ownerName: v.owner.userName,
         ownerImage: `${process.env.S3_BUCKET_URL}/profile/${v.owner.userImage}`,
+        leave: v.leave,
       };
     });
     return { list: _results };
@@ -79,6 +78,10 @@ class ChatService {
     };
   };
 
+  public acceptCard = async (roomId: string) => {
+    await this.chatRepository.acceptCard(roomId);
+  };
+
   public readMessage = async (roomId: string) => {
     this.chatRepository.readMessage(roomId);
   };
@@ -108,6 +111,11 @@ class ChatService {
   public chatHistory = async (roomId: string) => {
     const result = await this.chatRepository.chatHistory(roomId);
     return result;
+  };
+
+  public leaveRoom = async (userId: number, roomId: string, leave: number) => {
+    if (!leave) await this.chatRepository.leaveRoom(userId, roomId);
+    else await this.chatRepository.deleteRoom(roomId);
   };
 }
 

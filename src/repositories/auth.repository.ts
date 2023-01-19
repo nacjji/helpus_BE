@@ -110,7 +110,10 @@ class AuthRepository {
 
   // eslint-disable-next-line class-methods-use-this
   public myPosts = async (userId: number) => {
-    const myPosts = await this.prisma.post.findMany({ where: { userId } });
+    const myPosts = await this.prisma.post.findMany({
+      where: { userId },
+      include: { user: { select: { userImage: true } } },
+    });
 
     return myPosts;
   };

@@ -55,7 +55,7 @@ class AuthService {
     const match = await bcrypt.compare(password, user.password);
     if (!match) throw badRequest('이메일/비밀번호 불일치');
 
-    const accessToken = await jwt.sign(
+    const token = await jwt.sign(
       { userId: user.userId, userName: user.userName, state1: user.state1, state2: user.state2 },
       JWT_SECRET_KEY,
       {
@@ -75,7 +75,7 @@ class AuthService {
       userId: user.userId,
       userName: user.userName,
       userImage: `${process.env.S3_BUCKET_URL}/profile/${user.userImage}`,
-      accessToken,
+      token,
       refreshToken,
     };
   };
@@ -86,7 +86,8 @@ class AuthService {
     if (!userInfo) throw badRequest('요구사항에 맞지 않는 입력값');
     else {
       let imageUrl = userInfo.userImage;
-      if (!userInfo.kakao) imageUrl = `${process.env.S3_BUCKET_URL}/profile/${userInfo?.userImage}`;
+      if (!userInfo.kakao || !userInfo.userImage.includes('http://'))
+        imageUrl = `${process.env.S3_BUCKET_URL}/profile/${userInfo?.userImage}`;
 
       const scoreAvg =
         // eslint-disable-next-line no-unsafe-optional-chaining
@@ -101,7 +102,7 @@ class AuthService {
         email: userInfo.email,
         state1: userInfo.state1,
         state2: userInfo.state2,
-        score: Number(scoreAvg.toFixed(1)),
+        score: Number(scoreAvg.toFixed(0)) || 0,
         reportCount: userInfo.Report.length,
       };
     }
@@ -185,7 +186,28 @@ class AuthService {
 
   public myPosts = async (userId: number) => {
     const myPosts = await this.authRepository.myPosts(userId);
-    return myPosts;
+    const result = myPosts.map((v) => {
+      return {
+        postId: v.postId,
+        userId: v.userId,
+        userName: v.userName,
+        userImage: `${process.env.S3_BUCKET_URL}/profile/${v.user.userImage}`,
+        title: v.title,
+        content: v.content,
+        category: v.category,
+        appointed: v.appointed,
+        isDeadLine: v.isDeadLine,
+        location1: v.location1,
+        location2: v.location2,
+        imageUrl1: `${process.env.S3_BUCKET_URL}/${v.imageUrl1}`,
+        imageUrl2: `${process.env.S3_BUCKET_URL}/${v.imageUrl2}`,
+        imageUrl3: `${process.env.S3_BUCKET_URL}/${v.imageUrl3}`,
+        tag: v.tag,
+        createdAt: v.createdAt,
+        updated: v.updated,
+      };
+    });
+    return result;
   };
 }
 

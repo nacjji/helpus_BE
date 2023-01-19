@@ -1,4 +1,3 @@
-import { badRequest } from '@hapi/boom';
 import prisma from '../config/database/prisma';
 import ReportRepository from '../repositories/report.repository';
 

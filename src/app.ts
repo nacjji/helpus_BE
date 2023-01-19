@@ -22,6 +22,7 @@ class App {
 
   constructor() {
     this.app = express();
+    this.app.set('trust proxy', true);
     this.httpServer = createServer(this.app);
     this.io = Socket(this.httpServer);
     this.app.set('io', this.io);
