@@ -102,6 +102,7 @@ class AuthService {
         state1: userInfo.state1,
         state2: userInfo.state2,
         score: Number(scoreAvg.toFixed(1)),
+        reportCount: userInfo.Report.length,
       };
     }
   };
@@ -113,7 +114,27 @@ class AuthService {
   public wishlist = async (userId: number) => {
     const posts = await this.authRepository.wishlist(userId);
 
-    const results = posts.map((v) => v.post);
+    const results = posts.map((v) => {
+      return {
+        postId: v.postId,
+        userId: v.userId,
+        userImage: `${process.env.S3_BUCKET_URL}/profile/${v.user.userImage}`,
+        userName: v.post.userName,
+        title: v.post.title,
+        content: v.post.content,
+        category: v.post.category,
+        appointed: v.post.appointed,
+        isDeadLine: v.post.isDeadLine,
+        location1: v.post.location1,
+        location2: v.post.location2,
+        imageUrl1: `${process.env.S3_BUCKET_URL}/${v.post.imageUrl1}`,
+        imageUrl2: `${process.env.S3_BUCKET_URL}/${v.post.imageUrl2}`,
+        imageUrl3: `${process.env.S3_BUCKET_URL}/${v.post.imageUrl3}`,
+        tag: v.post.tag,
+        createdAt: v.post.createdAt,
+        updated: v.post.updated,
+      };
+    });
     return results;
   };
 

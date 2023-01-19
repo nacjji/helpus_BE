@@ -1,7 +1,6 @@
 /* eslint-disable class-methods-use-this */
 import { badRequest, unauthorized } from '@hapi/boom';
 import { Request, Response, NextFunction, RequestHandler } from 'express';
-import { multeruploader } from '../middlewares/multer.uploader';
 import PostsService from '../services/post.service';
 import { postInputPattern } from '../validations/posts.validation';
 
@@ -19,6 +18,7 @@ class PostsController {
       const { title, content, category, appointed, location1, location2, tag, createdAt } =
         await postInputPattern.validateAsync(req.body);
 
+      // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
       const filesArr = req.files! as Array<Express.MulterS3.File>;
       const imageUrl = filesArr.map((files) => files.location);
       const imageUrl1 = imageUrl[0];
@@ -55,9 +55,6 @@ class PostsController {
       }
       const search = req.query.search as string;
       const category = Number(req.query.category);
-
-      // const category = Number(req.query.category);
-
       const q = Number(req.query.q);
       const result = await this.postsService.myLocationPosts(q, state1, state2, category, search);
       return res.status(200).json({ result });
@@ -107,9 +104,6 @@ class PostsController {
         throw badRequest('수정사항이 없습니다.');
       }
       await postInputPattern.validateAsync(req.body);
-      // req.files 가 undefined 면 기존 이미지 넣기
-
-      // req.files 가 하나라도 undefined 면 에러 발생
 
       const imageUrls = JSON.parse(JSON.stringify(req.files)) || '';
       const result = await this.postsService.updatePost(
@@ -127,8 +121,6 @@ class PostsController {
       );
       return res.status(201).json({ result });
     } catch (err) {
-      console.log(err);
-
       return next(err);
     }
   };

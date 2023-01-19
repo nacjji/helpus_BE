@@ -2,9 +2,7 @@
 // learn more about it in the docs: https://pris.ly/d/prisma-schema
 
 generator client {
-  provider        = "prisma-client-js"
-  // 검색에 사용되는 라이브러리
-  previewFeatures = ["fullTextSearch", "fullTextIndex"]
+  provider = "prisma-client-js"
 }
 
 datasource db {
@@ -21,6 +19,7 @@ model User {
   state2      String?
   userImage   String
   score       Float         @default(0)
+  reportCount Int           @default(0)
   kakao       BigInt?       @unique
   Post        Post[]
   Wish        Wish[]
@@ -31,6 +30,7 @@ model User {
   alarmOwner  Alarm[]       @relation("Owner")
   roomSender  Room[]        @relation("Sender")
   roomOwner   Room[]        @relation("Owner")
+  Report      Report[]
 
   @@unique([userId, userName])
 }
@@ -63,6 +63,7 @@ model Post {
   Wish       Wish[]
   Room       Room[]
   Alarm      Alarm[]
+  Report     Report[]
 }
 
 model Chat {
@@ -112,4 +113,14 @@ model Alarm {
   count    Int  @default(0)
 
   @@id([postId, ownerId, senderId])
+}
+
+model Report {
+  reportId  Int     @id @default(autoincrement())
+  post      Post    @relation(fields: [postId], references: [postId])
+  user      User    @relation(fields: [userId], references: [userId])
+  postId    Int
+  reportNum Int
+  reason    String?
+  userId    Int
 }

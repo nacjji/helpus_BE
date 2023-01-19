@@ -57,8 +57,16 @@ class AuthController {
       const result = await this.authService.localLogin(email, password);
 
       //TODO: 프론트까지 배포 완료 이후 쿠키 보안 설정
-      res.cookie('helpus_token', result.accessToken, { sameSite: 'none', secure: false });
-      res.cookie('helpus_refresh', result.refreshToken, { sameSite: 'none', secure: false });
+      res.cookie('helpus_token', result.accessToken, {
+        sameSite: 'none',
+        domain: 'http://localhost:3000',
+        secure: false,
+      });
+      res.cookie('helpus_refresh', result.refreshToken, {
+        sameSite: 'none',
+        domain: 'http://localhost:3000',
+        secure: false,
+      });
 
       res.status(200).json({
         userId: result.userId,
@@ -99,7 +107,7 @@ class AuthController {
 
     try {
       const { userId } = res.locals;
-      const old = await this.authService.updateImage(userId, fileUrl[fileUrl.length - 1]);
+      await this.authService.updateImage(userId, fileUrl[fileUrl.length - 1]);
 
       res.status(200).json({ userImage });
     } catch (err) {

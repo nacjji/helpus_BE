@@ -1,11 +1,9 @@
 import { badRequest, notFound } from '@hapi/boom';
 import { PrismaClient } from '@prisma/client';
-import { number } from 'joi';
 
 class PostsRepository {
   prisma: PrismaClient;
 
-  // prisma 스키마를 생성자로 받는다.
   constructor(prisma: any) {
     this.prisma = prisma;
   }

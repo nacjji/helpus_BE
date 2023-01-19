@@ -31,52 +31,21 @@ class AuthRepository {
   };
 
   public userInfo = async (userId: number) => {
-    // const userScore = await this.prisma.score.findMany({ where: { userId } });
     const user = await this.prisma.user.findUnique({
       where: { userId },
-      select: {
-        userId: true,
-        userName: true,
-        email: true,
-        userImage: true,
-        state1: true,
-        state2: true,
-        Score: true,
-        kakao: true,
-      },
+      include: { Report: true, Score: true },
     });
-
     return user;
   };
 
   public wishlist = async (userId: number) => {
-    interface Wish {
-      postId: number;
-      userId: number;
-      post?: object;
-    }
-
-    const results: Wish[] = await this.prisma.wish.findMany({
+    const results = await this.prisma.wish.findMany({
       where: { userId },
       include: {
-        post: {
-          select: {
-            postId: true,
-            userName: true,
-            title: true,
-            content: true,
-            category: true,
-            location1: true,
-            location2: true,
-            imageUrl1: true,
-            tag: true,
-            createdAt: true,
-            updated: true,
-          },
-        },
+        user: { select: { userImage: true } },
+        post: true,
       },
     });
-
     return results;
   };
 
