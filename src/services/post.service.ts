@@ -103,8 +103,9 @@ class PostsService {
       return {
         postId: v.postId,
         userId: v.userId,
-        userName: v.userName,
-        userImage: `${process.env.S3_BUCKET_URL}/profile/${v.user.userImage}`,
+        userImage: v.user.userImage.includes('http://')
+          ? v.user.userImage
+          : `${process.env.S3_BUCKET_URL}/profile/${v.user.userImage}`,
         title: v.title,
         content: v.content,
         category: v.category,
@@ -134,7 +135,9 @@ class PostsService {
         postId: v.postId,
         userId: v.userId,
         userName: v.userName,
-        userImage: `${process.env.S3_BUCKET_URL}/profile/${v.user.userImage}`,
+        userImage: v.user.userImage.includes('http://')
+          ? v.user.userImage
+          : `${process.env.S3_BUCKET_URL}/profile/${v.user.userImage}`,
         title: v.title,
         content: v.content,
         category: v.category,
@@ -164,7 +167,9 @@ class PostsService {
       postId: result.postId,
       userId: result.userId,
       userName: result.userName,
-      userImage: `${process.env.S3_BUCKET_URL}/profile/${result.user.userImage}`,
+      userImage: result.user.userImage.includes('http://')
+        ? result.user.userImage
+        : `${process.env.S3_BUCKET_URL}/profile/${result.user.userImage}`,
       title: result.title,
       content: result.content,
       category: result.category,

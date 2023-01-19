@@ -114,13 +114,13 @@ class AuthService {
 
   public wishlist = async (userId: number) => {
     const posts = await this.authRepository.wishlist(userId);
-
     const results = posts.map((v) => {
       return {
         postId: v.postId,
-        userId: v.userId,
-        userImage: `${process.env.S3_BUCKET_URL}/profile/${v.user.userImage}`,
-        userName: v.post.userName,
+        userId: v.post.userId,
+        userImage: v.post.user.userImage.includes('http://')
+          ? v.post.user.userImage
+          : `${process.env.S3_BUCKET_URL}/profile/${v.post.user.userImage}`,
         title: v.post.title,
         content: v.post.content,
         category: v.post.category,
@@ -191,7 +191,9 @@ class AuthService {
         postId: v.postId,
         userId: v.userId,
         userName: v.userName,
-        userImage: `${process.env.S3_BUCKET_URL}/profile/${v.user.userImage}`,
+        userImage: v.user.userImage.includes('http://')
+          ? v.user.userImage
+          : `${process.env.S3_BUCKET_URL}/profile/${v.user.userImage}`,
         title: v.title,
         content: v.content,
         category: v.category,
