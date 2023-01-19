@@ -16,7 +16,8 @@ class AuthController {
   }
 
   public test: RequestHandler = (req, res, next) => {
-    const ip = req.headers['X-Forwarded-For'];
+    const ip = req.headers;
+    console.log(ip);
     res.status(200).json({ message: ip, why: 'check message please' });
   };
 
