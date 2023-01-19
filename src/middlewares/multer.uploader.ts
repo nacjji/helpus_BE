@@ -1,7 +1,7 @@
 import { Request } from 'express';
 import * as multer from 'multer';
+import { nanoid } from 'nanoid';
 import * as multers3 from 'multer-s3';
-import * as shortid from 'shortid';
 import s3 from '../config/AWS.s3';
 
 const multeruploader = multer({
@@ -14,7 +14,7 @@ const multeruploader = multer({
     },
     key(req, file, callback) {
       const fileType = file.mimetype.split('/')[1];
-      callback(null, `helpus/${shortid.generate()}.${fileType}`);
+      callback(null, `helpus/${nanoid()}.${fileType}`);
     },
   }),
 
@@ -39,7 +39,7 @@ const profileUploader = multer({
     },
     key(req, file, callback) {
       const fileType = file.mimetype.split('/')[1];
-      callback(null, `helpus/profile/${shortid.generate()}.${fileType}`);
+      callback(null, `helpus/profile/${nanoid()}.${fileType}`);
     },
   }),
   limits: { fileSize: 20 * 1024 * 1024 },

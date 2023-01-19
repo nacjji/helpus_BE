@@ -1,4 +1,4 @@
-import * as shortId from 'shortid';
+import { nanoid } from 'nanoid';
 import ChatRepository from '../repositories/chat.repository';
 
 class ChatService {
@@ -20,7 +20,7 @@ class ChatService {
       return result.roomId;
     }
 
-    const roomId = shortId.generate();
+    const roomId = nanoid();
     await this.chatRepository.createRoom(senderId, postId, roomId, ownerId);
     return roomId;
   };
