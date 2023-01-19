@@ -94,12 +94,39 @@ const Socket = (server: http.Server) => {
       }
     });
 
+    socket.on('acceptCard', async (data) => {
+      try {
+        const { roomId } = data;
+        chatService.acceptCard(roomId);
+      } catch (err) {
+        socket.emit('error', 'acceptCard 이벤트 실패');
+      }
+    });
+
     socket.on('read', async (data) => {
       try {
         const { roomId } = data;
         await chatService.readMessage(roomId);
       } catch (err) {
         socket.emit('error', 'read 이벤트 실패');
+      }
+    });
+
+    socket.on('leave', async (data) => {
+      try {
+        const { roomId } = data;
+        socket.leave(roomId);
+      } catch (err) {
+        socket.emit('error', 'leave 이벤트 실패');
+      }
+    });
+
+    socket.on('deleteRoom', async (data) => {
+      try {
+        const { roomId, userId, leave } = data;
+        await chatService.leaveRoom(userId, roomId, leave);
+      } catch (err) {
+        socket.emit('error', 'deleteRoom 이벤트 실패');
       }
     });
   });

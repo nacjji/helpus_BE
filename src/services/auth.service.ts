@@ -86,7 +86,8 @@ class AuthService {
     if (!userInfo) throw badRequest('요구사항에 맞지 않는 입력값');
     else {
       let imageUrl = userInfo.userImage;
-      if (!userInfo.kakao) imageUrl = `${process.env.S3_BUCKET_URL}/profile/${userInfo?.userImage}`;
+      if (!userInfo.kakao || !userInfo.userImage.includes('http://'))
+        imageUrl = `${process.env.S3_BUCKET_URL}/profile/${userInfo?.userImage}`;
 
       const scoreAvg =
         // eslint-disable-next-line no-unsafe-optional-chaining
@@ -101,7 +102,7 @@ class AuthService {
         email: userInfo.email,
         state1: userInfo.state1,
         state2: userInfo.state2,
-        score: Number(scoreAvg.toFixed(1)),
+        score: Number(scoreAvg.toFixed(0)) || 0,
         reportCount: userInfo.Report.length,
       };
     }
