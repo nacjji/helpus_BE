@@ -177,7 +177,28 @@ class AuthService {
 
   public myPosts = async (userId: number) => {
     const myPosts = await this.authRepository.myPosts(userId);
-    return myPosts;
+    const result = myPosts.map((v) => {
+      return {
+        postId: v.postId,
+        userId: v.userId,
+        userName: v.userName,
+        userImage: `${process.env.S3_BUCKET_URL}/profile/${v.user.userImage}`,
+        title: v.title,
+        content: v.content,
+        category: v.category,
+        appointed: v.appointed,
+        isDeadLine: v.isDeadLine,
+        location1: v.location1,
+        location2: v.location2,
+        imageUrl1: `${process.env.S3_BUCKET_URL}/${v.imageUrl1}`,
+        imageUrl2: `${process.env.S3_BUCKET_URL}/${v.imageUrl2}`,
+        imageUrl3: `${process.env.S3_BUCKET_URL}/${v.imageUrl3}`,
+        tag: v.tag,
+        createdAt: v.createdAt,
+        updated: v.updated,
+      };
+    });
+    return result;
   };
 }
 
