@@ -86,6 +86,13 @@ class ChatRepository {
     return result;
   };
 
+  public acceptCard = async (roomId: string) => {
+    await this.prisma.chat.updateMany({
+      where: { roomId, content: '`card`0' },
+      data: { content: '`card`1' },
+    });
+  };
+
   public readMessage = async (roomId: string) => {
     await this.prisma.chat.updateMany({
       where: { roomId, isRead: 0 },

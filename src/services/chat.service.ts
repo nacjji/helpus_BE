@@ -80,6 +80,10 @@ class ChatService {
     };
   };
 
+  public acceptCard = async (roomId: string) => {
+    await this.chatRepository.acceptCard(roomId);
+  };
+
   public readMessage = async (roomId: string) => {
     this.chatRepository.readMessage(roomId);
   };

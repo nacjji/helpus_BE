@@ -113,6 +113,15 @@ const Socket = (server: http.Server) => {
       }
     });
 
+    socket.on('acceptCard', async (data) => {
+      try {
+        const { roomId } = data;
+        chatService.acceptCard(roomId);
+      } catch (err) {
+        socket.emit('error', 'acceptCard 이벤트 실패');
+      }
+    });
+
     socket.on('read', async (data) => {
       try {
         const { roomId } = data;
