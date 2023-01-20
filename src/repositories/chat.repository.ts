@@ -25,7 +25,7 @@ class ChatRepository {
     return result;
   };
 
-  public roomList = async (userId: number) => {
+  public roomList = async (userId: number, q: number) => {
     const results = await this.prisma.room.findMany({
       where: {
         OR: [{ ownerId: userId }, { senderId: userId }],
@@ -36,6 +36,9 @@ class ChatRepository {
         sender: { select: { userName: true, userImage: true } },
         owner: { select: { userName: true, userImage: true } },
       },
+      skip: q || 0,
+      take: 6,
+      orderBy: { roomId: 'desc' },
     });
 
     return results;

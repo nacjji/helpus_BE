@@ -21,8 +21,9 @@ class ChatController {
 
   public roomList: RequestHandler = async (req, res, next) => {
     try {
+      const q = Number(req.query.q);
       const { userId } = res.locals;
-      const results = await this.chatService.roomList(userId);
+      const results = await this.chatService.roomList(userId, q);
 
       res.status(200).json(results);
     } catch (err) {
