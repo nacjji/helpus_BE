@@ -42,7 +42,7 @@ class AuthRepository {
     const results = await this.prisma.wish.findMany({
       where: { userId },
       include: {
-        post: { include: { user: { select: { userImage: true } } } },
+        post: { include: { user: { select: { userImage: true, userName: true } } } },
       },
     });
     return results;
