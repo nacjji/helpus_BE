@@ -1,6 +1,3 @@
-// This is your Prisma schema file,
-// learn more about it in the docs: https://pris.ly/d/prisma-schema
-
 generator client {
   provider = "prisma-client-js"
 }
@@ -21,16 +18,16 @@ model User {
   score       Float         @default(0)
   reportCount Int           @default(0)
   kakao       BigInt?       @unique
+  alarmOwner  Alarm[]       @relation("Owner")
+  alarmSender Alarm[]       @relation("Sender")
+  Chat        Chat[]
   Post        Post[]
-  Wish        Wish[]
+  Report      Report[]
+  roomOwner   Room[]        @relation("Owner")
+  roomSender  Room[]        @relation("Sender")
   Score       Score[]
   SocketTable SocketTable[]
-  Chat        Chat[]
-  alarmSender Alarm[]       @relation("Sender")
-  alarmOwner  Alarm[]       @relation("Owner")
-  roomSender  Room[]        @relation("Sender")
-  roomOwner   Room[]        @relation("Owner")
-  Report      Report[]
+  Wish        Wish[]
 
   @@unique([userId, userName])
 }
@@ -38,15 +35,16 @@ model User {
 model Score {
   id     Int   @id @default(autoincrement())
   userId Int
-  user   User  @relation(fields: [userId], references: [userId], onDelete: Cascade)
   score  Float
+  user   User  @relation(fields: [userId], references: [userId], onDelete: Cascade)
+
+  @@index([userId], map: "Score_userId_fkey")
 }
 
 model Post {
   postId     Int       @id @default(autoincrement())
   userId     Int
   userName   String
-  user       User      @relation(fields: [userId, userName], references: [userId, userName], onDelete: Cascade)
   title      String
   content    String
   category   Int
@@ -60,68 +58,86 @@ model Post {
   tag        String?
   createdAt  DateTime  @default(now())
   updated    Int       @default(0)
-  Wish       Wish[]
-  Room       Room[]
   Alarm      Alarm[]
+  user       User      @relation(fields: [userId, userName], references: [userId, userName], onDelete: Cascade)
   Report     Report[]
+  Room       Room[]
+  Wish       Wish[]
+
+  @@index([userId, userName], map: "Post_userId_userName_fkey")
 }
 
 model Chat {
   chatId    Int      @id @default(autoincrement())
-  user      User     @relation(fields: [userId], references: [userId], onDelete: Cascade)
-  Room      Room     @relation(fields: [roomId], references: [roomId], onDelete: Cascade)
   roomId    String
   content   String
   createdAt DateTime @default(now())
   userId    Int
   isRead    Int      @default(0)
+  Room      Room     @relation(fields: [roomId], references: [roomId], onDelete: Cascade)
+  user      User     @relation(fields: [userId], references: [userId], onDelete: Cascade)
+
+  @@index([roomId], map: "Chat_roomId_fkey")
+  @@index([userId], map: "Chat_userId_fkey")
 }
 
 model Room {
   roomId   String @id
-  sender   User   @relation("Sender", fields: [senderId], references: [userId], onDelete: Cascade)
-  owner    User   @relation("Owner", fields: [ownerId], references: [userId], onDelete: Cascade)
-  Post     Post   @relation(fields: [postId], references: [postId], onDelete: Cascade)
   ownerId  Int
   senderId Int
   postId   Int
   leave    Int    @default(0)
   Chat     Chat[]
+  owner    User   @relation("Owner", fields: [ownerId], references: [userId], onDelete: Cascade)
+  Post     Post   @relation(fields: [postId], references: [postId], onDelete: Cascade)
+  sender   User   @relation("Sender", fields: [senderId], references: [userId], onDelete: Cascade)
+
+  @@index([ownerId], map: "Room_ownerId_fkey")
+  @@index([postId], map: "Room_postId_fkey")
+  @@index([senderId], map: "Room_senderId_fkey")
 }
 
 model SocketTable {
   socketId String @id
-  user     User   @relation(fields: [userId], references: [userId])
   userId   Int
+  user     User   @relation(fields: [userId], references: [userId])
+
+  @@index([userId], map: "SocketTable_userId_fkey")
 }
 
 model Wish {
-  post   Post @relation(fields: [postId], references: [postId], onDelete: Cascade)
   postId Int
-  user   User @relation(fields: [userId], references: [userId], onDelete: Cascade)
   userId Int
+  post   Post @relation(fields: [postId], references: [postId], onDelete: Cascade)
+  user   User @relation(fields: [userId], references: [userId], onDelete: Cascade)
 
   @@id([postId, userId])
+  @@index([userId], map: "Wish_userId_fkey")
 }
 
 model Alarm {
-  sender   User @relation("Sender", fields: [senderId], references: [userId], onDelete: Cascade)
-  user     User @relation("Owner", fields: [ownerId], references: [userId], onDelete: Cascade)
   senderId Int
   ownerId  Int
-  post     Post @relation(fields: [postId], references: [postId], onDelete: Cascade)
   postId   Int
   count    Int  @default(0)
+  user     User @relation("Owner", fields: [ownerId], references: [userId], onDelete: Cascade)
+  post     Post @relation(fields: [postId], references: [postId], onDelete: Cascade)
+  sender   User @relation("Sender", fields: [senderId], references: [userId], onDelete: Cascade)
 
   @@id([postId, ownerId, senderId])
+  @@index([ownerId], map: "Alarm_ownerId_fkey")
+  @@index([senderId], map: "Alarm_senderId_fkey")
 }
 
 model Report {
   reportId  Int     @id @default(autoincrement())
-  post      Post    @relation(fields: [postId], references: [postId], onDelete: Cascade)
-  user      User    @relation(fields: [userId], references: [userId], onDelete: Cascade)
   postId    Int
   reportNum Int
   reason    String?
   userId    Int
+  post      Post    @relation(fields: [postId], references: [postId], onDelete: Cascade)
+  user      User    @relation(fields: [userId], references: [userId], onDelete: Cascade)
+
+  @@index([postId], map: "Report_postId_fkey")
+  @@index([userId], map: "Report_userId_fkey")
 }

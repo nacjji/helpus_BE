@@ -16,9 +16,9 @@ const shuffle = ([...image]) => {
 
 // 랜덤으로 생성할 사진 넣기
 const imgs = [
-  'luca-bravo-XJXWbfSo2f0-unsplash.jpg',
-  'markus-spiske-70Rir5vB96U-unsplash.jpg',
-  'markus-spiske-Fa0pTKuoDVY-unsplash.jpg',
+  'karl-pawlowicz-QUHuwyNgSA0-unsplash.jpg',
+  'tracy-adams-TEemXOpR3cQ-unsplash.jpg',
+  'markus-spiske-Skf7HxARcoc-unsplash.jpg',
 ];
 
 class PostsService {
