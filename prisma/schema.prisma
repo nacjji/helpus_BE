@@ -68,8 +68,8 @@ model Post {
 
 model Chat {
   chatId    Int      @id @default(autoincrement())
-  user      User     @relation(fields: [userId], references: [userId])
-  Room      Room     @relation(fields: [roomId], references: [roomId])
+  user      User     @relation(fields: [userId], references: [userId], onDelete: Cascade)
+  Room      Room     @relation(fields: [roomId], references: [roomId], onDelete: Cascade)
   roomId    String
   content   String
   createdAt DateTime @default(now())
@@ -79,9 +79,9 @@ model Chat {
 
 model Room {
   roomId   String @id
-  sender   User   @relation("Sender", fields: [senderId], references: [userId])
-  owner    User   @relation("Owner", fields: [ownerId], references: [userId])
-  Post     Post   @relation(fields: [postId], references: [postId])
+  sender   User   @relation("Sender", fields: [senderId], references: [userId], onDelete: Cascade)
+  owner    User   @relation("Owner", fields: [ownerId], references: [userId], onDelete: Cascade)
+  Post     Post   @relation(fields: [postId], references: [postId], onDelete: Cascade)
   ownerId  Int
   senderId Int
   postId   Int
@@ -105,11 +105,11 @@ model Wish {
 }
 
 model Alarm {
-  sender   User @relation("Sender", fields: [senderId], references: [userId])
-  user     User @relation("Owner", fields: [ownerId], references: [userId])
+  sender   User @relation("Sender", fields: [senderId], references: [userId], onDelete: Cascade)
+  user     User @relation("Owner", fields: [ownerId], references: [userId], onDelete: Cascade)
   senderId Int
   ownerId  Int
-  post     Post @relation(fields: [postId], references: [postId])
+  post     Post @relation(fields: [postId], references: [postId], onDelete: Cascade)
   postId   Int
   count    Int  @default(0)
 
@@ -118,8 +118,8 @@ model Alarm {
 
 model Report {
   reportId  Int     @id @default(autoincrement())
-  post      Post    @relation(fields: [postId], references: [postId])
-  user      User    @relation(fields: [userId], references: [userId])
+  post      Post    @relation(fields: [postId], references: [postId], onDelete: Cascade)
+  user      User    @relation(fields: [userId], references: [userId], onDelete: Cascade)
   postId    Int
   reportNum Int
   reason    String?
