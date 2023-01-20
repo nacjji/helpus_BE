@@ -25,8 +25,8 @@ class ChatService {
     return roomId;
   };
 
-  public roomList = async (userId: number) => {
-    const results = await this.chatRepository.roomList(userId);
+  public roomList = async (userId: number, q: number) => {
+    const results = await this.chatRepository.roomList(userId, q);
     // eslint-disable-next-line no-underscore-dangle
     const _results = results.map((v) => {
       return {

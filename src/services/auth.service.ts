@@ -112,8 +112,8 @@ class AuthService {
     await this.authRepository.updateUser(userId, userName, state1, state2);
   };
 
-  public wishlist = async (userId: number) => {
-    const posts = await this.authRepository.wishlist(userId);
+  public wishlist = async (userId: number, q: number) => {
+    const posts = await this.authRepository.wishlist(userId, q);
     const results = posts.map((v) => {
       return {
         postId: v.postId,
@@ -185,8 +185,8 @@ class AuthService {
     return scoreRate;
   };
 
-  public myPosts = async (userId: number) => {
-    const myPosts = await this.authRepository.myPosts(userId);
+  public myPosts = async (userId: number, q: number) => {
+    const myPosts = await this.authRepository.myPosts(userId, q);
     const result = myPosts.map((v) => {
       return {
         postId: v.postId,
