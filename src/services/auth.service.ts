@@ -118,6 +118,7 @@ class AuthService {
       return {
         postId: v.postId,
         userId: v.post.userId,
+        userName: v.post.user.userName,
         userImage: v.post.user.userImage.includes('http://')
           ? v.post.user.userImage
           : `${process.env.S3_BUCKET_URL}/profile/${v.post.user.userImage}`,
