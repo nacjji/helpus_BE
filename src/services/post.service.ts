@@ -16,9 +16,9 @@ const shuffle = ([...image]) => {
 
 // 랜덤으로 생성할 사진 넣기
 const imgs = [
-  'luca-bravo-XJXWbfSo2f0-unsplash.jpg',
-  'markus-spiske-70Rir5vB96U-unsplash.jpg',
-  'markus-spiske-Fa0pTKuoDVY-unsplash.jpg',
+  'karl-pawlowicz-QUHuwyNgSA0-unsplash.jpg',
+  'tracy-adams-TEemXOpR3cQ-unsplash.jpg',
+  'markus-spiske-Skf7HxARcoc-unsplash.jpg',
 ];
 
 class PostsService {
@@ -103,8 +103,9 @@ class PostsService {
       return {
         postId: v.postId,
         userId: v.userId,
-        userName: v.userName,
-        userImage: `${process.env.S3_BUCKET_URL}/profile/${v.user.userImage}`,
+        userImage: v.user.userImage.includes('http://')
+          ? v.user.userImage
+          : `${process.env.S3_BUCKET_URL}/profile/${v.user.userImage}`,
         title: v.title,
         content: v.content,
         category: v.category,
@@ -112,9 +113,7 @@ class PostsService {
         isDeadLine: v.isDeadLine,
         location1: v.location1,
         location2: v.location2,
-        imageUrl1: v.imageUrl2 || `${process.env.S3_BUCKET_URL}/${v.imageUrl1}`,
-        imageUrl2: v.imageUrl2 && `${process.env.S3_BUCKET_URL}/${v.imageUrl2}`,
-        imageUrl3: v.imageUrl2 && `${process.env.S3_BUCKET_URL}/${v.imageUrl3}`,
+        imageUrl1: v.imageUrl1 || `${process.env.S3_BUCKET_URL}/${v.imageUrl1}`,
         tag: v.tag,
         createdAt: v.createdAt,
         updated: v.updated,
@@ -134,7 +133,9 @@ class PostsService {
         postId: v.postId,
         userId: v.userId,
         userName: v.userName,
-        userImage: `${process.env.S3_BUCKET_URL}/profile/${v.user.userImage}`,
+        userImage: v.user.userImage.includes('http://')
+          ? v.user.userImage
+          : `${process.env.S3_BUCKET_URL}/profile/${v.user.userImage}`,
         title: v.title,
         content: v.content,
         category: v.category,
@@ -164,7 +165,9 @@ class PostsService {
       postId: result.postId,
       userId: result.userId,
       userName: result.userName,
-      userImage: `${process.env.S3_BUCKET_URL}/profile/${result.user.userImage}`,
+      userImage: result.user.userImage.includes('http://')
+        ? result.user.userImage
+        : `${process.env.S3_BUCKET_URL}/profile/${result.user.userImage}`,
       title: result.title,
       content: result.content,
       category: result.category,

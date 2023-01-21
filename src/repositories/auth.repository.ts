@@ -38,13 +38,15 @@ class AuthRepository {
     return user;
   };
 
-  public wishlist = async (userId: number) => {
+  public wishlist = async (userId: number, q: number) => {
     const results = await this.prisma.wish.findMany({
       where: { userId },
       include: {
-        user: { select: { userImage: true } },
-        post: true,
+        post: { include: { user: { select: { userImage: true, userName: true } } } },
       },
+      skip: q || 0,
+      take: 6,
+      orderBy: { postId: 'desc' },
     });
     return results;
   };
@@ -109,10 +111,13 @@ class AuthRepository {
   };
 
   // eslint-disable-next-line class-methods-use-this
-  public myPosts = async (userId: number) => {
+  public myPosts = async (userId: number, q: number) => {
     const myPosts = await this.prisma.post.findMany({
       where: { userId },
       include: { user: { select: { userImage: true } } },
+      skip: q || 0,
+      take: 6,
+      orderBy: { createdAt: 'desc' },
     });
 
     return myPosts;

@@ -112,15 +112,16 @@ class AuthService {
     await this.authRepository.updateUser(userId, userName, state1, state2);
   };
 
-  public wishlist = async (userId: number) => {
-    const posts = await this.authRepository.wishlist(userId);
-
+  public wishlist = async (userId: number, q: number) => {
+    const posts = await this.authRepository.wishlist(userId, q);
     const results = posts.map((v) => {
       return {
         postId: v.postId,
-        userId: v.userId,
-        userImage: `${process.env.S3_BUCKET_URL}/profile/${v.user.userImage}`,
-        userName: v.post.userName,
+        userId: v.post.userId,
+        userName: v.post.user.userName,
+        userImage: v.post.user.userImage.includes('http://')
+          ? v.post.user.userImage
+          : `${process.env.S3_BUCKET_URL}/profile/${v.post.user.userImage}`,
         title: v.post.title,
         content: v.post.content,
         category: v.post.category,
@@ -129,8 +130,6 @@ class AuthService {
         location1: v.post.location1,
         location2: v.post.location2,
         imageUrl1: `${process.env.S3_BUCKET_URL}/${v.post.imageUrl1}`,
-        imageUrl2: `${process.env.S3_BUCKET_URL}/${v.post.imageUrl2}`,
-        imageUrl3: `${process.env.S3_BUCKET_URL}/${v.post.imageUrl3}`,
         tag: v.post.tag,
         createdAt: v.post.createdAt,
         updated: v.post.updated,
@@ -184,14 +183,16 @@ class AuthService {
     return scoreRate;
   };
 
-  public myPosts = async (userId: number) => {
-    const myPosts = await this.authRepository.myPosts(userId);
+  public myPosts = async (userId: number, q: number) => {
+    const myPosts = await this.authRepository.myPosts(userId, q);
     const result = myPosts.map((v) => {
       return {
         postId: v.postId,
         userId: v.userId,
         userName: v.userName,
-        userImage: `${process.env.S3_BUCKET_URL}/profile/${v.user.userImage}`,
+        userImage: v.user.userImage.includes('http://')
+          ? v.user.userImage
+          : `${process.env.S3_BUCKET_URL}/profile/${v.user.userImage}`,
         title: v.title,
         content: v.content,
         category: v.category,
@@ -200,8 +201,6 @@ class AuthService {
         location1: v.location1,
         location2: v.location2,
         imageUrl1: `${process.env.S3_BUCKET_URL}/${v.imageUrl1}`,
-        imageUrl2: `${process.env.S3_BUCKET_URL}/${v.imageUrl2}`,
-        imageUrl3: `${process.env.S3_BUCKET_URL}/${v.imageUrl3}`,
         tag: v.tag,
         createdAt: v.createdAt,
         updated: v.updated,

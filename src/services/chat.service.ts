@@ -25,8 +25,8 @@ class ChatService {
     return roomId;
   };
 
-  public roomList = async (userId: number) => {
-    const results = await this.chatRepository.roomList(userId);
+  public roomList = async (userId: number, q: number) => {
+    const results = await this.chatRepository.roomList(userId, q);
     // eslint-disable-next-line no-underscore-dangle
     const _results = results.map((v) => {
       return {
@@ -37,9 +37,13 @@ class ChatService {
         title: v.Post.title,
         appointed: v.Post.appointed,
         senderName: v.sender.userName,
-        senderImage: `${process.env.S3_BUCKET_URL}/profile/${v.sender.userImage}`,
+        senderImage: v.sender.userImage.includes('http://')
+          ? v.sender.userImage
+          : `${process.env.S3_BUCKET_URL}/profile/${v.sender.userImage}`,
         ownerName: v.owner.userName,
-        ownerImage: `${process.env.S3_BUCKET_URL}/profile/${v.owner.userImage}`,
+        ownerImage: v.owner.userImage.includes('http://')
+          ? v.owner.userImage
+          : `${process.env.S3_BUCKET_URL}/profile/${v.owner.userImage}`,
         leave: v.leave,
       };
     });
