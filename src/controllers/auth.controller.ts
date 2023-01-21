@@ -17,8 +17,7 @@ class AuthController {
 
   // eslint-disable-next-line class-methods-use-this
   public test: RequestHandler = (req, res, next) => {
-    const ip = requestIp.getClientIp(req);
-    res.status(200).json({ message: ip, why: 'check message please' });
+    res.status(200).json({ message: req.ip });
   };
 
   public emailCheck: RequestHandler = async (req, res, next) => {
