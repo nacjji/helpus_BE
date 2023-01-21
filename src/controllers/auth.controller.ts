@@ -17,7 +17,7 @@ class AuthController {
 
   // eslint-disable-next-line class-methods-use-this
   public test: RequestHandler = (req, res, next) => {
-    res.status(200).json({ message: req.ip });
+    res.status(200).json({ message: req.headers });
   };
 
   public emailCheck: RequestHandler = async (req, res, next) => {
