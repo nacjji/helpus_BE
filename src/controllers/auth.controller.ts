@@ -17,10 +17,9 @@ class AuthController {
 
   // eslint-disable-next-line class-methods-use-this
   public test: RequestHandler = (req, res, next) => {
-    const user =
-      req.headers['x-forwarded-for'] || req.connection.remoteAddress || req.socket.remoteAddress;
+    const { helpus_token } = req.cookies;
 
-    res.status(200).json({ message: user });
+    res.status(200).json({ message: helpus_token });
   };
 
   public emailCheck: RequestHandler = async (req, res, next) => {
