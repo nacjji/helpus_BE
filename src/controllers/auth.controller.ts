@@ -62,12 +62,12 @@ class AuthController {
       // TODO: 프론트까지 배포 완료 이후 쿠키 보안 설정
       res.cookie('helpus_token', result.token, {
         sameSite: 'none',
-        domain: 'https://helpus-8ajte9z07-helpus.vercel.app',
+        domain: 'https://helpus-development.vercel.app',
         secure: true,
       });
       res.cookie('helpus_refresh', result.refreshToken, {
         sameSite: 'none',
-        domain: 'https://helpus-8ajte9z07-helpus.vercel.app',
+        domain: 'https://helpus-development.vercel.app',
         secure: true,
       });
 
