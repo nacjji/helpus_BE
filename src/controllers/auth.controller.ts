@@ -17,9 +17,9 @@ class AuthController {
 
   // eslint-disable-next-line class-methods-use-this
   public test: RequestHandler = (req, res, next) => {
-    const { helpus_token } = req.cookies;
+    const cookie = req.cookies;
 
-    res.status(200).json({ message: helpus_token });
+    res.status(200).json({ message: cookie });
   };
 
   public emailCheck: RequestHandler = async (req, res, next) => {
