@@ -85,7 +85,6 @@ class AuthController {
     try {
       const userInfo = await this.authService.detailUser(res.locals.userId);
 
-      console.log('here', userInfo);
       res.status(200).json(userInfo);
     } catch (err) {
       next(err);
