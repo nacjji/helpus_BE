@@ -35,8 +35,7 @@ class App {
     this.app.use(express.json());
     this.app.use(express.urlencoded({ extended: true }));
     this.app.use(morgan);
-    this.app.use('/api', router);
-    this.app.use(errorHandler);
+    this.app.use(cookieParser(COOKIE));
     //TODO: 프론트까지 배포 완료 이후 쿠키 보안 설정
     this.app.use(
       session({
@@ -49,7 +48,8 @@ class App {
         },
       })
     );
-    this.app.use(cookieParser(COOKIE));
+    this.app.use('/api', router);
+    this.app.use(errorHandler);
   }
 
   public listen(port: number) {
