@@ -63,12 +63,12 @@ class AuthController {
       res.cookie('helpus_token', result.token, {
         sameSite: 'none',
         domain: 'http://localhost:3000',
-        secure: false,
+        secure: true,
       });
       res.cookie('helpus_refresh', result.refreshToken, {
         sameSite: 'none',
         domain: 'http://localhost:3000',
-        secure: false,
+        secure: true,
       });
 
       res.status(200).json({
