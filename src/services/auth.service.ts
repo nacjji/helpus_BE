@@ -2,6 +2,7 @@ import { badRequest } from '@hapi/boom';
 import * as jwt from 'jsonwebtoken';
 import * as bcrypt from 'bcrypt';
 import AuthRepository from '../repositories/auth.repository';
+import prisma from '../config/database/prisma';
 import { deleteS3Image } from '../middlewares/multer.uploader';
 
 const { JWT_SECRET_KEY } = process.env as { JWT_SECRET_KEY: string };
@@ -12,7 +13,7 @@ class AuthService {
   authRepository: AuthRepository;
 
   constructor() {
-    this.authRepository = new AuthRepository();
+    this.authRepository = new AuthRepository(prisma);
   }
 
   public emailCheck = async (email: string) => {

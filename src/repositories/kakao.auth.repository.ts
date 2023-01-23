@@ -3,8 +3,8 @@ import { PrismaClient } from '@prisma/client';
 class KakaoAuthRepository {
   prisma: PrismaClient;
 
-  constructor() {
-    this.prisma = new PrismaClient();
+  constructor(prisma: any) {
+    this.prisma = prisma;
   }
 
   public checkIsUser = async (kakao: number) => {
