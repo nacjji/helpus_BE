@@ -59,14 +59,13 @@ class AuthController {
       const result = await this.authService.localLogin(email, password);
 
       // TODO: 프론트까지 배포 완료 이후 쿠키 보안 설정
-      res.cookie('helpus_token', result.token, { sameSite: 'none', secure: true });
+      res.cookie('helpus_token', result.accessToken, { sameSite: 'none', secure: true });
       res.cookie('helpus_refresh', result.refreshToken, { sameSite: 'none', secure: true });
 
       res.status(200).json({
         userId: result.userId,
         userName: result.userName,
         userImage: result.userImage,
-        token: result.token,
       });
     } catch (err) {
       next(err);

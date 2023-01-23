@@ -8,6 +8,16 @@ class AuthRepository {
     this.prisma = new PrismaClient();
   }
 
+  public saveToken = async (userId: number, accessToken: string, refreshToken: string) => {
+    await this.prisma.token.create({
+      data: {
+        userId,
+        accessToken,
+        refreshToken,
+      },
+    });
+  };
+
   public emailCheck = async (email: string) => {
     const check = await this.prisma.user.findUnique({
       where: { email },
