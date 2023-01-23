@@ -17,8 +17,9 @@ class AuthController {
 
   // eslint-disable-next-line class-methods-use-this
   public test: RequestHandler = (req, res, next) => {
-    const ip = req.headers['X-Forwarded-For'];
-    res.status(200).json({ message: ip, why: 'check message please' });
+    const cookie = req.cookies;
+
+    res.status(200).json({ message: cookie });
   };
 
   public emailCheck: RequestHandler = async (req, res, next) => {
@@ -58,16 +59,8 @@ class AuthController {
       const result = await this.authService.localLogin(email, password);
 
       // TODO: 프론트까지 배포 완료 이후 쿠키 보안 설정
-      // res.cookie('helpus_token', result.accessToken, {
-      //   sameSite: 'none',
-      //   domain: 'http://localhost:3000',
-      //   secure: false,
-      // });
-      // res.cookie('helpus_refresh', result.refreshToken, {
-      //   sameSite: 'none',
-      //   domain: 'http://localhost:3000',
-      //   secure: false,
-      // });
+      res.cookie('helpus_token', result.token);
+      res.cookie('helpus_refresh', result.refreshToken);
 
       res.status(200).json({
         userId: result.userId,
@@ -84,7 +77,6 @@ class AuthController {
     try {
       const userInfo = await this.authService.detailUser(res.locals.userId);
 
-      console.log('here', userInfo);
       res.status(200).json(userInfo);
     } catch (err) {
       next(err);
