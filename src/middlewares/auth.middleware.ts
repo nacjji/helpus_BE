@@ -16,13 +16,17 @@ const checkToken = (token: string) => {
 const requiredLogin: RequestHandler = (req, res, next) => {
   const { helpusAccess, helpusRefresh } = req.cookies;
 
-  if (!helpusAccess && !helpusRefresh) throw unauthorized('로그인 필요');
-  if (!helpusAccess || !helpusRefresh) throw badRequest('비정상 토큰으로 확인됨');
+  if (!helpusAccess && !helpusRefresh) throw unauthorized('로그인 필요 1');
+  if (!helpusAccess || !helpusRefresh) {
+    res.cookie('helpusAccess', '', { sameSite: 'none', secure: true });
+    res.cookie('helpusRefresh', '', { sameSite: 'none', secure: true });
+    throw badRequest('비정상 토큰으로 확인됨');
+  }
 
   const payload = checkToken(helpusAccess);
   const expired = checkToken(helpusRefresh);
   if (!payload) throw unauthorized('토큰 재발급 필요');
-  if (!expired) throw unauthorized('로그인 필요');
+  if (!expired) throw unauthorized('로그인 필요 2');
 
   res.locals.userId = payload.userId;
   res.locals.userName = payload.userName;
@@ -36,8 +40,11 @@ const requiredNoLogin: RequestHandler = (req, res, next) => {
   const { helpusAccess, helpusRefresh } = req.cookies;
 
   if (!helpusAccess && !helpusRefresh) next();
-  else if (!helpusAccess || !helpusRefresh) throw badRequest('비정상 토큰으로 확인됨');
-  else {
+  else if (!helpusAccess || !helpusRefresh) {
+    res.cookie('helpusAccess', '', { sameSite: 'none', secure: true });
+    res.cookie('helpusRefresh', '', { sameSite: 'none', secure: true });
+    throw badRequest('비정상 토큰으로 확인됨');
+  } else {
     const payload = checkToken(helpusAccess);
 
     if (payload) throw unauthorized('로그인 정보 있음');
@@ -48,8 +55,11 @@ const passAnyway: RequestHandler = (req, res, next) => {
   const { helpusAccess, helpusRefresh } = req.cookies;
 
   if (!helpusAccess && !helpusRefresh) next();
-  else if (!helpusAccess || !helpusRefresh) throw badRequest('비정상 토큰으로 확인됨');
-  else {
+  else if (!helpusAccess || !helpusRefresh) {
+    res.cookie('helpusAccess', '', { sameSite: 'none', secure: true });
+    res.cookie('helpusRefresh', '', { sameSite: 'none', secure: true });
+    throw badRequest('비정상 토큰으로 확인됨');
+  } else {
     const payload = checkToken(helpusAccess);
 
     if (payload) {
