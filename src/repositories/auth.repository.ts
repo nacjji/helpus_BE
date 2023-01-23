@@ -9,15 +9,13 @@ class AuthRepository {
   }
 
   public saveToken = async (userId: number, accessToken: string, refreshToken: string) => {
-    const result = await this.prisma.token.create({
+    await this.prisma.token.create({
       data: {
         userId,
         accessToken,
         refreshToken,
       },
     });
-
-    return result;
   };
 
   public emailCheck = async (email: string) => {
