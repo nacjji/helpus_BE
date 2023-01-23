@@ -117,6 +117,7 @@ class PostsService {
         updated: v.updated,
       };
     });
+
     return _result;
   };
 
