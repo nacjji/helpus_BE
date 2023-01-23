@@ -61,7 +61,6 @@ const deleteS3Image = (profileImage: string) => {
 };
 
 const deleteS3ImagePost = (imageUrl1: string, imageUrl2: string, imageUrl3: string) => {
-  console.log(`${process.env.S3_BUCKET_NAME}/helpus/${imageUrl1}`, 'multer');
   s3.deleteObjects({
     Bucket: process.env.S3_BUCKET_NAME as string,
     Delete: {
