@@ -2,6 +2,7 @@ import { badRequest } from '@hapi/boom';
 import * as jwt from 'jsonwebtoken';
 import * as bcrypt from 'bcrypt';
 import AuthRepository from '../repositories/auth.repository';
+import prisma from '../config/database/prisma';
 import { deleteS3Image } from '../middlewares/multer.uploader';
 
 const { JWT_SECRET_KEY } = process.env as { JWT_SECRET_KEY: string };
@@ -12,7 +13,7 @@ class AuthService {
   authRepository: AuthRepository;
 
   constructor() {
-    this.authRepository = new AuthRepository();
+    this.authRepository = new AuthRepository(prisma);
   }
 
   public emailCheck = async (email: string) => {
@@ -55,7 +56,7 @@ class AuthService {
     const match = await bcrypt.compare(password, user.password);
     if (!match) throw badRequest('이메일/비밀번호 불일치');
 
-    const token = await jwt.sign(
+    const accessToken = await jwt.sign(
       { userId: user.userId, userName: user.userName, state1: user.state1, state2: user.state2 },
       JWT_SECRET_KEY,
       {
@@ -71,11 +72,15 @@ class AuthService {
       }
     );
 
+    await this.authRepository.saveToken(user.userId, accessToken, refreshToken);
+
     return {
       userId: user.userId,
       userName: user.userName,
-      userImage: `${process.env.S3_BUCKET_URL}/profile/${user.userImage}`,
-      token,
+      userImage: !user.kakao
+        ? `${process.env.S3_BUCKET_URL}/profile/${user.userImage}`
+        : user.userImage,
+      accessToken,
       refreshToken,
     };
   };

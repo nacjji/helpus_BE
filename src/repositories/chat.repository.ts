@@ -2,10 +2,10 @@ import { PrismaClient } from '@prisma/client';
 import { number } from 'joi';
 
 class ChatRepository {
-  private prisma: PrismaClient;
+  prisma: PrismaClient;
 
-  constructor() {
-    this.prisma = new PrismaClient();
+  constructor(prisma: any) {
+    this.prisma = prisma;
   }
 
   public alarmList = async (ownerId: number) => {
