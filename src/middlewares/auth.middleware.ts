@@ -34,6 +34,8 @@ const requiredLogin: RequestHandler = (req, res, next) => {
 const requiredNoLogin: RequestHandler = (req, res, next) => {
   const { accessToken, refreshToken } = req.cookies;
 
+  next();
+
   // if (!accessToken && !refreshToken) next();
   // else if (!accessToken || !refreshToken) throw badRequest('비정상 토큰으로 확인됨');
   // else {
