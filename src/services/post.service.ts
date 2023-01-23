@@ -4,6 +4,7 @@ import PostsRepository from '../repositories/post.repository';
 import AuthRepository from '../repositories/auth.repository';
 import prisma from '../config/database/prisma';
 import { deleteS3ImagePost } from '../middlewares/multer.uploader';
+import randomImg from '../../randomImg';
 
 class PostsService {
   postsRepository: PostsRepository;
@@ -33,7 +34,7 @@ class PostsService {
     const imageFileName2 = imageUrl2?.split('/');
     const imageFileName3 = imageUrl3?.split('/');
 
-    // FIXME : Refectoring 시 중복 코드 제거 필요
+    const rand = Math.floor(Math.random() * 30);
     const result = await this.postsRepository.createPost(
       userId,
       userName,
@@ -43,19 +44,19 @@ class PostsService {
       appointed,
       location1,
       location2,
-      imageFileName1 ? imageFileName1[4] : 'https://source.unsplash.com/random/300×300',
+      imageFileName1 ? imageFileName1[4] : randomImg[rand],
       // eslint-disable-next-line no-nested-ternary
       imageFileName2
         ? imageFileName2[4]
-        : imageFileName1
+        : !imageFileName1?.includes('helpus-bucket')
         ? imageFileName2
-        : 'https://source.unsplash.com/random/300×300',
+        : undefined,
       // eslint-disable-next-line no-nested-ternary
       imageFileName3
         ? imageFileName3[4]
-        : imageFileName1
+        : !imageFileName1?.includes('helpus-bucket')
         ? imageFileName3
-        : 'https://source.unsplash.com/random/300×300',
+        : undefined,
       tag,
       createdAt
     );
@@ -88,11 +89,9 @@ class PostsService {
         isDeadLine: v.isDeadLine,
         location1: v.location1,
         location2: v.location2,
-        imageUrl1:
-          v.imageUrl1 !== 'https://source.unsplash.com/random/300×300'
-            ? `${process.env.S3_BUCKET_URL}/${v.imageUrl1}`
-            : 'https://source.unsplash.com/random/300×300',
-
+        imageUrl1: v.imageUrl1?.includes('helpus-bucket')
+          ? `${process.env.S3_BUCKET_URL}/${v.imageUrl1}`
+          : v.imageUrl1,
         tag: v.tag,
         createdAt: v.createdAt,
         updated: v.updated,
@@ -104,7 +103,6 @@ class PostsService {
 
   public allLocationPosts = async (q: number, category: number, search: string) => {
     const result = await this.postsRepository.allLocationPosts(q, category, search);
-    console.log(result[0].imageUrl1, 'here');
     // eslint-disable-next-line no-underscore-dangle
     const _result = result.map((v) => {
       return {
@@ -121,11 +119,9 @@ class PostsService {
         isDeadLine: v.isDeadLine,
         location1: v.location1,
         location2: v.location2,
-        imageUrl1:
-          v.imageUrl1 !== 'https://source.unsplash.com/random/300×300'
-            ? `${process.env.S3_BUCKET_URL}/${v.imageUrl1}`
-            : 'https://source.unsplash.com/random/300×300',
-
+        imageUrl1: v.imageUrl1?.includes('helpus-bucket')
+          ? `${process.env.S3_BUCKET_URL}/${v.imageUrl1}`
+          : v.imageUrl1,
         tag: v.tag,
         createdAt: v.createdAt,
         updated: v.updated,
@@ -155,18 +151,15 @@ class PostsService {
       isDeadLine: result.isDeadLine,
       location1: result.location1,
       location2: result.location2,
-      imageUrl1:
-        result.imageUrl1 === 'https://source.unsplash.com/random/300×300'
-          ? 'https://source.unsplash.com/random/300×300'
-          : `${process.env.S3_BUCKET_URL}/${result.imageUrl1}`,
-      imageUrl2:
-        result.imageUrl2 === 'https://source.unsplash.com/random/300×300'
-          ? 'https://source.unsplash.com/random/300×300'
-          : `${process.env.S3_BUCKET_URL}/${result.imageUrl2}`,
-      imageUrl3:
-        result.imageUrl3 === 'https://source.unsplash.com/random/300×300'
-          ? 'https://source.unsplash.com/random/300×300'
-          : `${process.env.S3_BUCKET_URL}/${result.imageUrl3}`,
+      imageUrl1: result.imageUrl1?.includes('helpus-bucket')
+        ? `${process.env.S3_BUCKET_URL}/${result.imageUrl1}`
+        : result.imageUrl1,
+      imageUrl2: result.imageUrl2?.includes('helpus-bucket')
+        ? `${process.env.S3_BUCKET_URL}/${result.imageUrl2}`
+        : result.imageUrl2,
+      imageUrl3: result.imageUrl3?.includes('helpus-bucket')
+        ? `${process.env.S3_BUCKET_URL}/${result.imageUrl3}`
+        : result.imageUrl3,
       tag: result.tag,
       createdAt: result.createdAt,
       updated: result.updated,
