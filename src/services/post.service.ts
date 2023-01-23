@@ -1,8 +1,9 @@
 /* eslint-disable no-param-reassign */
-import { notFound } from '@hapi/boom';
+import { badRequest, notFound } from '@hapi/boom';
 import PostsRepository from '../repositories/post.repository';
 import AuthRepository from '../repositories/auth.repository';
 import prisma from '../config/database/prisma';
+import { deleteS3ImagePost } from '../middlewares/multer.uploader';
 
 const shuffle = ([...image]) => {
   let imgLength = image.length;
@@ -60,9 +61,9 @@ class PostsService {
         appointed,
         location1,
         location2,
-        imageFileName1 ? imageFileName1[4] : shuffledImg[0],
-        imageFileName2 ? imageFileName2[4] : shuffledImg[1],
-        imageFileName3 ? imageFileName3[4] : shuffledImg[2],
+        imageFileName1 ? imageFileName1[4] : 'https://picsum.photos/200',
+        imageFileName2 ? imageFileName2[4] : 'https://picsum.photos/200',
+        imageFileName3 ? imageFileName3[4] : 'https://picsum.photos/200',
         tag,
         createdAt
       );
@@ -249,8 +250,10 @@ class PostsService {
     return result;
   };
 
-  public deletePost = async (postId: number) => {
+  public deletePost = async (postId: number, userId: number) => {
     const result = await this.postsRepository.deletePost(postId);
+    if (userId !== result.userId) throw badRequest('게시글의 작성자가 아닙니다.');
+    deleteS3ImagePost(result.imageUrl1 || '', result.imageUrl2 || '', result.imageUrl3 || '');
     return result;
   };
 }
