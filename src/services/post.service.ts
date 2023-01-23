@@ -1,25 +1,9 @@
 /* eslint-disable no-param-reassign */
-import { notFound } from '@hapi/boom';
+import { badRequest, notFound } from '@hapi/boom';
 import PostsRepository from '../repositories/post.repository';
 import AuthRepository from '../repositories/auth.repository';
 import prisma from '../config/database/prisma';
-
-const shuffle = ([...image]) => {
-  let imgLength = image.length;
-  while (imgLength) {
-    // eslint-disable-next-line no-plusplus
-    const imgIndex = Math.floor(Math.random() * imgLength--);
-    [image[imgLength], image[imgIndex]] = [image[imgIndex], image[imgLength]];
-  }
-  return image;
-};
-
-// 랜덤으로 생성할 사진 넣기
-const imgs = [
-  'karl-pawlowicz-QUHuwyNgSA0-unsplash.jpg',
-  'tracy-adams-TEemXOpR3cQ-unsplash.jpg',
-  'markus-spiske-Skf7HxARcoc-unsplash.jpg',
-];
+import { deleteS3ImagePost } from '../middlewares/multer.uploader';
 
 class PostsService {
   postsRepository: PostsRepository;
@@ -49,25 +33,6 @@ class PostsService {
     const imageFileName2 = imageUrl2?.split('/');
     const imageFileName3 = imageUrl3?.split('/');
 
-    const shuffledImg = shuffle(imgs);
-    if (!imageFileName1) {
-      const result = await this.postsRepository.createPost(
-        userId,
-        userName,
-        title,
-        content,
-        Number(category),
-        appointed,
-        location1,
-        location2,
-        imageFileName1 ? imageFileName1[4] : shuffledImg[0],
-        imageFileName2 ? imageFileName2[4] : shuffledImg[1],
-        imageFileName3 ? imageFileName3[4] : shuffledImg[2],
-        tag,
-        createdAt
-      );
-      return result;
-    }
     // FIXME : Refectoring 시 중복 코드 제거 필요
     const result = await this.postsRepository.createPost(
       userId,
@@ -78,9 +43,19 @@ class PostsService {
       appointed,
       location1,
       location2,
-      imageFileName1 ? imageFileName1[4] : undefined,
-      imageFileName2 ? imageFileName2[4] : undefined,
-      imageFileName3 ? imageFileName3[4] : undefined,
+      imageFileName1 ? imageFileName1[4] : 'https://source.unsplash.com/random/300×300',
+      // eslint-disable-next-line no-nested-ternary
+      imageFileName2
+        ? imageFileName2[4]
+        : imageFileName1
+        ? imageFileName2
+        : 'https://source.unsplash.com/random/300×300',
+      // eslint-disable-next-line no-nested-ternary
+      imageFileName3
+        ? imageFileName3[4]
+        : imageFileName1
+        ? imageFileName3
+        : 'https://source.unsplash.com/random/300×300',
       tag,
       createdAt
     );
@@ -113,7 +88,10 @@ class PostsService {
         isDeadLine: v.isDeadLine,
         location1: v.location1,
         location2: v.location2,
-        imageUrl1: v.imageUrl1 || `${process.env.S3_BUCKET_URL}/${v.imageUrl1}`,
+        imageUrl1:
+          result[0].imageUrl1 === 'https://source.unsplash.com/random/300×300'
+            ? 'https://source.unsplash.com/random/300×300'
+            : `${process.env.S3_BUCKET_URL}/${v.imageUrl1}`,
         tag: v.tag,
         createdAt: v.createdAt,
         updated: v.updated,
@@ -125,8 +103,7 @@ class PostsService {
 
   public allLocationPosts = async (q: number, category: number, search: string) => {
     const result = await this.postsRepository.allLocationPosts(q, category, search);
-    // eslint-disable-next-line no-underscore-dangle
-
+    console.log(result[0].imageUrl1);
     // eslint-disable-next-line no-underscore-dangle
     const _result = result.map((v) => {
       return {
@@ -143,7 +120,10 @@ class PostsService {
         isDeadLine: v.isDeadLine,
         location1: v.location1,
         location2: v.location2,
-        imageUrl1: `${process.env.S3_BUCKET_URL}/${v.imageUrl1}`,
+        imageUrl1:
+          result[0].imageUrl1 === 'https://source.unsplash.com/random/300×300'
+            ? 'https://source.unsplash.com/random/300×300'
+            : `${process.env.S3_BUCKET_URL}/${v.imageUrl1}`,
 
         tag: v.tag,
         createdAt: v.createdAt,
@@ -159,7 +139,6 @@ class PostsService {
     if (!result) {
       throw notFound('게시글 없음');
     }
-
     // eslint-disable-next-line no-underscore-dangle
     return {
       postId: result.postId,
@@ -175,9 +154,18 @@ class PostsService {
       isDeadLine: result.isDeadLine,
       location1: result.location1,
       location2: result.location2,
-      imageUrl1: `${process.env.S3_BUCKET_URL}/${result.imageUrl1}`,
-      imageUrl2: result.imageUrl2 && `${process.env.S3_BUCKET_URL}/${result.imageUrl2}`,
-      imageUrl3: result.imageUrl3 && `${process.env.S3_BUCKET_URL}/${result.imageUrl3}`,
+      imageUrl1:
+        result.imageUrl1 === 'https://source.unsplash.com/random/300×300'
+          ? 'https://source.unsplash.com/random/300×300'
+          : `${process.env.S3_BUCKET_URL}/${result.imageUrl1}`,
+      imageUrl2:
+        result.imageUrl2 === 'https://source.unsplash.com/random/300×300'
+          ? 'https://source.unsplash.com/random/300×300'
+          : `${process.env.S3_BUCKET_URL}/${result.imageUrl2}`,
+      imageUrl3:
+        result.imageUrl3 === 'https://source.unsplash.com/random/300×300'
+          ? 'https://source.unsplash.com/random/300×300'
+          : `${process.env.S3_BUCKET_URL}/${result.imageUrl3}`,
       tag: result.tag,
       createdAt: result.createdAt,
       updated: result.updated,
@@ -249,8 +237,10 @@ class PostsService {
     return result;
   };
 
-  public deletePost = async (postId: number) => {
+  public deletePost = async (postId: number, userId: number) => {
     const result = await this.postsRepository.deletePost(postId);
+    if (userId !== result.userId) throw badRequest('게시글의 작성자가 아닙니다.');
+    deleteS3ImagePost(result.imageUrl1 || '', result.imageUrl2 || '', result.imageUrl3 || '');
     return result;
   };
 }

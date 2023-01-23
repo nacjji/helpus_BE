@@ -133,7 +133,10 @@ class AuthService {
         isDeadLine: v.post.isDeadLine,
         location1: v.post.location1,
         location2: v.post.location2,
-        imageUrl1: `${process.env.S3_BUCKET_URL}/${v.post.imageUrl1}`,
+        imageUrl1:
+          v.post.imageUrl1 === 'https://picsum.photos/200'
+            ? 'https://picsum.photos/200'
+            : `${process.env.S3_BUCKET_URL}/${v.post.imageUrl1}`,
         tag: v.post.tag,
         createdAt: v.post.createdAt,
         updated: v.post.updated,
@@ -204,7 +207,10 @@ class AuthService {
         isDeadLine: v.isDeadLine,
         location1: v.location1,
         location2: v.location2,
-        imageUrl1: `${process.env.S3_BUCKET_URL}/${v.imageUrl1}`,
+        imageUrl1:
+          v.imageUrl1 === 'https://picsum.photos/200'
+            ? 'https://picsum.photos/200'
+            : `${process.env.S3_BUCKET_URL}/${v.imageUrl1}`,
         tag: v.tag,
         createdAt: v.createdAt,
         updated: v.updated,
