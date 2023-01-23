@@ -127,8 +127,9 @@ class PostsController {
 
   public deletePost: RequestHandler = async (req, res, next) => {
     try {
+      const userId = Number(res.locals.userId);
       const postId = Number(req.params.postId);
-      await this.postsService.deletePost(postId);
+      await this.postsService.deletePost(postId, userId);
       return res.status(201).json({ message: '게시글이 삭제되었습니다.' });
     } catch (err) {
       return next(err);
