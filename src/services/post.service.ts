@@ -89,9 +89,10 @@ class PostsService {
         location1: v.location1,
         location2: v.location2,
         imageUrl1:
-          result[0].imageUrl1 === 'https://source.unsplash.com/random/300×300'
-            ? 'https://source.unsplash.com/random/300×300'
-            : `${process.env.S3_BUCKET_URL}/${v.imageUrl1}`,
+          v.imageUrl1 !== 'https://source.unsplash.com/random/300×300'
+            ? `${process.env.S3_BUCKET_URL}/${v.imageUrl1}`
+            : 'https://source.unsplash.com/random/300×300',
+
         tag: v.tag,
         createdAt: v.createdAt,
         updated: v.updated,
@@ -103,7 +104,7 @@ class PostsService {
 
   public allLocationPosts = async (q: number, category: number, search: string) => {
     const result = await this.postsRepository.allLocationPosts(q, category, search);
-    console.log(result[0].imageUrl1);
+    console.log(result[0].imageUrl1, 'here');
     // eslint-disable-next-line no-underscore-dangle
     const _result = result.map((v) => {
       return {
@@ -121,9 +122,9 @@ class PostsService {
         location1: v.location1,
         location2: v.location2,
         imageUrl1:
-          result[0].imageUrl1 === 'https://source.unsplash.com/random/300×300'
-            ? 'https://source.unsplash.com/random/300×300'
-            : `${process.env.S3_BUCKET_URL}/${v.imageUrl1}`,
+          v.imageUrl1 !== 'https://source.unsplash.com/random/300×300'
+            ? `${process.env.S3_BUCKET_URL}/${v.imageUrl1}`
+            : 'https://source.unsplash.com/random/300×300',
 
         tag: v.tag,
         createdAt: v.createdAt,
