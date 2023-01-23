@@ -1,6 +1,7 @@
 import { badRequest } from '@hapi/boom';
 import axios from 'axios';
 import * as jwt from 'jsonwebtoken';
+import prisma from '../config/database/prisma';
 import KakaoAuthRepository from '../repositories/kakao.auth.repository';
 
 const { REST_API_KEY, REDIRECT_URI, ADMIN_KEY, JWT_SECRET_KEY } = process.env as {
@@ -14,7 +15,7 @@ class KakaoAuthService {
   kakaoauthRepository: KakaoAuthRepository;
 
   constructor() {
-    this.kakaoauthRepository = new KakaoAuthRepository();
+    this.kakaoauthRepository = new KakaoAuthRepository(prisma);
   }
 
   kakao = async (code: string) => {

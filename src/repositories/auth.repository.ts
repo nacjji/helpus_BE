@@ -1,12 +1,26 @@
 import { badRequest } from '@hapi/boom';
-import { PrismaClient } from '@prisma/client';
+import { PrismaClient, Prisma } from '@prisma/client';
+
+const client = new PrismaClient();
 
 class AuthRepository {
   prisma: PrismaClient;
 
-  constructor() {
-    this.prisma = new PrismaClient();
+  constructor(prisma: any) {
+    this.prisma = prisma;
   }
+
+  public saveToken = async (userId: number, accessToken: string, refreshToken: string) => {
+    console.log(refreshToken);
+    await this.prisma.token.create({
+      data: {
+        userId,
+        accessToken,
+        refreshToken:
+          'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOjU0LCJ1c2VyTmFtZSI6InRlc3QiLCJzdGF0ZTEiOiLstqnssq3rgqjrj4QiLCJzdGF0ZTIiOiLshJzsgrDsi5wiLCJpYXQiOjE2NzQ0NjM2MDgsImV4cCI6MTY3NDU1MDAwOH0.dSckKw_56kcoorBU9tfW0HhG0SNeQFjRCjWgvQN0jGk',
+      },
+    });
+  };
 
   public emailCheck = async (email: string) => {
     const check = await this.prisma.user.findUnique({

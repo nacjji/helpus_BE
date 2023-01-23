@@ -1,11 +1,12 @@
 import { nanoid } from 'nanoid';
 import ChatRepository from '../repositories/chat.repository';
+import prisma from '../config/database/prisma';
 
 class ChatService {
   private chatRepository: ChatRepository;
 
   constructor() {
-    this.chatRepository = new ChatRepository();
+    this.chatRepository = new ChatRepository(prisma);
   }
 
   public alarmList = async (ownerId: number) => {
