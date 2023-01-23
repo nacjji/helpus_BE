@@ -45,18 +45,8 @@ class PostsService {
       location1,
       location2,
       imageFileName1 ? imageFileName1[4] : randomImg[rand],
-      // eslint-disable-next-line no-nested-ternary
-      imageFileName2
-        ? imageFileName2[4]
-        : !imageFileName1?.includes('helpus-bucket')
-        ? imageFileName2
-        : undefined,
-      // eslint-disable-next-line no-nested-ternary
-      imageFileName3
-        ? imageFileName3[4]
-        : !imageFileName1?.includes('helpus-bucket')
-        ? imageFileName3
-        : undefined,
+      imageFileName2 ? imageFileName2[4] : undefined,
+      imageFileName3 ? imageFileName3[4] : undefined,
       tag,
       createdAt
     );
@@ -89,7 +79,7 @@ class PostsService {
         isDeadLine: v.isDeadLine,
         location1: v.location1,
         location2: v.location2,
-        imageUrl1: v.imageUrl1?.includes('helpus-bucket')
+        imageUrl1: !v.imageUrl1?.includes('https://')
           ? `${process.env.S3_BUCKET_URL}/${v.imageUrl1}`
           : v.imageUrl1,
         tag: v.tag,
@@ -119,7 +109,7 @@ class PostsService {
         isDeadLine: v.isDeadLine,
         location1: v.location1,
         location2: v.location2,
-        imageUrl1: v.imageUrl1?.includes('helpus-bucket')
+        imageUrl1: !v.imageUrl1?.includes('https://')
           ? `${process.env.S3_BUCKET_URL}/${v.imageUrl1}`
           : v.imageUrl1,
         tag: v.tag,
@@ -151,13 +141,13 @@ class PostsService {
       isDeadLine: result.isDeadLine,
       location1: result.location1,
       location2: result.location2,
-      imageUrl1: result.imageUrl1?.includes('helpus-bucket')
+      imageUrl1: !result.imageUrl1?.includes('https://')
         ? `${process.env.S3_BUCKET_URL}/${result.imageUrl1}`
         : result.imageUrl1,
-      imageUrl2: result.imageUrl2?.includes('helpus-bucket')
+      imageUrl2: !result.imageUrl2?.includes('https://')
         ? `${process.env.S3_BUCKET_URL}/${result.imageUrl2}`
         : result.imageUrl2,
-      imageUrl3: result.imageUrl3?.includes('helpus-bucket')
+      imageUrl3: !result.imageUrl3?.includes('https://')
         ? `${process.env.S3_BUCKET_URL}/${result.imageUrl3}`
         : result.imageUrl3,
       tag: result.tag,
