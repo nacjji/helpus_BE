@@ -4,6 +4,7 @@ import postsRouter from './post.route';
 import wishsRouter from './wish.route';
 import chatRouter from './chat.route';
 import reportRouter from './report.route';
+import tokenRouter from './token.route';
 
 const router = Router();
 
@@ -13,5 +14,6 @@ router.use('/post', postsRouter);
 router.use('/wish', wishsRouter);
 router.use('/chat', chatRouter);
 router.use('/report', reportRouter);
+router.use('/token', tokenRouter);
 
 export default router;

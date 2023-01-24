@@ -1,7 +1,5 @@
 import { badRequest } from '@hapi/boom';
-import { PrismaClient, Prisma } from '@prisma/client';
-
-const client = new PrismaClient();
+import { PrismaClient } from '@prisma/client';
 
 class AuthRepository {
   prisma: PrismaClient;
