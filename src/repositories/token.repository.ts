@@ -8,9 +8,9 @@ class TokenRepository {
     this.prisma = prisma;
   }
 
-  public checkToken = async (userId: number, accessToken: string, refreshToken: string) => {
+  public checkToken = async (accessToken: string, refreshToken: string) => {
     const [result] = await this.prisma.token.findMany({
-      where: { userId, accessToken, refreshToken },
+      where: { accessToken, refreshToken },
     });
 
     return result;
@@ -27,6 +27,18 @@ class TokenRepository {
     await this.prisma.token.update({
       where: { tokenId },
       data: { accessToken, refreshToken },
+    });
+  };
+
+  public removeToken = async (accessToken: string, refreshToken: string) => {
+    await this.prisma.token.deleteMany({
+      where: { accessToken, refreshToken },
+    });
+  };
+
+  public removeAllTokens = async (userId: number) => {
+    await this.prisma.token.deleteMany({
+      where: { userId },
     });
   };
 }
