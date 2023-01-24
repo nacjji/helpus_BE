@@ -17,9 +17,6 @@ class PostsRepository {
     appointed?: Date,
     location1?: string,
     location2?: string,
-    imageUrl1?: string,
-    imageUrl2?: string,
-    imageUrl3?: string,
     tag?: string,
     createdAt?: Date
     // eslint-disable-next-line consistent-return
@@ -34,9 +31,6 @@ class PostsRepository {
         appointed,
         location1,
         location2,
-        imageUrl1,
-        imageUrl2,
-        imageUrl3,
         tag,
         createdAt,
       },
@@ -45,6 +39,13 @@ class PostsRepository {
   };
 
   // eslint-disable-next-line class-methods-use-this
+  public uploadImgs = async (imageUrls: string[], postId: number) => {
+    const imageArr = imageUrls.map((v) => {
+      return { imageUrl: v, postId };
+    });
+    return this.prisma.postImages.createMany({ data: imageArr });
+  };
+
   public myLocationPosts = async (
     q: number,
     state1?: string,
@@ -72,7 +73,10 @@ class PostsRepository {
           },
         ],
       },
-      include: { user: { select: { userImage: true } } },
+      include: {
+        user: { select: { userImage: true } },
+        PostImages: { select: { imageUrl: true } },
+      },
 
       // 무한스크롤
       skip: q || 0,
@@ -101,7 +105,10 @@ class PostsRepository {
           },
         ],
       },
-      include: { user: { select: { userImage: true } } },
+      include: {
+        user: { select: { userImage: true } },
+        PostImages: { select: { imageUrl: true } },
+      },
       // 무한스크롤
       skip: q || 0,
       take: 12,
@@ -119,9 +126,9 @@ class PostsRepository {
           select: { Wish: true },
         },
         user: { select: { userImage: true } },
+        PostImages: { select: { imageUrl: true } },
       },
     });
-
     return result;
   };
 

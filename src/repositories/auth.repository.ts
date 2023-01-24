@@ -54,7 +54,12 @@ class AuthRepository {
     const results = await this.prisma.wish.findMany({
       where: { userId },
       include: {
-        post: { include: { user: { select: { userImage: true, userName: true } } } },
+        post: {
+          include: {
+            user: { select: { userImage: true, userName: true } },
+            PostImages: { select: { imageUrl: true, postId: true } },
+          },
+        },
       },
       skip: q || 0,
       take: 6,
@@ -126,7 +131,10 @@ class AuthRepository {
   public myPosts = async (userId: number, q: number) => {
     const myPosts = await this.prisma.post.findMany({
       where: { userId },
-      include: { user: { select: { userImage: true } } },
+      include: {
+        user: { select: { userImage: true } },
+        PostImages: { select: { imageUrl: true } },
+      },
       skip: q || 0,
       take: 6,
       orderBy: { createdAt: 'desc' },

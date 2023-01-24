@@ -43,29 +43,37 @@ model Score {
 }
 
 model Post {
-  postId     Int       @id @default(autoincrement())
+  postId     Int          @id @default(autoincrement())
   userId     Int
   userName   String
   title      String
   content    String
   category   Int
   appointed  DateTime?
-  isDeadLine Int?      @default(1)
+  isDeadLine Int?         @default(1)
   location1  String?
   location2  String?
   imageUrl1  String?
   imageUrl2  String?
   imageUrl3  String?
   tag        String?
-  createdAt  DateTime  @default(now())
-  updated    Int       @default(0)
+  createdAt  DateTime     @default(now())
+  updated    Int          @default(0)
   Alarm      Alarm[]
-  user       User      @relation(fields: [userId, userName], references: [userId, userName], onDelete: Cascade)
+  user       User         @relation(fields: [userId, userName], references: [userId, userName], onDelete: Cascade)
   Report     Report[]
   Room       Room[]
   Wish       Wish[]
+  PostImages PostImages[]
 
   @@index([userId, userName], map: "Post_userId_userName_fkey")
+}
+
+model PostImages {
+  imageId  Int     @id @default(autoincrement())
+  post     Post    @relation(fields: [postId], references: [postId])
+  imageUrl String?
+  postId   Int
 }
 
 model Chat {

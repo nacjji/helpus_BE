@@ -11,19 +11,26 @@ class PostsController {
     this.postsService = new PostsService();
   }
 
+  public uploadImgs: RequestHandler = async (req, res, next) => {
+    try {
+      const { postId } = req.params;
+      const imageUrls = req.files! as Array<Express.MulterS3.File>;
+      const images = imageUrls.map((v) => {
+        return v.location;
+      });
+      await this.postsService.uploadImgs(images, Number(postId));
+      return res.status(201).json({ images, postId });
+    } catch (err) {
+      return next(err);
+    }
+  };
+
   // eslint-disable-next-line class-methods-use-this
   public createPost = async (req: Request, res: Response, next: NextFunction) => {
     try {
       const { userId, userName } = res.locals;
       const { title, content, category, appointed, location1, location2, tag, createdAt } =
         await postInputPattern.validateAsync(req.body);
-
-      // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
-      const filesArr = req.files! as Array<Express.MulterS3.File>;
-      const imageUrl = filesArr.map((files) => files.location);
-      const imageUrl1 = imageUrl[0];
-      const imageUrl2 = imageUrl[1];
-      const imageUrl3 = imageUrl[2];
       const tagArr = tag?.split(',');
       const result = await this.postsService.createPost(
         userId,
@@ -34,9 +41,6 @@ class PostsController {
         appointed,
         location1,
         location2,
-        imageUrl1,
-        imageUrl2,
-        imageUrl3,
         tag,
         createdAt
       );

@@ -7,6 +7,12 @@ const postsRouter = Router();
 const postsController = new PostsController();
 
 postsRouter.post(
+  '/images/:postId',
+  [multeruploader.array('post-images', 10)],
+  postsController.uploadImgs
+);
+
+postsRouter.post(
   '/',
   requiredLogin,
   [multeruploader.array('post-image', 3)],
