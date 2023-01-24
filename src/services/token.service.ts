@@ -13,19 +13,15 @@ class TokenService {
   }
 
   public makeNewToken = async (accessToken: string, refreshToken: string) => {
-    const payload: any = jwt.decode(accessToken);
-    if (!payload) throw badRequest('비정상 토큰으로 확인됨');
-
-    // const { expiresIn } = jwt.decode(refreshToken) as { expiresIn: number };
-    const result = await this.tokenRepository.checkToken(payload.userId, accessToken, refreshToken);
+    const result = await this.tokenRepository.checkToken(accessToken, refreshToken);
     if (!result) throw unauthorized('로그인 필요');
 
-    const { expiresIn } = jwt.decode(refreshToken) as { expiresIn: number };
+    const { expiresIn, userId } = jwt.decode(refreshToken) as { expiresIn: number; userId: number };
 
     const leftTime = Number(new Date()) - expiresIn;
     if (leftTime < 1) throw unauthorized('로그인 필요');
 
-    const newAccessToken = await jwt.sign(payload, JWT_SECRET_KEY, {
+    const newAccessToken = await jwt.sign({ userId }, JWT_SECRET_KEY, {
       expiresIn: '30m',
     });
     if (leftTime < 86400) {
@@ -38,6 +34,18 @@ class TokenService {
     }
     await this.tokenRepository.updateAccess(result.tokenId, newAccessToken);
     return { newAccessToken };
+  };
+
+  public removeToken = async (accessToken: string, refreshToken: string) => {
+    await this.tokenRepository.removeToken(accessToken, refreshToken);
+  };
+
+  public removeAllTokens = async (accessToken: string, refreshToken: string) => {
+    const result = await this.tokenRepository.checkToken(accessToken, refreshToken);
+    if (result) {
+      const { userId } = jwt.decode(result.accessToken) as { userId: number };
+      await this.tokenRepository.removeAllTokens(userId);
+    }
   };
 }
 
