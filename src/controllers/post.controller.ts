@@ -11,24 +11,11 @@ class PostsController {
     this.postsService = new PostsService();
   }
 
-  public uploadImgs: RequestHandler = async (req, res, next) => {
-    try {
-      const { postId } = req.params;
-      const imageUrls = req.files! as Array<Express.MulterS3.File>;
-      const images = imageUrls.map((v) => {
-        return v.location;
-      });
-      await this.postsService.uploadImgs(images, Number(postId));
-      return res.status(201).json({ images, postId });
-    } catch (err) {
-      return next(err);
-    }
-  };
-
   // eslint-disable-next-line class-methods-use-this
   public createPost = async (req: Request, res: Response, next: NextFunction) => {
     try {
       const { userId, userName } = res.locals;
+
       const { title, content, category, appointed, location1, location2, tag, createdAt } =
         await postInputPattern.validateAsync(req.body);
       const tagArr = tag?.split(',');
@@ -45,6 +32,22 @@ class PostsController {
         createdAt
       );
       return res.status(201).json({ result, tag: tagArr });
+    } catch (err) {
+      return next(err);
+    }
+  };
+
+  public uploadImgs: RequestHandler = async (req, res, next) => {
+    try {
+      const { postId } = req.params;
+      const { userId } = res.locals;
+
+      const imageUrls = req.files! as Array<Express.MulterS3.File>;
+      const images = imageUrls.map((v) => {
+        return v.location;
+      });
+      await this.postsService.uploadImgs(images, Number(postId), Number(userId));
+      return res.status(201).json({ images, postId });
     } catch (err) {
       return next(err);
     }
@@ -131,9 +134,9 @@ class PostsController {
 
   public deletePost: RequestHandler = async (req, res, next) => {
     try {
-      const userId = Number(res.locals.userId);
-      const postId = Number(req.params.postId);
-      await this.postsService.deletePost(postId, userId);
+      const { userId } = res.locals;
+      const { postId } = req.params;
+      await this.postsService.deletePost(Number(postId), Number(userId));
       return res.status(201).json({ message: '게시글이 삭제되었습니다.' });
     } catch (err) {
       return next(err);

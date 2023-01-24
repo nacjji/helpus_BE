@@ -39,9 +39,9 @@ class PostsRepository {
   };
 
   // eslint-disable-next-line class-methods-use-this
-  public uploadImgs = async (imageUrls: string[], postId: number) => {
+  public uploadImgs = async (imageUrls: string[], postId: number, userId: number) => {
     const imageArr = imageUrls.map((v) => {
-      return { imageUrl: v, postId };
+      return { imageUrl: v, postId, userId };
     });
     return this.prisma.postImages.createMany({ data: imageArr });
   };
@@ -199,14 +199,18 @@ class PostsRepository {
     return result;
   };
 
-  public deletePost = async (postId: number) => {
+  public deletePost = async (postId: number, userId: number) => {
     const postExist = await this.prisma.post.findUnique({ where: { postId } });
+    const images = await this.prisma.postImages.findMany({ where: { postId } });
     if (!postExist) {
       throw notFound('게시글 없음');
     }
     await this.prisma.post.findUniqueOrThrow({ where: { postId } });
-    const result = await this.prisma.post.delete({ where: { postId } });
-    return result;
+
+    await this.prisma.post.delete({ where: { postId } });
+    await this.prisma.postImages.deleteMany({ where: { postId } });
+    console.log(images);
+    return images;
   };
 }
 

@@ -29,6 +29,7 @@ model User {
   SocketTable SocketTable[]
   Wish        Wish[]
   Token       Token[]
+  PostImages  PostImages[]
 
   @@unique([userId, userName])
 }
@@ -72,8 +73,10 @@ model Post {
 model PostImages {
   imageId  Int     @id @default(autoincrement())
   post     Post    @relation(fields: [postId], references: [postId])
+  user     User    @relation(fields: [userId], references: [userId])
   imageUrl String?
   postId   Int
+  userId   Int
 }
 
 model Chat {

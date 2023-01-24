@@ -15,12 +15,16 @@ class PostsService {
     this.postsRepository = new PostsRepository(prisma);
   }
 
-  public uploadImgs = async (imageUrls: string[], postId: number) => {
+  public uploadImgs = async (imageUrls: string[], postId: number, userId: number) => {
     const imageFileName = imageUrls.map((v) => {
       return v?.split('/')[4];
     });
     const rand = Math.floor(Math.random() * 30);
-    const result = await this.postsRepository.uploadImgs(imageFileName || randomImg[rand], postId);
+    const result = await this.postsRepository.uploadImgs(
+      imageFileName || randomImg[rand],
+      postId,
+      userId
+    );
 
     return result;
   };
@@ -179,11 +183,12 @@ class PostsService {
   };
 
   public deletePost = async (postId: number, userId: number) => {
-    const result = await this.postsRepository.deletePost(postId);
-    if (userId !== result.userId) throw badRequest('게시글의 작성자가 아닙니다.');
-    console.log(result);
-
-    deleteS3ImagePost(result.imageUrl1 || '', result.imageUrl2 || '', result.imageUrl3 || '');
+    const result = await this.postsRepository.deletePost(postId, userId);
+    // if (userId !== result.userId) throw badRequest('게시글의 작성자가 아닙니다.');
+    const imageUrls = result.map((v) => {
+      return v.imageUrl;
+    });
+    deleteS3ImagePost(imageUrls);
     return result;
   };
 }
