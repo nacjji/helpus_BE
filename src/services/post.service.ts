@@ -128,6 +128,7 @@ class PostsService {
       throw notFound('게시글 없음');
     }
     // eslint-disable-next-line no-underscore-dangle
+    console.log(result.imageUrl2);
     return {
       postId: result.postId,
       userId: result.userId,
@@ -145,12 +146,12 @@ class PostsService {
       imageUrl1: !result.imageUrl1?.includes('https://')
         ? `${process.env.S3_BUCKET_URL}/${result.imageUrl1}`
         : result.imageUrl1,
-      imageUrl2: !result.imageUrl2?.includes('https://')
-        ? `${process.env.S3_BUCKET_URL}/${result.imageUrl2}`
-        : result.imageUrl2,
-      imageUrl3: !result.imageUrl3?.includes('https://')
-        ? `${process.env.S3_BUCKET_URL}/${result.imageUrl3}`
-        : result.imageUrl3,
+      imageUrl2: result.imageUrl2
+        ? `${process.env.S3_BUCKET_URL}/${result.imageUrl2}` // null 이면
+        : null,
+      imageUrl3: result.imageUrl3
+        ? `${process.env.S3_BUCKET_URL}/${result.imageUrl3}` // null 이면
+        : null,
       tag: result.tag,
       createdAt: result.createdAt,
       updated: result.updated,
