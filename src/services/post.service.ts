@@ -145,9 +145,10 @@ class PostsService {
       imageUrl1: !result.imageUrl1?.includes('https://')
         ? `${process.env.S3_BUCKET_URL}/${result.imageUrl1}`
         : result.imageUrl1,
-      imageUrl2: !result.imageUrl2?.includes('https://')
-        ? `${process.env.S3_BUCKET_URL}/${result.imageUrl2}`
-        : result.imageUrl2,
+      // imageUrl2: !result.imageUrl2?.includes('https://')
+      //   ? `${process.env.S3_BUCKET_URL}/${result.imageUrl2}`
+      //   : result.imageUrl2,
+      imageUrl2: !result.imageUrl2?.includes('https://') || null,
       imageUrl3: !result.imageUrl3?.includes('https://')
         ? `${process.env.S3_BUCKET_URL}/${result.imageUrl3}`
         : result.imageUrl3,
