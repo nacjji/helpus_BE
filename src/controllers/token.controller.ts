@@ -16,6 +16,7 @@ class TokenController {
   public newToken: RequestHandler = async (req, res, next) => {
     try {
       const { helpusAccess, helpusRefresh } = req.cookies;
+      if (!helpusAccess || !helpusRefresh) throw badRequest('비정상 토큰으로 확인됨');
 
       const { newAccessToken, newRefreshToken } = await this.tokenService.makeNewToken(
         helpusAccess,
@@ -28,6 +29,8 @@ class TokenController {
 
       res.status(200);
     } catch (err) {
+      res.cookie('helpusAccess', '', { sameSite: 'none', secure: true });
+      res.cookie('helpusRefresh', '', { sameSite: 'none', secure: true });
       next(err);
     }
   };

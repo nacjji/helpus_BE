@@ -1,6 +1,5 @@
-import jwtDecode from 'jwt-decode';
 import * as jwt from 'jsonwebtoken';
-import { unauthorized } from '@hapi/boom';
+import { unauthorized, badRequest } from '@hapi/boom';
 import prisma from '../config/database/prisma';
 import TokenRepository from '../repositories/token.repository';
 
@@ -14,20 +13,22 @@ class TokenService {
   }
 
   public makeNewToken = async (accessToken: string, refreshToken: string) => {
-    if (!accessToken || !refreshToken) throw unauthorized('비정상 토큰으로 확인됨');
+    const payload: any = jwt.decode(accessToken);
+    if (!payload) throw badRequest('비정상 토큰으로 확인됨');
 
-    const payload: any = jwtDecode(accessToken);
-    if (!payload) throw unauthorized('올바르지 않은 토큰');
-
-    const { expiresIn } = jwtDecode(refreshToken) as { expiresIn: number };
+    // const { expiresIn } = jwt.decode(refreshToken) as { expiresIn: number };
     const result = await this.tokenRepository.checkToken(payload.userId, accessToken, refreshToken);
     if (!result) throw unauthorized('로그인 필요');
+
+    const { expiresIn } = jwt.decode(refreshToken) as { expiresIn: number };
+
+    const leftTime = Number(new Date()) - expiresIn;
+    if (leftTime < 1) throw unauthorized('로그인 필요');
 
     const newAccessToken = await jwt.sign(payload, JWT_SECRET_KEY, {
       expiresIn: '30m',
     });
-    const expired = Number(new Date()) - expiresIn;
-    if (expired < 86400) {
+    if (leftTime < 86400) {
       const newRefreshToken = await jwt.sign({}, JWT_SECRET_KEY, {
         expiresIn: '14d',
       });

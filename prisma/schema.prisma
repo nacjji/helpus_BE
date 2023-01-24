@@ -146,7 +146,7 @@ model Report {
 model Token {
   User         User   @relation(fields: [userId], references: [userId])
   userId       Int
-  accessToken  String
-  refreshToken String
+  accessToken  String @db.LongText
+  refreshToken String @db.LongText
   tokenId      Int    @id @default(autoincrement())
 }

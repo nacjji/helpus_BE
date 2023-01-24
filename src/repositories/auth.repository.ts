@@ -9,14 +9,8 @@ class AuthRepository {
   }
 
   public saveToken = async (userId: number, accessToken: string, refreshToken: string) => {
-    console.log(refreshToken);
     await this.prisma.token.create({
-      data: {
-        userId,
-        accessToken,
-        refreshToken:
-          'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOjU0LCJ1c2VyTmFtZSI6InRlc3QiLCJzdGF0ZTEiOiLstqnssq3rgqjrj4QiLCJzdGF0ZTIiOiLshJzsgrDsi5wiLCJpYXQiOjE2NzQ0NjM2MDgsImV4cCI6MTY3NDU1MDAwOH0.dSckKw_56kcoorBU9tfW0HhG0SNeQFjRCjWgvQN0jGk',
-      },
+      data: { userId, accessToken, refreshToken },
     });
   };
 
