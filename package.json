@@ -4,7 +4,7 @@
   "description": "",
   "main": "",
   "scripts": {
-    "start": "cross-env NODE_ENV=production pm2 start dist/server.js",
+    "start": "cross-env NODE_ENV=production pm2 start dist/src/server.js",
     "dev": "cross-env NODE_ENV=development nodemon src/server.ts",
     "test": "jest",
     "lint": "eslint 'src/** /*.{ts,tsx,js,jsx}'",
