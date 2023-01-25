@@ -130,9 +130,7 @@ class AuthService {
         isDeadLine: v.post.isDeadLine,
         location1: v.post.location1,
         location2: v.post.location2,
-        imageUrl1: !v.post.imageUrl1?.includes('https://')
-          ? `${process.env.S3_BUCKET_URL}/${v.post.imageUrl1}`
-          : v.post.imageUrl1,
+        imageUrls: v.post.PostImages,
         tag: v.post.tag,
         createdAt: v.post.createdAt,
         updated: v.post.updated,
@@ -205,9 +203,8 @@ class AuthService {
         isDeadLine: v.isDeadLine,
         location1: v.location1,
         location2: v.location2,
-        imageUrl1: !v.imageUrl1?.includes('https://')
-          ? `${process.env.S3_BUCKET_URL}/${v.imageUrl1}`
-          : v.imageUrl1,
+        imageUrls: v.PostImages,
+
         tag: v.tag,
         createdAt: v.createdAt,
         updated: v.updated,

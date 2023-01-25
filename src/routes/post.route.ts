@@ -20,16 +20,7 @@ postsRouter.get('/all-location', passAnyway, postsController.allLocationPosts);
 
 postsRouter.get('/:postId', postsController.findDetailPost);
 
-postsRouter.put(
-  '/:postId',
-  requiredLogin,
-  multeruploader.fields([
-    { name: 'imageUrl1', maxCount: 3 },
-    { name: 'imageUrl2' },
-    { name: 'imageUrl3' },
-  ]),
-  postsController.updatePost
-);
+postsRouter.put('/:postId', requiredLogin, postsController.updatePost);
 
 postsRouter.delete('/:postId', requiredLogin, postsController.deletePost);
 
