@@ -49,6 +49,12 @@ class KakaoAuthRepository {
       where: { userId },
     });
   };
+
+  public saveToken = async (userId: number, accessToken: string, refreshToken: string) => {
+    await this.prisma.token.create({
+      data: { userId, accessToken, refreshToken },
+    });
+  };
 }
 
 export default KakaoAuthRepository;

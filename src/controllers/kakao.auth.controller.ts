@@ -13,7 +13,16 @@ class KakaoAuthController {
       const { code } = req.query as { code: string };
 
       const result = await this.kakaoAuthService.kakao(code);
-      res.status(200).json(result);
+      if (result.accessToken) {
+        res.cookie('helpusAccess', result.accessToken, { sameSite: 'none', secure: true });
+        res.cookie('helpusRefresh', result.refreshToken, { sameSite: 'none', secure: true });
+      }
+
+      res.status(200).json({
+        userId: result.userid,
+        userImage: result.userImage,
+        userName: result.userName,
+      });
     } catch (err) {
       next(err);
     }
@@ -24,7 +33,16 @@ class KakaoAuthController {
       const { state1, state2, userId } = req.body;
 
       const result = await this.kakaoAuthService.kakaoState(state1, state2, userId);
-      res.status(201).json(result);
+      if (result.accessToken) {
+        res.cookie('helpusAccess', result.accessToken, { sameSite: 'none', secure: true });
+        res.cookie('helpusRefresh', result.refreshToken, { sameSite: 'none', secure: true });
+      }
+
+      res.status(201).json({
+        userId: result.userId,
+        userImage: result.userImage,
+        userName: result.userName,
+      });
     } catch (err) {
       next(err);
     }
