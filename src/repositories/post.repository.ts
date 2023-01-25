@@ -43,16 +43,6 @@ class PostsRepository {
     return result;
   };
 
-  // eslint-disable-next-line class-methods-use-this
-  // public uploadImgs = async (imageUrls: string[], postId: number, userId: number) => {
-  //   const imageArr = imageUrls.map((v) => {
-  //     return { imageUrl: v, postId, userId };
-  //   });
-  //   console.log(imageArr);
-
-  //   return;
-  // };
-
   public myLocationPosts = async (
     q: number,
     state1?: string,
@@ -159,25 +149,6 @@ class PostsRepository {
     if (postExist.userId !== userId) {
       throw badRequest('해당 글의 작성자가 아닙니다.');
     }
-    // if (!imageUrl1 && !imageUrl2 && !imageUrl3) {
-    //   const result = await this.prisma.post.update({
-    //     where: { postId },
-    //     data: {
-    //       postId,
-    //       userId,
-    //       title,
-    //       content,
-    //       category: category || postExist.category,
-    //       appointed,
-    //       updated: 1,
-    //       isDeadLine: isDeadLine || postExist.isDeadLine,
-    //       location1,
-    //       location2,
-    //       tag,
-    //     },
-    //   });
-    //   return result;
-    // }
     const result = await this.prisma.post.update({
       where: { postId },
       data: {
