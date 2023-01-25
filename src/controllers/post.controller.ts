@@ -112,7 +112,6 @@ class PostsController {
       }
       await postInputPattern.validateAsync(req.body);
 
-      const imageUrls = JSON.parse(JSON.stringify(req.files)) || '';
       const result = await this.postsService.updatePost(
         postId,
         userId,
@@ -123,7 +122,6 @@ class PostsController {
         isDeadLine,
         location1,
         location2,
-        imageUrls,
         tag
       );
       return res.status(201).json({ result });

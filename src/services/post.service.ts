@@ -161,7 +161,6 @@ class PostsService {
     isDeadLine?: number,
     location1?: string,
     location2?: string,
-    imageUrls?: string,
     tag?: string
   ) => {
     const result = await this.postsRepository.updatePost(

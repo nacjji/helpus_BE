@@ -54,9 +54,6 @@ model Post {
   isDeadLine Int?         @default(1)
   location1  String?
   location2  String?
-  imageUrl1  String?
-  imageUrl2  String?
-  imageUrl3  String?
   tag        String?
   createdAt  DateTime     @default(now())
   updated    Int          @default(0)
@@ -72,8 +69,8 @@ model Post {
 
 model PostImages {
   imageId  Int     @id @default(autoincrement())
-  post     Post    @relation(fields: [postId], references: [postId])
-  user     User    @relation(fields: [userId], references: [userId])
+  post     Post    @relation(fields: [postId], references: [postId], onDelete: Cascade)
+  user     User    @relation(fields: [userId], references: [userId], onDelete: Cascade)
   imageUrl String?
   postId   Int
   userId   Int
