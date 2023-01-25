@@ -14,11 +14,14 @@ class PostsController {
   // eslint-disable-next-line class-methods-use-this
   public createPost = async (req: Request, res: Response, next: NextFunction) => {
     try {
+      // const userId = 2;
+      // const userName = 'test2';
+
       const { userId, userName } = res.locals;
 
       const { title, content, category, appointed, location1, location2, tag, createdAt } =
         await postInputPattern.validateAsync(req.body);
-      const tagArr = tag?.split(',');
+
       const imageUrls = req.files! as Array<Express.MulterS3.File>;
       const images = imageUrls.map((v) => {
         return v.location;
@@ -36,7 +39,8 @@ class PostsController {
         createdAt,
         images
       );
-      return res.status(201).json({ result, images, tag: tagArr });
+
+      return res.status(201).json({ result, images });
     } catch (err) {
       return next(err);
     }

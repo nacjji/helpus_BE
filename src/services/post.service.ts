@@ -71,7 +71,9 @@ class PostsService {
         isDeadLine: v.isDeadLine,
         location1: v.location1,
         location2: v.location2,
-        imageUrls: v.PostImages,
+        imageUrls: v.PostImages.map((val) => {
+          return `${process.env.S3_BUCKET_URL}/${val.imageUrl}`;
+        }),
         tag: v.tag,
         createdAt: v.createdAt,
         updated: v.updated,
@@ -100,7 +102,9 @@ class PostsService {
         isDeadLine: v.isDeadLine,
         location1: v.location1,
         location2: v.location2,
-        imageUrls: v.PostImages,
+        imageUrls: v.PostImages.map((val) => {
+          return `${process.env.S3_BUCKET_URL}/${val.imageUrl}`;
+        }),
         tag: v.tag,
         createdAt: v.createdAt,
         updated: v.updated,
@@ -131,7 +135,9 @@ class PostsService {
       isDeadLine: result.isDeadLine,
       location1: result.location1,
       location2: result.location2,
-      imageUrls: result.PostImages,
+      imageUrls: result.PostImages.map((v) => {
+        return `${process.env.S3_BUCKET_URL}/${v.imageUrl}`;
+      }),
       tag: result.tag,
       createdAt: result.createdAt,
       updated: result.updated,
