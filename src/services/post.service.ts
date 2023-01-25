@@ -6,6 +6,8 @@ import prisma from '../config/database/prisma';
 import { deleteS3ImagePost } from '../middlewares/multer.uploader';
 import randomImg from '../../randomImg';
 
+const rand = Math.floor(Math.random() * 30);
+
 class PostsService {
   postsRepository: PostsRepository;
 
@@ -73,7 +75,11 @@ class PostsService {
         location2: v.location2,
         imageUrls: v.PostImages.map((val) => {
           return `${process.env.S3_BUCKET_URL}/${val.imageUrl}`;
-        }),
+        }).length
+          ? v.PostImages.map((val) => {
+              return `${process.env.S3_BUCKET_URL}/${val.imageUrl}`;
+            })
+          : randomImg[rand],
         tag: v.tag,
         createdAt: v.createdAt,
         updated: v.updated,
@@ -104,13 +110,16 @@ class PostsService {
         location2: v.location2,
         imageUrls: v.PostImages.map((val) => {
           return `${process.env.S3_BUCKET_URL}/${val.imageUrl}`;
-        }),
+        }).length
+          ? v.PostImages.map((val) => {
+              return `${process.env.S3_BUCKET_URL}/${val.imageUrl}`;
+            })
+          : randomImg[rand],
         tag: v.tag,
         createdAt: v.createdAt,
         updated: v.updated,
       };
     });
-
     return _result;
   };
 
@@ -135,9 +144,13 @@ class PostsService {
       isDeadLine: result.isDeadLine,
       location1: result.location1,
       location2: result.location2,
-      imageUrls: result.PostImages.map((v) => {
-        return `${process.env.S3_BUCKET_URL}/${v.imageUrl}`;
-      }),
+      imageUrls: result.PostImages.map((val) => {
+        return val.imageUrl;
+      }).length
+        ? result.PostImages.map((val) => {
+            return `${process.env.S3_BUCKET_URL}/${val.imageUrl}`;
+          })
+        : randomImg[rand],
       tag: result.tag,
       createdAt: result.createdAt,
       updated: result.updated,
