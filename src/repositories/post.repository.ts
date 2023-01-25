@@ -17,9 +17,6 @@ class PostsRepository {
     appointed?: Date,
     location1?: string,
     location2?: string,
-    imageUrl1?: string,
-    imageUrl2?: string,
-    imageUrl3?: string,
     tag?: string,
     createdAt?: Date
     // eslint-disable-next-line consistent-return
@@ -34,9 +31,6 @@ class PostsRepository {
         appointed,
         location1,
         location2,
-        imageUrl1,
-        imageUrl2,
-        imageUrl3,
         tag,
         createdAt,
       },
@@ -45,6 +39,13 @@ class PostsRepository {
   };
 
   // eslint-disable-next-line class-methods-use-this
+  public uploadImgs = async (imageUrls: string[], postId: number, userId: number) => {
+    const imageArr = imageUrls.map((v) => {
+      return { imageUrl: v, postId, userId };
+    });
+    return this.prisma.postImages.createMany({ data: imageArr });
+  };
+
   public myLocationPosts = async (
     q: number,
     state1?: string,
@@ -72,7 +73,10 @@ class PostsRepository {
           },
         ],
       },
-      include: { user: { select: { userImage: true } } },
+      include: {
+        user: { select: { userImage: true } },
+        PostImages: { select: { imageUrl: true } },
+      },
 
       // 무한스크롤
       skip: q || 0,
@@ -101,7 +105,10 @@ class PostsRepository {
           },
         ],
       },
-      include: { user: { select: { userImage: true } } },
+      include: {
+        user: { select: { userImage: true } },
+        PostImages: { select: { imageUrl: true } },
+      },
       // 무한스크롤
       skip: q || 0,
       take: 12,
@@ -119,9 +126,9 @@ class PostsRepository {
           select: { Wish: true },
         },
         user: { select: { userImage: true } },
+        PostImages: { select: { imageUrl: true } },
       },
     });
-
     return result;
   };
 
@@ -135,9 +142,6 @@ class PostsRepository {
     isDeadLine?: number,
     location1?: string,
     location2?: string,
-    imageUrl1?: string,
-    imageUrl2?: string,
-    imageUrl3?: string,
     tag?: string
   ) => {
     const postExist = await this.prisma.post.findUnique({ where: { postId } });
@@ -148,28 +152,25 @@ class PostsRepository {
     if (postExist.userId !== userId) {
       throw badRequest('해당 글의 작성자가 아닙니다.');
     }
-    if (!imageUrl1 && !imageUrl2 && !imageUrl3) {
-      const result = await this.prisma.post.update({
-        where: { postId },
-        data: {
-          postId,
-          userId,
-          title,
-          content,
-          category: category || postExist.category,
-          appointed,
-          updated: 1,
-          isDeadLine: isDeadLine || postExist.isDeadLine,
-          location1,
-          location2,
-          imageUrl1: postExist.imageUrl1,
-          imageUrl2: postExist.imageUrl2,
-          imageUrl3: postExist.imageUrl3,
-          tag,
-        },
-      });
-      return result;
-    }
+    // if (!imageUrl1 && !imageUrl2 && !imageUrl3) {
+    //   const result = await this.prisma.post.update({
+    //     where: { postId },
+    //     data: {
+    //       postId,
+    //       userId,
+    //       title,
+    //       content,
+    //       category: category || postExist.category,
+    //       appointed,
+    //       updated: 1,
+    //       isDeadLine: isDeadLine || postExist.isDeadLine,
+    //       location1,
+    //       location2,
+    //       tag,
+    //     },
+    //   });
+    //   return result;
+    // }
     const result = await this.prisma.post.update({
       where: { postId },
       data: {
@@ -183,23 +184,24 @@ class PostsRepository {
         isDeadLine: isDeadLine || postExist.isDeadLine,
         location1,
         location2,
-        imageUrl1,
-        imageUrl2,
-        imageUrl3,
         tag,
       },
     });
     return result;
   };
 
-  public deletePost = async (postId: number) => {
+  public deletePost = async (postId: number, userId: number) => {
     const postExist = await this.prisma.post.findUnique({ where: { postId } });
+    const images = await this.prisma.postImages.findMany({ where: { postId } });
     if (!postExist) {
       throw notFound('게시글 없음');
     }
     await this.prisma.post.findUniqueOrThrow({ where: { postId } });
-    const result = await this.prisma.post.delete({ where: { postId } });
-    return result;
+
+    await this.prisma.post.delete({ where: { postId } });
+    await this.prisma.postImages.deleteMany({ where: { postId } });
+    console.log(images);
+    return images;
   };
 }
 

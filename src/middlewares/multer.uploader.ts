@@ -60,15 +60,14 @@ const deleteS3Image = (profileImage: string) => {
   });
 };
 
-const deleteS3ImagePost = (imageUrl1: string, imageUrl2: string, imageUrl3: string) => {
+const deleteS3ImagePost = (imageUrls: any) => {
+  const deleteImgs = imageUrls.map((v: string) => {
+    return { Key: `helpus/${v}` };
+  });
   s3.deleteObjects({
     Bucket: process.env.S3_BUCKET_NAME as string,
     Delete: {
-      Objects: [
-        { Key: `helpus/${imageUrl1}` },
-        { Key: `helpus/${imageUrl2}` },
-        { Key: `helpus/${imageUrl3}` },
-      ],
+      Objects: deleteImgs,
     },
   });
 };

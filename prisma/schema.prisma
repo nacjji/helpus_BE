@@ -29,6 +29,7 @@ model User {
   SocketTable SocketTable[]
   Wish        Wish[]
   Token       Token[]
+  PostImages  PostImages[]
 
   @@unique([userId, userName])
 }
@@ -53,9 +54,6 @@ model Post {
   isDeadLine Int?         @default(1)
   location1  String?
   location2  String?
-  imageUrl1  String?
-  imageUrl2  String?
-  imageUrl3  String?
   tag        String?
   createdAt  DateTime     @default(now())
   updated    Int          @default(0)
@@ -67,6 +65,15 @@ model Post {
   PostImages PostImages[]
 
   @@index([userId, userName], map: "Post_userId_userName_fkey")
+}
+
+model PostImages {
+  imageId  Int     @id @default(autoincrement())
+  post     Post    @relation(fields: [postId], references: [postId], onDelete: Cascade)
+  user     User    @relation(fields: [userId], references: [userId], onDelete: Cascade)
+  imageUrl String?
+  postId   Int
+  userId   Int
 }
 
 model Chat {
@@ -150,11 +157,4 @@ model Token {
   accessToken  String @db.LongText
   refreshToken String @db.LongText
   tokenId      Int    @id @default(autoincrement())
-}
-
-model PostImages {
-  imageId  Int     @id @default(autoincrement())
-  post     Post    @relation(fields: [postId], references: [postId], onDelete: Cascade)
-  imageUrl String?
-  postId   Int
 }
