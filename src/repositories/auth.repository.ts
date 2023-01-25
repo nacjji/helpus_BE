@@ -51,7 +51,7 @@ class AuthRepository {
         post: {
           include: {
             user: { select: { userImage: true, userName: true } },
-            PostImages: { select: { imageUrl: true, postId: true } },
+            PostImages: { select: { imageUrl: true } },
           },
         },
       },
@@ -123,7 +123,6 @@ class AuthRepository {
     return [scoreRate, ...allScores];
   };
 
-  // eslint-disable-next-line class-methods-use-this
   public myPosts = async (userId: number, q: number) => {
     const myPosts = await this.prisma.post.findMany({
       where: { userId },
