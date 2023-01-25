@@ -15,20 +15,6 @@ class PostsService {
     this.postsRepository = new PostsRepository(prisma);
   }
 
-  public uploadImgs = async (imageUrls: string[], postId: number, userId: number) => {
-    const imageFileName = imageUrls.map((v) => {
-      return v?.split('/')[4];
-    });
-    const rand = Math.floor(Math.random() * 30);
-    const result = await this.postsRepository.uploadImgs(
-      imageFileName || randomImg[rand],
-      postId,
-      userId
-    );
-
-    return result;
-  };
-
   public createPost = async (
     userId: number,
     userName: string,
@@ -39,8 +25,12 @@ class PostsService {
     location1?: string,
     location2?: string,
     tag?: string,
-    createdAt?: Date
+    createdAt?: Date,
+    images?: string[]
   ) => {
+    const imageFileName = images?.map((v) => {
+      return v?.split('/')[4];
+    });
     const result = await this.postsRepository.createPost(
       userId,
       userName,
@@ -51,13 +41,12 @@ class PostsService {
       location1,
       location2,
       tag,
-      createdAt
+      createdAt,
+      imageFileName
     );
     return result;
   };
 
-  // 전체 조회
-  // eslint-disable-next-line class-methods-use-this
   public myLocationPosts = async (
     q: number,
     state1?: string,
