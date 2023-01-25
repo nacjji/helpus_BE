@@ -21,6 +21,7 @@ class PostsController {
 
       const { title, content, category, appointed, location1, location2, tag, createdAt } =
         await postInputPattern.validateAsync(req.body);
+
       const imageUrls = req.files! as Array<Express.MulterS3.File>;
       const images = imageUrls.map((v) => {
         return v.location;
@@ -38,6 +39,7 @@ class PostsController {
         createdAt,
         images
       );
+
       return res.status(201).json({ result, images });
     } catch (err) {
       return next(err);

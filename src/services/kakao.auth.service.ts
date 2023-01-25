@@ -18,7 +18,7 @@ class KakaoAuthService {
     this.kakaoauthRepository = new KakaoAuthRepository(prisma);
   }
 
-  kakao = async (code: string) => {
+  public kakao = async (code: string) => {
     const config = {
       client_id: REST_API_KEY,
       grant_type: 'authorization_code',
@@ -47,11 +47,33 @@ class KakaoAuthService {
 
     let isUser = await this.kakaoauthRepository.checkIsUser(data.id);
 
-    let token = '';
     if (isUser && isUser.state1) {
-      token = jwt.sign({ userId: isUser.userId, userName: isUser.userName }, JWT_SECRET_KEY, {
-        expiresIn: '2h',
+      const accessToken = await jwt.sign(
+        {
+          userId: isUser.userId,
+          userName: isUser.userName,
+          state1: isUser.state1,
+          state2: isUser.state2,
+        },
+        JWT_SECRET_KEY,
+        {
+          expiresIn: '30m',
+        }
+      );
+
+      const refreshToken = await jwt.sign({}, JWT_SECRET_KEY, {
+        expiresIn: '14d',
       });
+
+      await this.kakaoauthRepository.saveToken(isUser.userId, accessToken, refreshToken);
+
+      return {
+        userid: isUser.userId,
+        userName: isUser.userName,
+        userImage: isUser.userImage,
+        accessToken,
+        refreshToken,
+      };
     }
 
     if (!isUser) {
@@ -66,22 +88,32 @@ class KakaoAuthService {
       userid: isUser.userId,
       userName: isUser.userName,
       userImage: isUser.userImage,
-      token,
     };
   };
 
   public kakaoState = async (state1: string, state2: string, userId: number) => {
     const result = await this.kakaoauthRepository.kakaoState(state1, state2, userId);
 
-    const token = jwt.sign({ userId: result.userId, userName: result.userName }, JWT_SECRET_KEY, {
-      expiresIn: '2h',
+    const accessToken = await jwt.sign(
+      { userId, userName: result.userName, state1, state2 },
+      JWT_SECRET_KEY,
+      {
+        expiresIn: '30m',
+      }
+    );
+
+    const refreshToken = await jwt.sign({}, JWT_SECRET_KEY, {
+      expiresIn: '14d',
     });
 
+    await this.kakaoauthRepository.saveToken(userId, accessToken, refreshToken);
+
     return {
-      userId: result.userId,
+      userId,
       userName: result.userName,
       userImage: result.userImage,
-      token,
+      accessToken,
+      refreshToken,
     };
   };
 

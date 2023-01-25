@@ -47,8 +47,6 @@ class PostsService {
     return result;
   };
 
-  // 전체 조회
-  // eslint-disable-next-line class-methods-use-this
   public myLocationPosts = async (
     q: number,
     state1?: string,
