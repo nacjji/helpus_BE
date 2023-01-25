@@ -22,7 +22,7 @@ class TokenService {
     if (leftTime < 1) throw unauthorized('로그인 필요');
 
     const newAccessToken = await jwt.sign({ userId }, JWT_SECRET_KEY, {
-      expiresIn: '30m',
+      expiresIn: '30s',
     });
     if (leftTime < 86400) {
       const newRefreshToken = await jwt.sign({}, JWT_SECRET_KEY, {
