@@ -7,13 +7,11 @@ const postsRouter = Router();
 const postsController = new PostsController();
 
 postsRouter.post(
-  '/images/:postId',
+  '/',
   requiredLogin,
   [multeruploader.array('post-images', 10)],
-  postsController.uploadImgs
+  postsController.createPost
 );
-
-postsRouter.post('/', requiredLogin, postsController.createPost);
 
 postsRouter.get('/my-location', passAnyway, postsController.myLocationPosts);
 postsRouter.get('/all-location', passAnyway, postsController.allLocationPosts);

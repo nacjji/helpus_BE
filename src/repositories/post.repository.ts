@@ -18,7 +18,8 @@ class PostsRepository {
     location1?: string,
     location2?: string,
     tag?: string,
-    createdAt?: Date
+    createdAt?: Date,
+    imageUrls?: string[]
     // eslint-disable-next-line consistent-return
   ) => {
     const result = await this.prisma.post.create({
@@ -35,15 +36,11 @@ class PostsRepository {
         createdAt,
       },
     });
-    return result;
-  };
-
-  // eslint-disable-next-line class-methods-use-this
-  public uploadImgs = async (imageUrls: string[], postId: number, userId: number) => {
-    const imageArr = imageUrls.map((v) => {
-      return { imageUrl: v, postId, userId };
+    const imageArr = imageUrls?.map((v) => {
+      return { imageUrl: v, postId: result.postId, userId };
     });
-    return this.prisma.postImages.createMany({ data: imageArr });
+    await this.prisma.postImages.createMany({ data: imageArr || [] });
+    return result;
   };
 
   public myLocationPosts = async (
@@ -200,7 +197,6 @@ class PostsRepository {
 
     await this.prisma.post.delete({ where: { postId } });
     await this.prisma.postImages.deleteMany({ where: { postId } });
-    console.log(images);
     return images;
   };
 }
