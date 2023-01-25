@@ -42,10 +42,10 @@ class TokenController {
       res.cookie('helpusAccess', '', { sameSite: 'none', secure: true });
       res.cookie('helpusRefresh', '', { sameSite: 'none', secure: true });
 
-      if (!helpusAccess || !helpusRefresh) throw badRequest('비정상 토큰으로 확인됨');
+      // if (!helpusAccess || !helpusRefresh) throw badRequest('비정상 토큰으로 확인됨');
 
       await this.tokenService.removeToken(helpusAccess, helpusRefresh);
-      res.status(200).json({ message: '토큰 삭제 완료' });
+      res.status(200).json({ helpusAccess, helpusRefresh });
     } catch (err) {
       next(err);
     }
