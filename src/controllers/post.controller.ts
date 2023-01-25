@@ -14,11 +14,16 @@ class PostsController {
   // eslint-disable-next-line class-methods-use-this
   public createPost = async (req: Request, res: Response, next: NextFunction) => {
     try {
-      const { userId, userName } = res.locals;
+      const userId = 2;
+      const userName = 'test2';
 
       const { title, content, category, appointed, location1, location2, tag, createdAt } =
         await postInputPattern.validateAsync(req.body);
       const tagArr = tag?.split(',');
+      const imageUrls = req.files! as Array<Express.MulterS3.File>;
+      const images = imageUrls.map((v) => {
+        return v.location;
+      });
       const result = await this.postsService.createPost(
         userId,
         userName,
@@ -29,25 +34,10 @@ class PostsController {
         location1,
         location2,
         tag,
-        createdAt
+        createdAt,
+        images
       );
-      return res.status(201).json({ result, tag: tagArr });
-    } catch (err) {
-      return next(err);
-    }
-  };
-
-  public uploadImgs: RequestHandler = async (req, res, next) => {
-    try {
-      const { postId } = req.params;
-      const { userId } = res.locals;
-
-      const imageUrls = req.files! as Array<Express.MulterS3.File>;
-      const images = imageUrls.map((v) => {
-        return v.location;
-      });
-      await this.postsService.uploadImgs(images, Number(postId), Number(userId));
-      return res.status(201).json({ images, postId });
+      return res.status(201).json({ result, images });
     } catch (err) {
       return next(err);
     }
@@ -105,7 +95,7 @@ class PostsController {
       const postId = Number(req.params.postId);
       const { title, content, location1, category, appointed, isDeadLine, location2, tag } =
         req.body;
-      const { userId } = res.locals;
+      const userId = 2;
 
       if (!postInputPattern.validateAsync) {
         throw badRequest('수정사항이 없습니다.');

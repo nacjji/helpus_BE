@@ -6,22 +6,15 @@ import { requiredLogin, passAnyway } from '../middlewares/auth.middleware';
 const postsRouter = Router();
 const postsController = new PostsController();
 
-postsRouter.post(
-  '/images/:postId',
-  requiredLogin,
-  [multeruploader.array('post-images', 10)],
-  postsController.uploadImgs
-);
-
-postsRouter.post('/', requiredLogin, postsController.createPost);
+postsRouter.post('/', [multeruploader.array('post-images', 10)], postsController.createPost);
 
 postsRouter.get('/my-location', passAnyway, postsController.myLocationPosts);
 postsRouter.get('/all-location', passAnyway, postsController.allLocationPosts);
 
 postsRouter.get('/:postId', postsController.findDetailPost);
 
-postsRouter.put('/:postId', requiredLogin, postsController.updatePost);
+postsRouter.put('/:postId', postsController.updatePost);
 
-postsRouter.delete('/:postId', requiredLogin, postsController.deletePost);
+postsRouter.delete('/:postId', postsController.deletePost);
 
 export default postsRouter;

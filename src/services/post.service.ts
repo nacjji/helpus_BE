@@ -15,20 +15,6 @@ class PostsService {
     this.postsRepository = new PostsRepository(prisma);
   }
 
-  public uploadImgs = async (imageUrls: string[], postId: number, userId: number) => {
-    const imageFileName = imageUrls.map((v) => {
-      return v?.split('/')[4];
-    });
-    const rand = Math.floor(Math.random() * 30);
-    const result = await this.postsRepository.uploadImgs(
-      imageFileName || randomImg[rand],
-      postId,
-      userId
-    );
-
-    return result;
-  };
-
   public createPost = async (
     userId: number,
     userName: string,
@@ -39,8 +25,12 @@ class PostsService {
     location1?: string,
     location2?: string,
     tag?: string,
-    createdAt?: Date
+    createdAt?: Date,
+    images?: string[]
   ) => {
+    const imageFileName = images?.map((v) => {
+      return v?.split('/')[4];
+    });
     const result = await this.postsRepository.createPost(
       userId,
       userName,
@@ -51,7 +41,8 @@ class PostsService {
       location1,
       location2,
       tag,
-      createdAt
+      createdAt,
+      imageFileName
     );
     return result;
   };
@@ -82,7 +73,9 @@ class PostsService {
         isDeadLine: v.isDeadLine,
         location1: v.location1,
         location2: v.location2,
-        imageUrls: v.PostImages,
+        imageUrls: v.PostImages.map((val) => {
+          return `${process.env.S3_BUCKET_URL}/${val.imageUrl}`;
+        }),
         tag: v.tag,
         createdAt: v.createdAt,
         updated: v.updated,
@@ -111,7 +104,9 @@ class PostsService {
         isDeadLine: v.isDeadLine,
         location1: v.location1,
         location2: v.location2,
-        imageUrls: v.PostImages,
+        imageUrls: v.PostImages.map((val) => {
+          return `${process.env.S3_BUCKET_URL}/${val.imageUrl}`;
+        }),
         tag: v.tag,
         createdAt: v.createdAt,
         updated: v.updated,
@@ -142,7 +137,9 @@ class PostsService {
       isDeadLine: result.isDeadLine,
       location1: result.location1,
       location2: result.location2,
-      imageUrls: result.PostImages,
+      imageUrls: result.PostImages.map((v) => {
+        return `${process.env.S3_BUCKET_URL}/${v.imageUrl}`;
+      }),
       tag: result.tag,
       createdAt: result.createdAt,
       updated: result.updated,
