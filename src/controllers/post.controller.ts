@@ -14,8 +14,7 @@ class PostsController {
   // eslint-disable-next-line class-methods-use-this
   public createPost = async (req: Request, res: Response, next: NextFunction) => {
     try {
-      const userId = 2;
-      const userName = 'test2';
+      const { userId, userName } = res.locals;
 
       const { title, content, category, appointed, location1, location2, tag, createdAt } =
         await postInputPattern.validateAsync(req.body);
