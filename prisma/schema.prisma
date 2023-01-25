@@ -158,10 +158,3 @@ model Token {
   refreshToken String @db.LongText
   tokenId      Int    @id @default(autoincrement())
 }
-
-model PostImages {
-  imageId  Int     @id @default(autoincrement())
-  post     Post    @relation(fields: [postId], references: [postId], onDelete: Cascade)
-  imageUrl String?
-  postId   Int
-}
