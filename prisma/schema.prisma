@@ -109,7 +109,7 @@ model Room {
 model SocketTable {
   socketId String @id
   userId   Int
-  user     User   @relation(fields: [userId], references: [userId])
+  user     User   @relation(fields: [userId], references: [userId], onDelete: Cascade)
 
   @@index([userId], map: "SocketTable_userId_fkey")
 }
@@ -152,9 +152,16 @@ model Report {
 }
 
 model Token {
-  User         User   @relation(fields: [userId], references: [userId])
+  User         User   @relation(fields: [userId], references: [userId], onDelete: Cascade)
   userId       Int
   accessToken  String @db.LongText
   refreshToken String @db.LongText
   tokenId      Int    @id @default(autoincrement())
+}
+
+model PostImages {
+  imageId  Int     @id @default(autoincrement())
+  post     Post    @relation(fields: [postId], references: [postId], onDelete: Cascade)
+  imageUrl String?
+  postId   Int
 }

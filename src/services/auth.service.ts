@@ -178,7 +178,9 @@ class AuthService {
   };
 
   public deleteUser = async (userId: number) => {
-    await this.authRepository.deleteUser(userId);
+    const userInfo = await this.authRepository.deleteUser(userId);
+
+    if (!userInfo.userImage.includes('/')) deleteS3Image(userInfo.userImage);
   };
 
   public score = async (userId: number, score: number) => {

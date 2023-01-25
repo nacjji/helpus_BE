@@ -99,9 +99,11 @@ class AuthRepository {
   };
 
   public deleteUser = async (userId: number) => {
-    await this.prisma.user.delete({
+    const result = await this.prisma.user.delete({
       where: { userId },
     });
+
+    return result;
   };
 
   public isKakao = async (userId: number) => {
