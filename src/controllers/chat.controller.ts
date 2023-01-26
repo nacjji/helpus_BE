@@ -36,8 +36,8 @@ class ChatController {
       const { roomId, userId } = req.body;
       const { location: image } = req.file as Express.MulterS3.File;
 
-      await this.chatService.uploadImage(Number(userId), image, roomId);
-      res.status(201).json({ content: image });
+      const content = await this.chatService.uploadImage(Number(userId), image, roomId);
+      res.status(201).json({ content });
     } catch (err) {
       next(err);
     }
