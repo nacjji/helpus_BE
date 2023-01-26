@@ -125,6 +125,8 @@ class ChatService {
 
   public uploadImage = async (userId: number, image: string, roomId: string) => {
     await this.chatRepository.sendMessage(roomId, userId, `\`image\`${image}`);
+
+    return `\`image\`${image}`;
   };
 }
 
