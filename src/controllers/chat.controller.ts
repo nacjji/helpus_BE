@@ -30,6 +30,18 @@ class ChatController {
       next(err);
     }
   };
+
+  public uploadImage: RequestHandler = async (req, res, next) => {
+    try {
+      const { roomId, userId } = req.body;
+      const { location: image } = req.file as Express.MulterS3.File;
+
+      await this.chatService.uploadImage(userId, image, roomId);
+      res.json(201).json({ message: '이미지 전송 완료', url: image });
+    } catch (err) {
+      next(err);
+    }
+  };
 }
 
 export default ChatController;

@@ -1,5 +1,8 @@
 import * as http from 'http';
 import { Server } from 'socket.io';
+import { writeFile } from 'fs';
+import { fromBuffer } from 'file-type';
+import { nanoid } from 'nanoid';
 import './config/env';
 import ChatService from './services/chat.service';
 
@@ -23,6 +26,19 @@ const Socket = (server: http.Server) => {
 
     socket.on('test', () => {
       socket.emit('test', socket.id);
+    });
+
+    socket.on('upload', async (file) => {
+      console.log(file);
+      const { ext } = (await fromBuffer(file)) as { ext: string };
+      const filename = nanoid();
+
+      // save the content to the disk, for example
+      writeFile(`./chat/${filename}.${ext}`, file, (err) => {
+        if (err) socket.emit('error', '사진 전송 실패');
+        else {
+        }
+      });
     });
 
     socket.on('disconnect', async () => {
