@@ -36,8 +36,8 @@ class ChatController {
       const { roomId, userId } = req.body;
       const { location: image } = req.file as Express.MulterS3.File;
 
-      await this.chatService.uploadImage(userId, image, roomId);
-      res.json(201).json({ message: '이미지 전송 완료', url: image });
+      await this.chatService.uploadImage(Number(userId), image, roomId);
+      res.status(201).json({ content: image });
     } catch (err) {
       next(err);
     }

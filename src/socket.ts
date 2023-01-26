@@ -28,19 +28,6 @@ const Socket = (server: http.Server) => {
       socket.emit('test', socket.id);
     });
 
-    socket.on('upload', async (file) => {
-      console.log(file);
-      const { ext } = (await fromBuffer(file)) as { ext: string };
-      const filename = nanoid();
-
-      // save the content to the disk, for example
-      writeFile(`./chat/${filename}.${ext}`, file, (err) => {
-        if (err) socket.emit('error', '사진 전송 실패');
-        else {
-        }
-      });
-    });
-
     socket.on('disconnect', async () => {
       try {
         await chatService.deleteSocket(socket.id);
