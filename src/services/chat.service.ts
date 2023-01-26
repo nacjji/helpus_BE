@@ -122,6 +122,10 @@ class ChatService {
     if (!leave) await this.chatRepository.leaveRoom(userId, roomId);
     else await this.chatRepository.deleteRoom(roomId);
   };
+
+  public uploadImage = async (userId: number, image: string, roomId: string) => {
+    await this.chatRepository.sendMessage(roomId, userId, `\`image\`${image}`);
+  };
 }
 
 export default ChatService;
