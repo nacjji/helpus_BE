@@ -15,19 +15,19 @@ class TokenController {
 
   public newToken: RequestHandler = async (req, res, next) => {
     try {
-      const { helpusAccess, helpusRefresh, expiresIn, userId } = req.cookies;
+      const { helpusAccess, helpusRefresh, re, ac } = req.cookies;
       if (!helpusAccess || !helpusRefresh) throw badRequest('비정상 토큰으로 확인됨');
 
-      const { newAccessToken, newRefreshToken } = await this.tokenService.makeNewToken(
-        helpusAccess,
-        helpusRefresh
-      );
+      // const { newAccessToken, newRefreshToken } = await this.tokenService.makeNewToken(
+      //   helpusAccess,
+      //   helpusRefresh
+      // );
 
-      res.cookie('helpusAccess', newAccessToken, { sameSite: 'none', secure: true });
-      if (newRefreshToken)
-        res.cookie('helpusRefresh', newRefreshToken, { sameSite: 'none', secure: true });
+      // res.cookie('helpusAccess', newAccessToken, { sameSite: 'none', secure: true });
+      // if (newRefreshToken)
+      //   res.cookie('helpusRefresh', newRefreshToken, { sameSite: 'none', secure: true });
 
-      res.status(200).json({ message: '토큰 발급 완료', expiresIn, userId });
+      res.status(200).json({ message: '토큰 발급 완료', re, ac });
     } catch (err) {
       res.cookie('helpusAccess', '', { sameSite: 'none', secure: true });
       res.cookie('helpusRefresh', '', { sameSite: 'none', secure: true });

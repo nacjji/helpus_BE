@@ -16,24 +16,29 @@ class TokenService {
     const result = await this.tokenRepository.checkToken(accessToken, refreshToken);
     if (!result) throw unauthorized('로그인 필요');
 
-    const { expiresIn, userId } = jwt.decode(refreshToken) as { expiresIn: number; userId: number };
+    const re = jwt.decode(refreshToken);
+    const ac = jwt.decode(accessToken);
 
-    const leftTime = Number(new Date()) - expiresIn;
-    if (leftTime < 1) throw unauthorized('로그인 필요');
+    return { re, ac };
 
-    const newAccessToken = await jwt.sign({ userId }, JWT_SECRET_KEY, {
-      expiresIn: '30s',
-    });
-    if (leftTime < 86400) {
-      const newRefreshToken = await jwt.sign({}, JWT_SECRET_KEY, {
-        expiresIn: '14d',
-      });
+    // const { expiresIn, userId } = jwt.decode(refreshToken) as { expiresIn: number; userId: number };
 
-      await this.tokenRepository.updateRefresh(result.tokenId, newAccessToken, newRefreshToken);
-      return { newAccessToken, newRefreshToken };
-    }
-    await this.tokenRepository.updateAccess(result.tokenId, newAccessToken);
-    return { newAccessToken, expiresIn, userId };
+    // const leftTime = Number(new Date()) - expiresIn;
+    // if (leftTime < 1) throw unauthorized('로그인 필요');
+
+    // const newAccessToken = await jwt.sign({ userId }, JWT_SECRET_KEY, {
+    //   expiresIn: '30s',
+    // });
+    // if (leftTime < 86400) {
+    //   const newRefreshToken = await jwt.sign({}, JWT_SECRET_KEY, {
+    //     expiresIn: '14d',
+    //   });
+
+    //   await this.tokenRepository.updateRefresh(result.tokenId, newAccessToken, newRefreshToken);
+    //   return { newAccessToken, newRefreshToken };
+    // }
+    // await this.tokenRepository.updateAccess(result.tokenId, newAccessToken);
+    // return { newAccessToken, expiresIn, userId };
   };
 
   public removeToken = async (accessToken: string, refreshToken: string) => {
