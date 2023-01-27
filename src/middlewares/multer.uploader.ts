@@ -96,4 +96,24 @@ const deleteS3ImagePost = (imageUrls: any) => {
   });
 };
 
-export { multeruploader, profileUploader, chatUploader, deleteS3Image, deleteS3ImagePost };
+const deleteS3ImageChat = (imageUrls: any[]) => {
+  const deleteImgs = imageUrls.map((v: { content: string }) => {
+    return { Key: v.content.split('.com/')[1] };
+  });
+
+  s3.deleteObjects({
+    Bucket: process.env.S3_BUCKET_NAME as string,
+    Delete: {
+      Objects: deleteImgs,
+    },
+  });
+};
+
+export {
+  multeruploader,
+  profileUploader,
+  chatUploader,
+  deleteS3Image,
+  deleteS3ImagePost,
+  deleteS3ImageChat,
+};
