@@ -66,6 +66,8 @@ class AuthController {
         userId: result.userId,
         userName: result.userName,
         userImage: result.userImage,
+        state1: result.state1,
+        state2: result.state2,
       });
     } catch (err) {
       next(err);
@@ -89,7 +91,7 @@ class AuthController {
 
       await this.authService.updateUser(userId, userName, state1, state2);
 
-      res.status(200).json({ message: '변경 완료' });
+      res.status(200).json({ userName, state1, state2 });
     } catch (err) {
       next(err);
     }
