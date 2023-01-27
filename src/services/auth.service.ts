@@ -94,7 +94,7 @@ class AuthService {
 
       const scoreAvg =
         // eslint-disable-next-line no-unsafe-optional-chaining
-        userInfo.Score?.reduce((sum: number, curValue) => {
+        userInfo.Score?.reduce((sum: number, curValue: any) => {
           return sum + curValue.score;
         }, 0) / userInfo.Score.length;
 
@@ -117,7 +117,7 @@ class AuthService {
 
   public wishlist = async (userId: number, q: number) => {
     const posts = await this.authRepository.wishlist(userId, q);
-    const results = posts.map((v) => {
+    const results = posts.map((v: any) => {
       return {
         postId: v.postId,
         userId: v.post.userId,
@@ -132,10 +132,10 @@ class AuthService {
         isDeadLine: v.post.isDeadLine,
         location1: v.post.location1,
         location2: v.post.location2,
-        imageUrls: v.post.PostImages.map((val) => {
+        imageUrls: v.post.PostImages.map((val: any) => {
           return `${process.env.S3_BUCKET_URL}/${val.imageUrl}`;
         }).length
-          ? v.post.PostImages.map((val) => {
+          ? v.post.PostImages.map((val: any) => {
               return `${process.env.S3_BUCKET_URL}/${val.imageUrl}`;
             })
           : randomImg[rand],
@@ -196,7 +196,7 @@ class AuthService {
 
   public myPosts = async (userId: number, q: number) => {
     const myPosts = await this.authRepository.myPosts(userId, q);
-    const result = myPosts.map((v) => {
+    const result = myPosts.map((v: any) => {
       return {
         postId: v.postId,
         userId: v.userId,
@@ -211,10 +211,10 @@ class AuthService {
         isDeadLine: v.isDeadLine,
         location1: v.location1,
         location2: v.location2,
-        imageUrls: v.PostImages.map((val) => {
+        imageUrls: v.PostImages.map((val: any) => {
           return `${process.env.S3_BUCKET_URL}/${val.imageUrl}`;
         }).length
-          ? v.PostImages.map((val) => {
+          ? v.PostImages.map((val: any) => {
               return `${process.env.S3_BUCKET_URL}/${val.imageUrl}`;
             })
           : randomImg[rand],
