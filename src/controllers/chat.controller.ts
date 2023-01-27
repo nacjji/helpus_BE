@@ -1,4 +1,5 @@
 import { RequestHandler } from 'express';
+import { nextTick } from 'process';
 import ChatService from '../services/chat.service';
 
 class ChatController {
@@ -7,6 +8,17 @@ class ChatController {
   constructor() {
     this.chatService = new ChatService();
   }
+
+  public test: RequestHandler = async (req, res, next) => {
+    try {
+      const { userId, roomId, leave } = req.body;
+      await this.chatService.leaveRoom(userId, roomId, leave);
+
+      res.status(200).json({});
+    } catch (err) {
+      next(err);
+    }
+  };
 
   public alarmList: RequestHandler = async (req, res, next) => {
     try {
@@ -26,6 +38,18 @@ class ChatController {
       const results = await this.chatService.roomList(userId, q);
 
       res.status(200).json(results);
+    } catch (err) {
+      next(err);
+    }
+  };
+
+  public uploadImage: RequestHandler = async (req, res, next) => {
+    try {
+      const { roomId, userId } = req.body;
+      const { location: image } = req.file as Express.MulterS3.File;
+
+      const content = await this.chatService.uploadImage(Number(userId), image, roomId);
+      res.status(201).json({ content });
     } catch (err) {
       next(err);
     }

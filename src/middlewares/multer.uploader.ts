@@ -53,6 +53,30 @@ const profileUploader = multer({
   },
 });
 
+const chatUploader = multer({
+  storage: multers3({
+    s3,
+    bucket: process.env.S3_BUCKET_NAME as string,
+    acl: 'public-read',
+    contentType: (req, file, callback) => {
+      callback(null, `image/${file.mimetype.split('/')[1]}`);
+    },
+    key(req, file, callback) {
+      const fileType = file.mimetype.split('/')[1];
+      callback(null, `helpus/chat/${nanoid()}.${fileType}`);
+    },
+  }),
+  limits: { fileSize: 20 * 1024 * 1024 },
+  fileFilter: (req: Request, file: Express.Multer.File, callback: multer.FileFilterCallback) => {
+    const fileType = file.mimetype.split('/')[0];
+    if (fileType === 'image') {
+      callback(null, true);
+    } else {
+      callback(new Error('이미지 형식이 아님'));
+    }
+  },
+});
+
 const deleteS3Image = (profileImage: string) => {
   s3.deleteObject({
     Bucket: process.env.S3_BUCKET_NAME as string,
@@ -72,4 +96,24 @@ const deleteS3ImagePost = (imageUrls: any) => {
   });
 };
 
-export { multeruploader, profileUploader, deleteS3Image, deleteS3ImagePost };
+const deleteS3ImageChat = (imageUrls: any[]) => {
+  const deleteImgs = imageUrls.map((v: { content: string }) => {
+    return { Key: v.content.split('.com/')[1] };
+  });
+
+  s3.deleteObjects({
+    Bucket: process.env.S3_BUCKET_NAME as string,
+    Delete: {
+      Objects: deleteImgs,
+    },
+  });
+};
+
+export {
+  multeruploader,
+  profileUploader,
+  chatUploader,
+  deleteS3Image,
+  deleteS3ImagePost,
+  deleteS3ImageChat,
+};
