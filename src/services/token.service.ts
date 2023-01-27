@@ -33,7 +33,7 @@ class TokenService {
       return { newAccessToken, newRefreshToken };
     }
     await this.tokenRepository.updateAccess(result.tokenId, newAccessToken);
-    return { newAccessToken };
+    return { newAccessToken, expiresIn, userId };
   };
 
   public removeToken = async (accessToken: string, refreshToken: string) => {
