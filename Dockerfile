@@ -6,5 +6,5 @@ RUN npm install
 RUN npm i -g typescript -g prisma
 RUN npx prisma generate
 RUN npx tsc
-ENTRYPOINT [ "npm", "run","dev" ]
+ENTRYPOINT [ "npm", "start" ]
 EXPOSE 3001

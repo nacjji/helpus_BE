@@ -1,4 +1,4 @@
-import { badRequest, notFound } from '@hapi/boom';
+import { badRequest, notFound, unauthorized } from '@hapi/boom';
 import { PrismaClient } from '@prisma/client';
 
 class PostsRepository {
@@ -174,6 +174,7 @@ class PostsRepository {
     if (!postExist) {
       throw notFound('게시글 없음');
     }
+    if (postExist.userId !== userId) throw unauthorized('게시글의 작성자가 아닙니다');
     await this.prisma.post.findUniqueOrThrow({ where: { postId } });
 
     await this.prisma.post.delete({ where: { postId } });
