@@ -1,4 +1,5 @@
 import { RequestHandler } from 'express';
+import { nextTick } from 'process';
 import ChatService from '../services/chat.service';
 
 class ChatController {
@@ -7,6 +8,17 @@ class ChatController {
   constructor() {
     this.chatService = new ChatService();
   }
+
+  public test: RequestHandler = async (req, res, next) => {
+    try {
+      const { userId, roomId, leave } = req.body;
+      await this.chatService.leaveRoom(userId, roomId, leave);
+
+      res.status(200).json({});
+    } catch (err) {
+      next(err);
+    }
+  };
 
   public alarmList: RequestHandler = async (req, res, next) => {
     try {
