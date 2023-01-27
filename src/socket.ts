@@ -1,5 +1,8 @@
 import * as http from 'http';
 import { Server } from 'socket.io';
+import { writeFile } from 'fs';
+import { fromBuffer } from 'file-type';
+import { nanoid } from 'nanoid';
 import './config/env';
 import ChatService from './services/chat.service';
 

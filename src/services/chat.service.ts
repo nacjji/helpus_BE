@@ -1,6 +1,7 @@
 import { nanoid } from 'nanoid';
 import ChatRepository from '../repositories/chat.repository';
 import prisma from '../config/database/prisma';
+import { deleteS3ImageChat } from '../middlewares/multer.uploader';
 
 class ChatService {
   private chatRepository: ChatRepository;
@@ -120,7 +121,17 @@ class ChatService {
 
   public leaveRoom = async (userId: number, roomId: string, leave: number) => {
     if (!leave) await this.chatRepository.leaveRoom(userId, roomId);
-    else await this.chatRepository.deleteRoom(roomId);
+    else {
+      const chatList = await this.chatRepository.searchImage(roomId);
+      deleteS3ImageChat(chatList);
+      await this.chatRepository.deleteRoom(roomId);
+    }
+  };
+
+  public uploadImage = async (userId: number, image: string, roomId: string) => {
+    await this.chatRepository.sendMessage(roomId, userId, `\`image\`${image}`);
+
+    return `\`image\`${image}`;
   };
 }
 

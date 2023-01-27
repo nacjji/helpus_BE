@@ -78,6 +78,8 @@ class AuthService {
       userImage: !user.kakao
         ? `${process.env.S3_BUCKET_URL}/profile/${user.userImage}`
         : user.userImage,
+      state1: user.state1,
+      state2: user.state2,
       accessToken,
       refreshToken,
     };

@@ -77,6 +77,15 @@ class ChatRepository {
     return result;
   };
 
+  public searchImage = async (roomId: string) => {
+    const results = await this.prisma.chat.findMany({
+      where: { AND: [{ roomId }, { content: { startsWith: '`image`' } }] },
+      select: { content: true },
+    });
+
+    return results;
+  };
+
   public sendMessage = async (roomId: string, userId: number, content: string) => {
     const result = await this.prisma.chat.create({
       data: {
