@@ -98,7 +98,7 @@ class PostsController {
       const postId = Number(req.params.postId);
       const { title, content, location1, category, appointed, isDeadLine, location2, tag } =
         req.body;
-      const userId = 2;
+      const { userId } = res.locals;
 
       if (!postInputPattern.validateAsync) {
         throw badRequest('수정사항이 없습니다.');
@@ -107,7 +107,7 @@ class PostsController {
 
       const result = await this.postsService.updatePost(
         postId,
-        userId,
+        Number(userId),
         title,
         content,
         category,

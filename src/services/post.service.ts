@@ -59,7 +59,7 @@ class PostsService {
     const result = await this.postsRepository.myLocationPosts(q, state1, state2, category, search);
 
     // eslint-disable-next-line no-underscore-dangle
-    const _result = result.map((v) => {
+    const _result = result.map((v: any) => {
       return {
         postId: v.postId,
         userId: v.userId,
@@ -73,10 +73,10 @@ class PostsService {
         isDeadLine: v.isDeadLine,
         location1: v.location1,
         location2: v.location2,
-        imageUrls: v.PostImages.map((val) => {
+        imageUrls: v.PostImages.map((val: any) => {
           return `${process.env.S3_BUCKET_URL}/${val.imageUrl}`;
         }).length
-          ? v.PostImages.map((val) => {
+          ? v.PostImages.map((val: any) => {
               return `${process.env.S3_BUCKET_URL}/${val.imageUrl}`;
             })
           : randomImg[rand],
@@ -93,7 +93,7 @@ class PostsService {
     const result = await this.postsRepository.allLocationPosts(q, category, search);
 
     // eslint-disable-next-line no-underscore-dangle
-    const _result = result.map((v) => {
+    const _result = result.map((v: any) => {
       return {
         postId: v.postId,
         userId: v.userId,
@@ -108,10 +108,10 @@ class PostsService {
         isDeadLine: v.isDeadLine,
         location1: v.location1,
         location2: v.location2,
-        imageUrls: v.PostImages.map((val) => {
+        imageUrls: v.PostImages.map((val: any) => {
           return `${process.env.S3_BUCKET_URL}/${val.imageUrl}`;
         }).length
-          ? v.PostImages.map((val) => {
+          ? v.PostImages.map((val: any) => {
               return `${process.env.S3_BUCKET_URL}/${val.imageUrl}`;
             })
           : randomImg[rand],
@@ -144,10 +144,10 @@ class PostsService {
       isDeadLine: result.isDeadLine,
       location1: result.location1,
       location2: result.location2,
-      imageUrls: result.PostImages.map((val) => {
+      imageUrls: result.PostImages.map((val: any) => {
         return val.imageUrl;
       }).length
-        ? result.PostImages.map((val) => {
+        ? result.PostImages.map((val: any) => {
             return `${process.env.S3_BUCKET_URL}/${val.imageUrl}`;
           })
         : randomImg[rand],
@@ -192,7 +192,7 @@ class PostsService {
   public deletePost = async (postId: number, userId: number) => {
     const result = await this.postsRepository.deletePost(postId, userId);
     // if (userId !== result.userId) throw badRequest('게시글의 작성자가 아닙니다.');
-    const imageUrls = result.map((v) => {
+    const imageUrls = result.map((v: any) => {
       return v.imageUrl;
     });
     deleteS3ImagePost(imageUrls);
