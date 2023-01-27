@@ -16,29 +16,40 @@ class TokenService {
     const result = await this.tokenRepository.checkToken(accessToken, refreshToken);
     if (!result) throw unauthorized('로그인 필요');
 
-    const re = jwt.decode(refreshToken);
-    const ac = jwt.decode(accessToken);
+    const { expiresIn } = jwt.decode(refreshToken) as { expiresIn: number };
 
-    return { re, ac };
+    const leftTime = Number(new Date()) - expiresIn;
+    if (leftTime < 1) throw unauthorized('로그인 필요');
 
-    // const { expiresIn, userId } = jwt.decode(refreshToken) as { expiresIn: number; userId: number };
+    const userInfo = jwt.decode(accessToken) as {
+      userId: number;
+      userName: string;
+      state1: string;
+      state2: string;
+    };
 
-    // const leftTime = Number(new Date()) - expiresIn;
-    // if (leftTime < 1) throw unauthorized('로그인 필요');
+    const newAccessToken = await jwt.sign(
+      {
+        userId: userInfo.userId,
+        userName: userInfo.userName,
+        state1: userInfo.state1,
+        state2: userInfo.state2,
+      },
+      JWT_SECRET_KEY,
+      {
+        expiresIn: '30s',
+      }
+    );
+    if (leftTime < 86400) {
+      const newRefreshToken = await jwt.sign({}, JWT_SECRET_KEY, {
+        expiresIn: '14d',
+      });
 
-    // const newAccessToken = await jwt.sign({ userId }, JWT_SECRET_KEY, {
-    //   expiresIn: '30s',
-    // });
-    // if (leftTime < 86400) {
-    //   const newRefreshToken = await jwt.sign({}, JWT_SECRET_KEY, {
-    //     expiresIn: '14d',
-    //   });
-
-    //   await this.tokenRepository.updateRefresh(result.tokenId, newAccessToken, newRefreshToken);
-    //   return { newAccessToken, newRefreshToken };
-    // }
-    // await this.tokenRepository.updateAccess(result.tokenId, newAccessToken);
-    // return { newAccessToken, expiresIn, userId };
+      await this.tokenRepository.updateRefresh(result.tokenId, newAccessToken, newRefreshToken);
+      return { newAccessToken, newRefreshToken };
+    }
+    await this.tokenRepository.updateAccess(result.tokenId, newAccessToken);
+    return { newAccessToken };
   };
 
   public removeToken = async (accessToken: string, refreshToken: string) => {
