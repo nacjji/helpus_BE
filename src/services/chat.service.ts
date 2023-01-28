@@ -1,4 +1,5 @@
 import { nanoid } from 'nanoid';
+import { badRequest } from '@hapi/boom';
 import ChatRepository from '../repositories/chat.repository';
 import prisma from '../config/database/prisma';
 import { deleteS3ImageChat } from '../middlewares/multer.uploader';
@@ -25,6 +26,34 @@ class ChatService {
     const roomId = nanoid();
     await this.chatRepository.createRoom(senderId, postId, roomId, ownerId);
     return roomId;
+  };
+
+  public roomInfo = async (roomId: string, userId: number) => {
+    const result = await this.chatRepository.roomInfo(roomId);
+    if (!result) throw badRequest('존재하지 않는 방');
+
+    if (result.ownerId === userId) {
+      const imageURL = result.sender.userImage;
+
+      return {
+        otherImage: imageURL.includes('http://')
+          ? imageURL
+          : `${process.env.S3_BUCKET_URL}/profile/${imageURL}`,
+        otherNmae: result.sender.userName,
+        appointed: result.Post.appointed,
+        leave: result.leave,
+      };
+    }
+
+    const imageURL = result.owner.userImage;
+    return {
+      otherImage: imageURL.includes('http://')
+        ? imageURL
+        : `${process.env.S3_BUCKET_URL}/profile/${imageURL}`,
+      otherNmae: result.owner.userName,
+      appointed: result.Post.appointed,
+      leave: result.leave,
+    };
   };
 
   public roomList = async (userId: number, q: number) => {

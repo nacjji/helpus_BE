@@ -43,9 +43,22 @@ class ChatController {
     }
   };
 
+  public roomInfo: RequestHandler = async (req, res, next) => {
+    try {
+      const { userId } = res.locals;
+      const { roomId } = req.body;
+      const result = await this.chatService.roomInfo(roomId, userId);
+
+      res.status(200).json(result);
+    } catch (err) {
+      next(err);
+    }
+  };
+
   public uploadImage: RequestHandler = async (req, res, next) => {
     try {
-      const { roomId, userId } = req.body;
+      const { userId } = res.locals;
+      const { roomId } = req.body;
       const { location: image } = req.file as Express.MulterS3.File;
 
       const content = await this.chatService.uploadImage(Number(userId), image, roomId);
