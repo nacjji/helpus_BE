@@ -158,6 +158,9 @@ class AuthController {
       const { userId } = res.locals;
       await this.authService.deleteUser(userId);
 
+      res.cookie('helpusAccess', '', { sameSite: 'none', secure: true });
+      res.cookie('helpusRefresh', '', { sameSite: 'none', secure: true });
+
       res.status(200).json({ message: '탈퇴 완료', userId });
     } catch (err) {
       next(err);
