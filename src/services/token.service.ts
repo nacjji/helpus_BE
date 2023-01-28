@@ -37,7 +37,7 @@ class TokenService {
       },
       JWT_SECRET_KEY,
       {
-        expiresIn: '30m',
+        expiresIn: '30s',
       }
     );
     if (leftTime < 86400) {
