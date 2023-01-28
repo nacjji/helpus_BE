@@ -22,7 +22,7 @@ class KakaoAuthController {
         userId: result.userid,
         userImage: result.userImage,
         userName: result.userName,
-        state11: result.state1,
+        state1: result.state1,
         state2: result.state2,
       });
     } catch (err) {
@@ -44,7 +44,7 @@ class KakaoAuthController {
         userId: result.userId,
         userImage: result.userImage,
         userName: result.userName,
-        state11: result.state1,
+        state1: result.state1,
         state2: result.state2,
       });
     } catch (err) {
