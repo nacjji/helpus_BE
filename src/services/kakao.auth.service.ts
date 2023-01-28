@@ -71,6 +71,8 @@ class KakaoAuthService {
         userid: isUser.userId,
         userName: isUser.userName,
         userImage: isUser.userImage,
+        state1: isUser.state1,
+        state2: isUser.state2,
         accessToken,
         refreshToken,
       };
@@ -112,6 +114,8 @@ class KakaoAuthService {
       userId,
       userName: result.userName,
       userImage: result.userImage,
+      state1,
+      state2,
       accessToken,
       refreshToken,
     };
