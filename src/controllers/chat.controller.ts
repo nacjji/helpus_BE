@@ -1,6 +1,14 @@
 import { RequestHandler } from 'express';
-import { nextTick } from 'process';
 import ChatService from '../services/chat.service';
+
+const chatImage: RequestHandler = (req, res, next) => {
+  try {
+    const { location: image } = req.file as Express.MulterS3.File;
+    res.status(201).json(image);
+  } catch (err) {
+    next(err);
+  }
+};
 
 class ChatController {
   private chatService;
@@ -61,12 +69,12 @@ class ChatController {
       const { roomId } = req.body;
       const { location: image } = req.file as Express.MulterS3.File;
 
-      const content = await this.chatService.uploadImage(Number(userId), image, roomId);
-      res.status(201).json({ content });
+      const result = await this.chatService.uploadImage(Number(userId), image, roomId);
+      res.status(201).json(result);
     } catch (err) {
       next(err);
     }
   };
 }
 
-export default ChatController;
+export { ChatController, chatImage };
