@@ -1,0 +1,28 @@
+name: NodeJS with Gulp
+
+on:
+  push:
+    branches: [ "master" ]
+  pull_request:
+    branches: [ "master" ]
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: connect server
+      uses: appleboy/ssh-action@v0.1.7
+      with:
+        proxy_host: ${{ secrets.PROXY_IP }}
+        proxy_username: ${{ secrets.PROXY_USERNAME }}
+        proxy_key: ${{secrets.PROXY_KEY }}
+        host: ${{ secrets.SERVER_IP }}
+        username: ${{ secrets.USERNAME }}
+        key: ${{ secrets.KEY }}
+        script: |
+          cd ${{ secrets.PATH }}
+          git pull
+          npm install
+          npx tsc
+          pm2 restart ${{ secrets.PM2_ID }}
