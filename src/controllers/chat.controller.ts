@@ -4,7 +4,7 @@ import ChatService from '../services/chat.service';
 const chatImage: RequestHandler = (req, res, next) => {
   try {
     const { location: image } = req.file as Express.MulterS3.File;
-    res.status(201).json(image);
+    res.status(201).json({ content: `\`image\`${image}` });
   } catch (err) {
     next(err);
   }
@@ -58,19 +58,6 @@ class ChatController {
       const result = await this.chatService.roomInfo(roomId, userId);
 
       res.status(200).json(result);
-    } catch (err) {
-      next(err);
-    }
-  };
-
-  public uploadImage: RequestHandler = async (req, res, next) => {
-    try {
-      const { userId } = res.locals;
-      const { roomId } = req.body;
-      const { location: image } = req.file as Express.MulterS3.File;
-
-      const result = await this.chatService.uploadImage(Number(userId), image, roomId);
-      res.status(201).json(result);
     } catch (err) {
       next(err);
     }
