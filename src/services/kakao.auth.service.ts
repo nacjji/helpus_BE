@@ -66,6 +66,16 @@ class KakaoAuthService {
       });
 
       await this.kakaoauthRepository.saveToken(isUser.userId, accessToken, refreshToken);
+
+      return {
+        userid: isUser.userId,
+        userName: isUser.userName,
+        userImage: isUser.userImage,
+        state1: isUser.state1,
+        state2: isUser.state2,
+        accessToken,
+        refreshToken,
+      };
     }
 
     if (!isUser) {
@@ -80,8 +90,8 @@ class KakaoAuthService {
       userid: isUser.userId,
       userName: isUser.userName,
       userImage: isUser.userImage,
-      state1: isUser.state1 || '',
-      state2: isUser.state2 || '',
+      state1: isUser.state1,
+      state2: isUser.state2,
     };
   };
 
