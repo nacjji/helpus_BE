@@ -16,9 +16,9 @@ jobs:
       # uses: appleboy/ssh-action@d91a1af6f57cd4478ceee14d7705601dafabaa19
       uses: appleboy/ssh-action@v0.1.7
       with:
-        host: ${{ secrets.HOST_TEST }}
+        host: ${{ secrets.HOST_MAIN }}
         username: ${{ secrets.USERNAME }}
-        key: ${{ secrets.KEY_TEST }}
+        key: ${{ secrets.KEY_MAIN }}
         script_stop: true
         script: |
           cd ${{ secrets.PATH }}
