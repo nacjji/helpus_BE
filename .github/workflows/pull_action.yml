@@ -24,3 +24,4 @@ jobs:
           cd ${{ secrets.PATH }}
           git pull
           sudo npm install
+          npx prisma db push
