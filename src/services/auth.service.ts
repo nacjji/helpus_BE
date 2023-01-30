@@ -67,7 +67,7 @@ class AuthService {
     );
 
     const refreshToken = await jwt.sign({}, JWT_SECRET_KEY, {
-      expiresIn: '10s',
+      expiresIn: '14d',
     });
 
     await this.authRepository.saveToken(user.userId, accessToken, refreshToken);

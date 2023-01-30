@@ -57,7 +57,7 @@ class KakaoAuthService {
         },
         JWT_SECRET_KEY,
         {
-          expiresIn: '30s',
+          expiresIn: '10s',
         }
       );
 
