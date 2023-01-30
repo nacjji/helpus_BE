@@ -1,4 +1,4 @@
-name: NodeJS with Gulp
+name: update server
 
 on:
   push:
@@ -22,6 +22,7 @@ jobs:
         script_stop: true
         script: |
           cd ${{ secrets.PATH }}
+          sudo -s
           git pull origin master
           npm install
           npx prisma db push
