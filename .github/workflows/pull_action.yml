@@ -23,6 +23,7 @@ jobs:
         script: |
           cd ${{ secrets.PATH }}
           git pull origin master
+          ${{ secrets.ACTION_SETTING }}
           sudo npm install
           npx prisma db push
           npx tsc
