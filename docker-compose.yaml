@@ -1,0 +1,7 @@
+version: '3.9'
+services:
+  node:
+    image: nacjji/helpus:develop
+    ports:
+      - 3003:3003
+    mySQL: image

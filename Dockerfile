@@ -1,10 +1,11 @@
 # syntax=docker/dockerfile:1
 FROM node:16
 WORKDIR /helpus
-COPY ./ /helpus/
+COPY . .
 RUN npm install
-RUN npm i -g typescript -g prisma
 RUN npx prisma generate
+RUN npm install -g typescript
+RUN npm i -g pm2
 RUN npx tsc
-ENTRYPOINT [ "npm", "start" ]
-EXPOSE 3001
+CMD [ "npm", "start" ]
+EXPOSE 3003
