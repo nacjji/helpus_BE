@@ -144,6 +144,9 @@ class PostsService {
       isDeadLine: result.isDeadLine,
       location1: result.location1,
       location2: result.location2,
+      mainImage: result.PostImages[0]
+        ? `${process.env.S3_BUCKET_URL}/${result.PostImages[0]?.imageUrl}`
+        : randomImg[rand],
       imageUrls: result.PostImages.map((val: any) => {
         return val.imageUrl;
       }).length
