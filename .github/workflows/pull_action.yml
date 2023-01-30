@@ -22,9 +22,8 @@ jobs:
         script_stop: true
         script: |
           cd ${{ secrets.PATH }}
-          sudo -s
           git pull origin master
-          npm install
+          sudo npm install
           npx prisma db push
           npx tsc
           pm2 restart ${{ secrets.PM2_ID }}
