@@ -133,9 +133,9 @@ class AuthService {
         location1: v.post.location1,
         location2: v.post.location2,
         thumbnail:
-          v.PostImages[0].imageUrl.split('/')[2] === 'images.unsplash.com'
-            ? v.PostImages[0].imageUrl
-            : `${process.env.S3_BUCKET_URL}/${v.PostImages[0].imageUrl}`,
+          v.post.PostImages[0].imageUrl.split('/')[2] === 'images.unsplash.com'
+            ? v.post.PostImages[0].imageUrl
+            : `${process.env.S3_BUCKET_URL}/${v.post.PostImages[0].imageUrl}`,
         tag: v.post.tag,
         createdAt: v.post.createdAt,
         updated: v.post.updated,
