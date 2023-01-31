@@ -22,7 +22,7 @@ class TokenController {
       res.cookie('helpusAccess', newAccessToken, {
         sameSite: 'none',
         secure: true,
-        maxAge: n10 * 1000,
+        maxAge: 10 * 1000,
       });
       if (newRefreshToken)
         res.cookie('helpusRefresh', newRefreshToken, {
