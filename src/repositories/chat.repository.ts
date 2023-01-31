@@ -107,6 +107,13 @@ class ChatRepository {
     return result;
   };
 
+  public stateUpdate = async (roomId: string, state: number) => {
+    await this.prisma.room.update({
+      where: { roomId },
+      data: { state },
+    });
+  };
+
   public acceptCard = async (roomId: string) => {
     await this.prisma.chat.updateMany({
       where: { roomId, content: '`card`0' },
