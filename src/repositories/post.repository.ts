@@ -1,4 +1,4 @@
-import { badRequest, notFound, unauthorized } from '@hapi/boom';
+import { notFound, unauthorized } from '@hapi/boom';
 import { PrismaClient } from '@prisma/client';
 
 class PostsRepository {
@@ -146,27 +146,27 @@ class PostsRepository {
     if (!postExist) {
       throw notFound('게시글 없음');
     }
-    console.log(userId);
-    if (postExist.userId !== userId) {
-      throw unauthorized('해당 글의 작성자가 아닙니다.');
-    }
-    const result = await this.prisma.post.update({
-      where: { postId },
-      data: {
-        postId,
-        userId,
-        title,
-        content,
-        category: category || postExist.category,
-        appointed,
-        updated: 1,
-        isDeadLine: isDeadLine || postExist.isDeadLine,
-        location1,
-        location2,
-        tag,
-      },
-    });
-    return result;
+    return { '로그인 유저': userId, '게시글 작성자': postExist.userId || null, postExist };
+    // if (postExist.userId !== userId) {
+    //   throw unauthorized('해당 글의 작성자가 아닙니다.');
+    // }
+    // const result = await this.prisma.post.update({
+    //   where: { postId },
+    //   data: {
+    //     postId,
+    //     userId,
+    //     title,
+    //     content,
+    //     category: category || postExist.category,
+    //     appointed,
+    //     updated: 1,
+    //     isDeadLine: isDeadLine || postExist.isDeadLine,
+    //     location1,
+    //     location2,
+    //     tag,
+    //   },
+    // });
+    // return result;
   };
 
   public deletePost = async (postId: number, userId: number) => {
