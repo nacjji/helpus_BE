@@ -186,9 +186,9 @@ class PostsService {
       location2 || undefined,
       tag
     );
-    if (!result) {
-      throw notFound('게시글 없음');
-    }
+    // if (!result) {
+    //   throw notFound('게시글 없음');
+    // }
     return result;
   };
 
