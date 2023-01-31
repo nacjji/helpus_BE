@@ -36,10 +36,13 @@ class PostsRepository {
         createdAt,
       },
     });
-    const imageArr = imageUrls?.map((v) => {
-      return { imageUrl: v, postId: result.postId, userId };
+
+    const imageArr = imageUrls?.map((imageUrl) => {
+      return { imageUrl, postId: result.postId, userId };
     });
-    await this.prisma.postImages.createMany({ data: imageArr || [] });
+    await this.prisma.postImages.createMany({
+      data: imageArr || [],
+    });
     return result;
   };
 

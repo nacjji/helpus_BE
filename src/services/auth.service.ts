@@ -4,9 +4,7 @@ import * as bcrypt from 'bcrypt';
 import AuthRepository from '../repositories/auth.repository';
 import prisma from '../config/database/prisma';
 import { deleteS3Image } from '../middlewares/multer.uploader';
-import randomImg from '../../randomImg';
 
-const rand = Math.floor(Math.random() * 30);
 const { JWT_SECRET_KEY } = process.env as { JWT_SECRET_KEY: string };
 const { salt } = process.env as { salt: string };
 const { S3_BUCKET_URL } = process.env as { S3_BUCKET_URL: string };
@@ -134,13 +132,11 @@ class AuthService {
         isDeadLine: v.post.isDeadLine,
         location1: v.post.location1,
         location2: v.post.location2,
-        imageUrls: v.post.PostImages.map((val: any) => {
-          return `${process.env.S3_BUCKET_URL}/${val.imageUrl}`;
-        }).length
-          ? v.post.PostImages.map((val: any) => {
-              return `${process.env.S3_BUCKET_URL}/${val.imageUrl}`;
-            })
-          : randomImg[rand],
+        imageUrls: v.PostImages.map((val: any) => {
+          return val.imageUrl.split('/')[2] === 'images.unsplash.com'
+            ? val.imageUrl
+            : `${process.env.S3_BUCKET_URL}/${val.imageUrl}`;
+        }),
         tag: v.post.tag,
         createdAt: v.post.createdAt,
         updated: v.post.updated,
@@ -214,12 +210,10 @@ class AuthService {
         location1: v.location1,
         location2: v.location2,
         imageUrls: v.PostImages.map((val: any) => {
-          return `${process.env.S3_BUCKET_URL}/${val.imageUrl}`;
-        }).length
-          ? v.PostImages.map((val: any) => {
-              return `${process.env.S3_BUCKET_URL}/${val.imageUrl}`;
-            })
-          : randomImg[rand],
+          return val.imageUrl.split('/')[2] === 'images.unsplash.com'
+            ? val.imageUrl
+            : `${process.env.S3_BUCKET_URL}/${val.imageUrl}`;
+        }),
         tag: v.tag,
         createdAt: v.createdAt,
         updated: v.updated,

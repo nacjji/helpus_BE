@@ -1,7 +1,7 @@
 import { PrismaClient } from '@prisma/client';
 
 const prisma =
-  process.env.NODE_ENV === 'test'
+  process.env.NODE_ENV === ''
     ? new PrismaClient({
         datasources: {
           db: {

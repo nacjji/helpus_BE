@@ -33,6 +33,7 @@ class PostsService {
     const imageFileName = images?.map((v) => {
       return v?.split('/')[4];
     });
+
     const result = await this.postsRepository.createPost(
       userId,
       userName,
@@ -44,7 +45,7 @@ class PostsService {
       location2,
       tag,
       createdAt,
-      imageFileName
+      imageFileName?.length ? imageFileName : [randomImg[rand]]
     );
     return result;
   };
@@ -74,12 +75,10 @@ class PostsService {
         location1: v.location1,
         location2: v.location2,
         imageUrls: v.PostImages.map((val: any) => {
-          return `${process.env.S3_BUCKET_URL}/${val.imageUrl}`;
-        }).length
-          ? v.PostImages.map((val: any) => {
-              return `${process.env.S3_BUCKET_URL}/${val.imageUrl}`;
-            })
-          : randomImg[rand],
+          return val.imageUrl.split('/')[2] === 'images.unsplash.com'
+            ? val.imageUrl
+            : `${process.env.S3_BUCKET_URL}/${val.imageUrl}`;
+        }),
         tag: v.tag,
         createdAt: v.createdAt,
         updated: v.updated,
@@ -91,7 +90,6 @@ class PostsService {
 
   public allLocationPosts = async (q: number, category: number, search: string) => {
     const result = await this.postsRepository.allLocationPosts(q, category, search);
-
     // eslint-disable-next-line no-underscore-dangle
     const _result = result.map((v: any) => {
       return {
@@ -109,12 +107,10 @@ class PostsService {
         location1: v.location1,
         location2: v.location2,
         imageUrls: v.PostImages.map((val: any) => {
-          return `${process.env.S3_BUCKET_URL}/${val.imageUrl}`;
-        }).length
-          ? v.PostImages.map((val: any) => {
-              return `${process.env.S3_BUCKET_URL}/${val.imageUrl}`;
-            })
-          : randomImg[rand],
+          return val.imageUrl.split('/')[2] === 'images.unsplash.com'
+            ? val.imageUrl
+            : `${process.env.S3_BUCKET_URL}/${val.imageUrl}`;
+        }),
         tag: v.tag,
         createdAt: v.createdAt,
         updated: v.updated,
@@ -144,16 +140,12 @@ class PostsService {
       isDeadLine: result.isDeadLine,
       location1: result.location1,
       location2: result.location2,
-      mainImage: result.PostImages[0]
-        ? `${process.env.S3_BUCKET_URL}/${result.PostImages[0]?.imageUrl}`
-        : randomImg[rand],
+      mainImage: result.PostImages[0].imageUrl,
       imageUrls: result.PostImages.map((val: any) => {
-        return val.imageUrl;
-      }).length
-        ? result.PostImages.map((val: any) => {
-            return `${process.env.S3_BUCKET_URL}/${val.imageUrl}`;
-          })
-        : randomImg[rand],
+        return val.imageUrl.split('/')[2] === 'images.unsplash.com'
+          ? val.imageUrl
+          : `${process.env.S3_BUCKET_URL}/${val.imageUrl}`;
+      }),
       tag: result.tag,
       createdAt: result.createdAt,
       updated: result.updated,
@@ -186,9 +178,9 @@ class PostsService {
       location2 || undefined,
       tag
     );
-    // if (!result) {
-    //   throw notFound('게시글 없음');
-    // }
+    if (!result) {
+      throw notFound('게시글 없음');
+    }
     return result;
   };
 
