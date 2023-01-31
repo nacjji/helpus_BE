@@ -4,7 +4,7 @@ import PostsRepository from '../repositories/post.repository';
 import AuthRepository from '../repositories/auth.repository';
 import prisma from '../config/database/prisma';
 import { deleteS3ImagePost } from '../middlewares/multer.uploader';
-import randomImg from '../../randomImg';
+import randomImg from '../randomImg';
 
 const rand = Math.floor(Math.random() * 30);
 
@@ -74,11 +74,10 @@ class PostsService {
         isDeadLine: v.isDeadLine,
         location1: v.location1,
         location2: v.location2,
-        imageUrls: v.PostImages.map((val: any) => {
-          return val.imageUrl.split('/')[2] === 'images.unsplash.com'
-            ? val.imageUrl
-            : `${process.env.S3_BUCKET_URL}/${val.imageUrl}`;
-        }),
+        thumbnail:
+          v.PostImages[0].imageUrl.split('/')[2] === 'images.unsplash.com'
+            ? v.PostImages[0].imageUrl
+            : `${process.env.S3_BUCKET_URL}/${v.PostImages[0].imageUrl}`,
         tag: v.tag,
         createdAt: v.createdAt,
         updated: v.updated,
@@ -106,11 +105,10 @@ class PostsService {
         isDeadLine: v.isDeadLine,
         location1: v.location1,
         location2: v.location2,
-        imageUrls: v.PostImages.map((val: any) => {
-          return val.imageUrl.split('/')[2] === 'images.unsplash.com'
-            ? val.imageUrl
-            : `${process.env.S3_BUCKET_URL}/${val.imageUrl}`;
-        }),
+        thumbnail:
+          v.PostImages[0].imageUrl.split('/')[2] === 'images.unsplash.com'
+            ? v.PostImages[0].imageUrl
+            : `${process.env.S3_BUCKET_URL}/${v.PostImages[0].imageUrl}`,
         tag: v.tag,
         createdAt: v.createdAt,
         updated: v.updated,

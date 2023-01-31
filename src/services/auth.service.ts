@@ -1,6 +1,6 @@
 import { badRequest } from '@hapi/boom';
-import * as jwt from 'jsonwebtoken';
-import * as bcrypt from 'bcrypt';
+import jwt from 'jsonwebtoken';
+import bcrypt from 'bcrypt';
 import AuthRepository from '../repositories/auth.repository';
 import prisma from '../config/database/prisma';
 import { deleteS3Image } from '../middlewares/multer.uploader';
@@ -132,11 +132,10 @@ class AuthService {
         isDeadLine: v.post.isDeadLine,
         location1: v.post.location1,
         location2: v.post.location2,
-        imageUrls: v.PostImages.map((val: any) => {
-          return val.imageUrl.split('/')[2] === 'images.unsplash.com'
-            ? val.imageUrl
-            : `${process.env.S3_BUCKET_URL}/${val.imageUrl}`;
-        }),
+        thumbnail:
+          v.PostImages[0].imageUrl.split('/')[2] === 'images.unsplash.com'
+            ? v.PostImages[0].imageUrl
+            : `${process.env.S3_BUCKET_URL}/${v.PostImages[0].imageUrl}`,
         tag: v.post.tag,
         createdAt: v.post.createdAt,
         updated: v.post.updated,
@@ -209,11 +208,10 @@ class AuthService {
         isDeadLine: v.isDeadLine,
         location1: v.location1,
         location2: v.location2,
-        imageUrls: v.PostImages.map((val: any) => {
-          return val.imageUrl.split('/')[2] === 'images.unsplash.com'
-            ? val.imageUrl
-            : `${process.env.S3_BUCKET_URL}/${val.imageUrl}`;
-        }),
+        thumbnail:
+          v.PostImages[0].imageUrl.split('/')[2] === 'images.unsplash.com'
+            ? v.PostImages[0].imageUrl
+            : `${process.env.S3_BUCKET_URL}/${v.PostImages[0].imageUrl}`,
         tag: v.tag,
         createdAt: v.createdAt,
         updated: v.updated,
