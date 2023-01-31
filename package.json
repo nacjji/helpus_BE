@@ -1,12 +1,12 @@
 {
-  "name": "clone-coding-be",
+  "name": "helpus-be",
   "version": "1.0.0",
   "description": "",
   "main": "",
   "scripts": {
     "start": "cross-env NODE_ENV=production pm2 start dist/src/server.js",
     "dev": "cross-env NODE_ENV=development nodemon src/server.ts",
-    "test": "cross-env NODE_ENV=development jest",
+    "test": "cross-env NODE_ENV=test jest",
     "lint": "eslint 'src/** /*.{ts,tsx,js,jsx}'",
     "lint:fix": "eslint --fix 'src/** /*.{ts,tsx,js,jsx}'"
   },
@@ -35,6 +35,7 @@
     "express": "^4.18.2",
     "express-rate-limit": "^6.7.0",
     "express-session": "^1.17.3",
+    "express-typescript-jest-supertest": "^0.0.75",
     "file-type": "^16.5.3",
     "helmet": "^6.0.1",
     "joi": "^17.7.0",

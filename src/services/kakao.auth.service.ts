@@ -1,6 +1,6 @@
 import { badRequest } from '@hapi/boom';
 import axios from 'axios';
-import * as jwt from 'jsonwebtoken';
+import jwt from 'jsonwebtoken';
 import prisma from '../config/database/prisma';
 import KakaoAuthRepository from '../repositories/kakao.auth.repository';
 

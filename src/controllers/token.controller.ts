@@ -1,6 +1,6 @@
 import { badRequest } from '@hapi/boom';
 import { RequestHandler } from 'express';
-import * as jwt from 'jsonwebtoken';
+import jwt from 'jsonwebtoken';
 import TokenService from '../services/token.service';
 import prisma from '../config/database/prisma';
 

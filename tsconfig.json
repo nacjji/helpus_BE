@@ -1,6 +1,7 @@
 {
   "compilerOptions": {
-    "lib": ["ES2021"],
+    "lib": ["DOM", "ES2021"],
+    "esModuleInterop": true,
     "target": "es2021",
     "outDir": "dist",
     "baseUrl": "src",

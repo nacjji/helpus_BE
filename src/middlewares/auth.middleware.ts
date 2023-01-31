@@ -1,6 +1,6 @@
 import { RequestHandler } from 'express';
 import { unauthorized, badRequest } from '@hapi/boom';
-import * as jwt from 'jsonwebtoken';
+import jwt from 'jsonwebtoken';
 
 const { JWT_SECRET_KEY } = process.env as { JWT_SECRET_KEY: string };
 

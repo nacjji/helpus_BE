@@ -1,4 +1,4 @@
-import * as morgan from 'morgan';
+import morgan from 'morgan';
 import logger from '../config/logger';
 
 const stream: morgan.StreamOptions = {

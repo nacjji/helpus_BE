@@ -1,5 +1,5 @@
 import { RequestHandler } from 'express';
-import * as requestIp from 'request-ip';
+import requestIp from 'request-ip';
 import AuthService from '../services/auth.service';
 import {
   emailPattern,
