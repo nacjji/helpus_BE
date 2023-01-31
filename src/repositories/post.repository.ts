@@ -146,8 +146,9 @@ class PostsRepository {
     if (!postExist) {
       throw notFound('게시글 없음');
     }
+    console.log(userId);
     if (postExist.userId !== userId) {
-      throw badRequest('해당 글의 작성자가 아닙니다.');
+      throw unauthorized('해당 글의 작성자가 아닙니다.');
     }
     const result = await this.prisma.post.update({
       where: { postId },

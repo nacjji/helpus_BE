@@ -7,6 +7,11 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 
+// datasource db_test {
+//   provider = "mysql"
+//   url      = env("DATABASE_TEST_URL")
+// }
+
 model User {
   userId      Int           @id @default(autoincrement())
   userName    String

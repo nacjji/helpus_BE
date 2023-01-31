@@ -18,7 +18,7 @@ postsRouter.get('/all-location', passAnyway, postsController.allLocationPosts);
 
 postsRouter.get('/:postId', postsController.findDetailPost);
 
-postsRouter.put('/:postId', requiredLogin, postsController.updatePost);
+postsRouter.put('/:postId', postsController.updatePost);
 
 postsRouter.delete('/:postId', requiredLogin, postsController.deletePost);
 
