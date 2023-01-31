@@ -14,8 +14,16 @@ class KakaoAuthController {
 
       const result = await this.kakaoAuthService.kakao(code);
       if (result.accessToken) {
-        res.cookie('helpusAccess', result.accessToken, { sameSite: 'none', secure: true });
-        res.cookie('helpusRefresh', result.refreshToken, { sameSite: 'none', secure: true });
+        res.cookie('helpusAccess', result.accessToken, {
+          sameSite: 'none',
+          secure: true,
+          maxAge: 60 * 30,
+        });
+        res.cookie('helpusRefresh', result.refreshToken, {
+          sameSite: 'none',
+          secure: true,
+          maxAge: 60 * 60 * 24 * 14,
+        });
       }
 
       res.status(200).json({
@@ -36,8 +44,16 @@ class KakaoAuthController {
 
       const result = await this.kakaoAuthService.kakaoState(state1, state2, userId);
       if (result.accessToken) {
-        res.cookie('helpusAccess', result.accessToken, { sameSite: 'none', secure: true });
-        res.cookie('helpusRefresh', result.refreshToken, { sameSite: 'none', secure: true });
+        res.cookie('helpusAccess', result.accessToken, {
+          sameSite: 'none',
+          secure: true,
+          maxAge: 60 * 30,
+        });
+        res.cookie('helpusRefresh', result.refreshToken, {
+          sameSite: 'none',
+          secure: true,
+          maxAge: 60 * 60 * 24 * 14,
+        });
       }
 
       res.status(201).json({
