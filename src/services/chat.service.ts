@@ -81,7 +81,12 @@ class ChatService {
     return { list: _results };
   };
 
-  public sendMessageAt = async (roomId: string, userId: number, content: string) => {
+  public sendMessageAt = async (
+    roomId: string,
+    userId: number,
+    content: string,
+    card?: boolean
+  ) => {
     const roomInfo = await this.chatRepository.searchRoomId(roomId);
     if (!roomInfo) {
       return {};
@@ -101,6 +106,8 @@ class ChatService {
       senderName = roomInfo.sender.userName;
       receiverId = roomInfo.ownerId;
     }
+
+    if (card) await this.chatRepository.stateUpdate(roomId, 1);
 
     return {
       chatId: result.chatId,
