@@ -62,7 +62,7 @@ class AuthService {
       { userId: user.userId, userName: user.userName, state1: user.state1, state2: user.state2 },
       JWT_SECRET_KEY,
       {
-        expiresIn: '10s',
+        expiresIn: '30m',
       }
     );
 
