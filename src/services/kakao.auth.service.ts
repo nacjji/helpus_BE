@@ -57,12 +57,12 @@ class KakaoAuthService {
         },
         JWT_SECRET_KEY,
         {
-          expiresIn: '10s',
+          expiresIn: '15s',
         }
       );
 
       const refreshToken = await jwt.sign({}, JWT_SECRET_KEY, {
-        expiresIn: '14d',
+        expiresIn: '30s',
       });
 
       await this.kakaoauthRepository.saveToken(isUser.userId, accessToken, refreshToken);
@@ -100,12 +100,12 @@ class KakaoAuthService {
       { userId, userName: result.userName, state1, state2 },
       JWT_SECRET_KEY,
       {
-        expiresIn: '10s',
+        expiresIn: '15s',
       }
     );
 
     const refreshToken = await jwt.sign({}, JWT_SECRET_KEY, {
-      expiresIn: '14d',
+      expiresIn: '30s',
     });
 
     await this.kakaoauthRepository.saveToken(userId, accessToken, refreshToken);
