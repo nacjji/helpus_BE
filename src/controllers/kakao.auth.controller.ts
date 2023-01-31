@@ -17,12 +17,12 @@ class KakaoAuthController {
         res.cookie('helpusAccess', result.accessToken, {
           sameSite: 'none',
           secure: true,
-          maxAge: 60 * 30,
+          maxAge: 60 * 60 * 24 * 14 * 1000,
         });
         res.cookie('helpusRefresh', result.refreshToken, {
           sameSite: 'none',
           secure: true,
-          maxAge: 60 * 60 * 24 * 14,
+          maxAge: 60 * 60 * 24 * 14 * 1000,
         });
       }
 
@@ -47,12 +47,12 @@ class KakaoAuthController {
         res.cookie('helpusAccess', result.accessToken, {
           sameSite: 'none',
           secure: true,
-          maxAge: 60 * 30,
+          maxAge: 60 * 60 * 24 * 14 * 1000,
         });
         res.cookie('helpusRefresh', result.refreshToken, {
           sameSite: 'none',
           secure: true,
-          maxAge: 60 * 60 * 24 * 14,
+          maxAge: 60 * 60 * 24 * 14 * 1000,
         });
       }
 

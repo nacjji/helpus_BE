@@ -1,4 +1,4 @@
-import { badRequest, notFound, unauthorized } from '@hapi/boom';
+import { notFound, unauthorized } from '@hapi/boom';
 import { PrismaClient } from '@prisma/client';
 
 class PostsRepository {
@@ -146,7 +146,6 @@ class PostsRepository {
     if (!postExist) {
       throw notFound('게시글 없음');
     }
-    console.log(userId);
     if (postExist.userId !== userId) {
       throw unauthorized('해당 글의 작성자가 아닙니다.');
     }
