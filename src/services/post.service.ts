@@ -138,7 +138,10 @@ class PostsService {
       isDeadLine: result.isDeadLine,
       location1: result.location1,
       location2: result.location2,
-      mainImage: result.PostImages[0].imageUrl,
+      mainImage:
+        result.PostImages[0].imageUrl?.split('/')[2] === 'images.unsplash.com'
+          ? result.PostImages[0].imageUrl
+          : `${process.env.S3_BUCKET_URL}/${result.PostImages[0].imageUrl}`,
       imageUrls: result.PostImages.map((val: any) => {
         return val.imageUrl.split('/')[2] === 'images.unsplash.com'
           ? val.imageUrl
