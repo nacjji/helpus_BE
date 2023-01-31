@@ -1,7 +1,7 @@
 import { Request } from 'express';
-import * as multer from 'multer';
+import multer from 'multer';
 import { nanoid } from 'nanoid';
-import * as multers3 from 'multer-s3';
+import multers3 from 'multer-s3';
 import s3 from '../config/AWS.s3';
 
 const multeruploader = multer({

@@ -1,4 +1,4 @@
-import * as joi from 'joi';
+import joi from 'joi';
 
 export const postInputPattern = joi.object().keys({
   title: joi.string().description('제목'),

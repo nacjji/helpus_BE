@@ -1,4 +1,4 @@
-import * as socketIo from 'socket.io';
+import socketIo from 'socket.io';
 
 const socketConnect = (httpServer: any) => {
   const ioConnect = new socketIo.Server(httpServer, {

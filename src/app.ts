@@ -1,9 +1,9 @@
-import * as express from 'express';
+import express from 'express';
 import session = require('express-session');
 import cookieParser = require('cookie-parser');
-import * as cors from 'cors';
+import cors from 'cors';
 import helmet from 'helmet';
-import * as compression from 'compression';
+import compression from 'compression';
 import { createServer } from 'http';
 import morgan from './middlewares/morgan';
 import router from './routes';
