@@ -13,13 +13,14 @@ postsRouter.post(
   postsController.createPost
 );
 
-postsRouter.get('/my-location', passAnyway, postsController.myLocationPosts);
+postsRouter.get('/my-location', requiredLogin, passAnyway, postsController.myLocationPosts);
+
 postsRouter.get('/all-location', passAnyway, postsController.allLocationPosts);
 
 postsRouter.get('/:postId', postsController.findDetailPost);
 
-postsRouter.put('/:postId', postsController.updatePost);
+postsRouter.put('/:postId', requiredLogin, postsController.updatePost);
 
-postsRouter.delete('/:postId', postsController.deletePost);
+postsRouter.delete('/:postId', requiredLogin, postsController.deletePost);
 
 export default postsRouter;

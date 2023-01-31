@@ -1,4 +1,4 @@
-import { badRequest, notFound, unauthorized } from '@hapi/boom';
+import { notFound, unauthorized } from '@hapi/boom';
 import { PrismaClient } from '@prisma/client';
 
 class PostsRepository {
@@ -147,7 +147,7 @@ class PostsRepository {
       throw notFound('게시글 없음');
     }
     if (postExist.userId !== userId) {
-      throw badRequest('해당 글의 작성자가 아닙니다.');
+      throw unauthorized('해당 글의 작성자가 아닙니다.');
     }
     const result = await this.prisma.post.update({
       where: { postId },

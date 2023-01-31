@@ -25,6 +25,15 @@ class ChatRepository {
     return result;
   };
 
+  public roomInfo = async (roomId: string) => {
+    const result = await this.prisma.room.findUnique({
+      where: { roomId },
+      include: { Post: true, sender: true, owner: true },
+    });
+
+    return result;
+  };
+
   public roomList = async (userId: number, q: number) => {
     const results = await this.prisma.room.findMany({
       where: {

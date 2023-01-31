@@ -1,0 +1,27 @@
+name: update server
+
+on:
+  push:
+    branches: [ "master" ]
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: SSH Remote Commands
+      # You may pin to the exact commit or the version.
+      # uses: appleboy/ssh-action@d91a1af6f57cd4478ceee14d7705601dafabaa19
+      uses: appleboy/ssh-action@v0.1.7
+      with:
+        host: ${{ secrets.HOST_MAIN }}
+        username: ${{ secrets.USERNAME }}
+        key: ${{ secrets.KEY_MAIN }}
+        script_stop: true
+        script: |
+          cd ${{ secrets.PATH }}
+          git pull
+          sudo npm install
+          npx prisma db push
+          npx tsc
+          sudo pm2 restart ${{ secrets.PM2_ID }}
