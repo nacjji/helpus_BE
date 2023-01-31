@@ -23,9 +23,17 @@ class TokenController {
         helpusRefresh
       );
 
-      res.cookie('helpusAccess', newAccessToken, { sameSite: 'none', secure: true });
+      res.cookie('helpusAccess', newAccessToken, {
+        sameSite: 'none',
+        secure: true,
+        maxAge: 60 * 30,
+      });
       if (newRefreshToken)
-        res.cookie('helpusRefresh', newRefreshToken, { sameSite: 'none', secure: true });
+        res.cookie('helpusRefresh', newRefreshToken, {
+          sameSite: 'none',
+          secure: true,
+          maxAge: 60 * 60 * 24 * 14,
+        });
 
       res.status(200).json({ message: '토큰 발급 완료' });
     } catch (err) {
