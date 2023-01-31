@@ -26,13 +26,13 @@ class TokenController {
       res.cookie('helpusAccess', newAccessToken, {
         sameSite: 'none',
         secure: true,
-        maxAge: 60 * 30,
+        expires: new Date(Date.now() + 10 * 1000),
       });
       if (newRefreshToken)
         res.cookie('helpusRefresh', newRefreshToken, {
           sameSite: 'none',
           secure: true,
-          maxAge: 60 * 60 * 24 * 14,
+          expires: new Date(Date.now() + 60 * 60 * 24 * 14 * 1000),
         });
 
       res.status(200).json({ message: '토큰 발급 완료' });

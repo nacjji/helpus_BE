@@ -62,12 +62,12 @@ class AuthController {
       res.cookie('helpusAccess', result.accessToken, {
         sameSite: 'none',
         secure: true,
-        maxAge: 60 * 30,
+        expires: new Date(Date.now() + 10 * 1000),
       });
       res.cookie('helpusRefresh', result.refreshToken, {
         sameSite: 'none',
         secure: true,
-        maxAge: 60 * 60 * 24 * 14,
+        expires: new Date(Date.now() + 60 * 60 * 24 * 14 * 1000),
       });
 
       res.status(200).json({
