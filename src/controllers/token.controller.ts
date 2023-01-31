@@ -1,10 +1,6 @@
 import { badRequest } from '@hapi/boom';
 import { RequestHandler } from 'express';
-import * as jwt from 'jsonwebtoken';
 import TokenService from '../services/token.service';
-import prisma from '../config/database/prisma';
-
-const { JWT_SECRET_KEY } = process.env as { JWT_SECRET_KEY: string };
 
 class TokenController {
   tokenService: TokenService;
@@ -26,13 +22,13 @@ class TokenController {
       res.cookie('helpusAccess', newAccessToken, {
         sameSite: 'none',
         secure: true,
-        expires: new Date(Date.now() + 10 * 1000),
+        maxAge: n10 * 1000,
       });
       if (newRefreshToken)
         res.cookie('helpusRefresh', newRefreshToken, {
           sameSite: 'none',
           secure: true,
-          expires: new Date(Date.now() + 60 * 60 * 24 * 14 * 1000),
+          maxAge: 60 * 60 * 24 * 14 * 1000,
         });
 
       res.status(200).json({ message: '토큰 발급 완료' });

@@ -100,7 +100,7 @@ class KakaoAuthService {
       { userId, userName: result.userName, state1, state2 },
       JWT_SECRET_KEY,
       {
-        expiresIn: '30s',
+        expiresIn: '10s',
       }
     );
 
