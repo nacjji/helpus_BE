@@ -1,0 +1,25 @@
+name: update test server
+
+on:
+  push:
+    branches: [ "Develop" ]
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: SSH Remote Commands
+      uses: appleboy/ssh-action@v0.1.7
+      with:
+        host: ${{ secrets.HOST_TEST }}
+        username: ${{ secrets.USERNAME }}
+        key: ${{ secrets.KEY_TEST }}
+        script_stop: true
+        script: |
+          cd ${{ secrets.PATH }}
+          git pull origin Develop
+          sudo npm install
+          npx prisma db push
+          npx tsc
+          sudo pm2 restart ${{ secrets.PM2_ID }}
