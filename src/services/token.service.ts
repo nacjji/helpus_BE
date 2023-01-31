@@ -37,12 +37,12 @@ class TokenService {
       },
       JWT_SECRET_KEY,
       {
-        expiresIn: '15s',
+        expiresIn: '30m',
       }
     );
     if (leftTime < 86400) {
       const newRefreshToken = await jwt.sign({}, JWT_SECRET_KEY, {
-        expiresIn: '30s',
+        expiresIn: '14d',
       });
 
       await this.tokenRepository.updateRefresh(result.tokenId, newAccessToken, newRefreshToken);
