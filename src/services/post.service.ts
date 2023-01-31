@@ -186,6 +186,7 @@ class PostsService {
       location2 || undefined,
       tag
     );
+    return console.log('here');
     if (!result) {
       throw notFound('게시글 없음');
     }
