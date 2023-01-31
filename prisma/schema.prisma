@@ -96,6 +96,7 @@ model Room {
   senderId Int
   postId   Int
   leave    Int    @default(0)
+  state    Int    @default(0)
   Chat     Chat[]
   owner    User   @relation("Owner", fields: [ownerId], references: [userId], onDelete: Cascade)
   Post     Post   @relation(fields: [postId], references: [postId], onDelete: Cascade)
