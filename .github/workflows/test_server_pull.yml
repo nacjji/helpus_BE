@@ -17,10 +17,8 @@ jobs:
         key: ${{ secrets.KEY_TEST }}
         script_stop: true
         script: |
-          sudo -s
           cd ${{ secrets.PATH }}
           git pull origin Develop
-          npm install
-          npx prisma db push
+          sudo npm install
           npx tsc
           sudo pm2 restart ${{ secrets.PM2_ID }}

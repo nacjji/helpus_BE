@@ -1,5 +1,8 @@
 import { badRequest } from '@hapi/boom';
 import { RequestHandler } from 'express';
+
+import jwt from 'jsonwebtoken';
+
 import TokenService from '../services/token.service';
 
 class TokenController {

@@ -1,4 +1,4 @@
-import * as jwt from 'jsonwebtoken';
+import jwt from 'jsonwebtoken';
 import { unauthorized, badRequest } from '@hapi/boom';
 import prisma from '../config/database/prisma';
 import TokenRepository from '../repositories/token.repository';

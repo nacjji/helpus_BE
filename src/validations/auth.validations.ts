@@ -1,4 +1,4 @@
-import * as joi from 'joi';
+import joi from 'joi';
 
 export const signupPattern = joi.object().keys({
   email: joi.string().email().required().description('이메일'),
