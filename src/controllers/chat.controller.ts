@@ -46,7 +46,7 @@ class ChatController {
       const { userId } = res.locals;
       const results = await this.chatService.roomList(userId, q);
 
-      res.status(200).json({ results });
+      res.status(200).json(results);
     } catch (err) {
       next(err);
     }
