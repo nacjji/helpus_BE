@@ -18,7 +18,8 @@ jobs:
         script_stop: true
         script: |
           cd ${{ secrets.PATH }}
-          git pull origin Develop
+          sudo git pull origin Develop
           sudo npm install
-          npx tsc
+          npx prisma db push
+          sudo npx tsc
           sudo pm2 restart ${{ secrets.PM2_ID }}
