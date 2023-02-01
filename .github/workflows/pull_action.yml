@@ -23,5 +23,5 @@ jobs:
           sudo git pull origin master
           sudo npm install
           npx prisma db push
-          npx tsc
+          sudo npx tsc
           sudo pm2 restart ${{ secrets.PM2_ID }}
