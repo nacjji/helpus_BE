@@ -103,12 +103,28 @@ class PostsController {
         content,
         category,
         appointed,
-        isDeadLine,
         location1,
         location2,
         tag
       );
       return res.status(201).json({ result });
+    } catch (err) {
+      return next(err);
+    }
+  };
+
+  public deadLine: RequestHandler = async (req, res, next) => {
+    try {
+      const { userId } = res.locals;
+      const { isDeadLine } = req.body;
+      const { postId } = req.params;
+
+      const result = await this.postsService.deadLine(
+        Number(postId),
+        Number(userId),
+        Number(isDeadLine)
+      );
+      return res.status(201).json({ message: result.message });
     } catch (err) {
       return next(err);
     }
