@@ -21,6 +21,8 @@ postsRouter.get('/:postId', postsController.findDetailPost);
 
 postsRouter.put('/:postId', requiredLogin, postsController.updatePost);
 
+postsRouter.put('/deadline/:postId', requiredLogin, postsController.deadLine);
+
 postsRouter.delete('/:postId', requiredLogin, postsController.deletePost);
 
 export default postsRouter;

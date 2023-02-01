@@ -162,7 +162,6 @@ class PostsService {
     content?: string,
     category?: number,
     appointed?: Date,
-    isDeadLine?: number,
     location1?: string,
     location2?: string,
     tag?: string
@@ -179,12 +178,22 @@ class PostsService {
       content,
       Number(category),
       appointed,
-      Number(isDeadLine),
       location1 || undefined,
       location2 || undefined,
       tag
     );
     return result;
+  };
+
+  public deadLine = async (postId: number, userId: number, isDeadLine: number) => {
+    const findPost = await this.postsRepository.findPost(postId);
+    if (!findPost) throw notFound('게시글 없음');
+    const postWriter = await this.postsRepository.postWriter(userId);
+    if (!postWriter) throw badRequest('게시글의 작성자가 아닙니다.');
+
+    const result = await this.postsRepository.deadLine(postId, isDeadLine);
+    if (result.isDeadLine === 2) return { message: '마감 취소' };
+    return { message: '마감' };
   };
 
   public deletePost = async (postId: number, userId: number) => {

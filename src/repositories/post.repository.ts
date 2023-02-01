@@ -134,8 +134,6 @@ class PostsRepository {
 
   public findPost = async (postId: number) => {
     const result = await this.prisma.post.findFirst({ where: { postId } });
-    console.log(result);
-
     return result;
   };
 
@@ -151,13 +149,10 @@ class PostsRepository {
     content?: string,
     category?: number,
     appointed?: Date,
-    isDeadLine?: number,
     location1?: string,
     location2?: string,
     tag?: string
   ) => {
-    // 게시글이 존재하는지 데이터베이스에서 찾고 post.service 로 넘기는 것보다 여기서 바로 찾고 없을 경우 게시글이 없다는 에러메시지를 보냄
-
     const result = await this.prisma.post.update({
       where: { postId },
       data: {
@@ -168,12 +163,16 @@ class PostsRepository {
         category,
         appointed,
         updated: 1,
-        isDeadLine,
         location1,
         location2,
         tag,
       },
     });
+    return result;
+  };
+
+  public deadLine = async (postId: number, isDeadLine: number) => {
+    const result = await this.prisma.post.update({ where: { postId }, data: { isDeadLine } });
     return result;
   };
 
