@@ -24,4 +24,5 @@ jobs:
           sudo npm install
           npx prisma db push
           sudo npx tsc
-          sudo pm2 restart ${{ secrets.PM2_ID }}
+          sudo pm2 kill
+          sudo npm run start
