@@ -167,6 +167,11 @@ class PostsService {
     location2?: string,
     tag?: string
   ) => {
+    const findPost = await this.postsRepository.findPost(postId);
+    if (!findPost) throw notFound('없는 게시글');
+
+    const postWriter = await this.postsRepository.postWriter(userId);
+    if (!postWriter) throw badRequest('게시글의 작성자가 아닙니다.');
     const result = await this.postsRepository.updatePost(
       Number(postId),
       Number(userId),
@@ -179,15 +184,16 @@ class PostsService {
       location2 || undefined,
       tag
     );
-    if (!result) {
-      throw notFound('게시글 없음');
-    }
     return result;
   };
 
   public deletePost = async (postId: number, userId: number) => {
-    const result = await this.postsRepository.deletePost(postId, userId);
-    // if (userId !== result.userId) throw badRequest('게시글의 작성자가 아닙니다.');
+    const findPost = await this.postsRepository.findPost(postId);
+    if (!findPost) throw notFound('게시글 없음');
+    const postWriter = await this.postsRepository.postWriter(userId);
+    if (!postWriter) throw badRequest('게시글의 작성자가 아닙니다.');
+
+    const result = await this.postsRepository.deletePost(postId);
     const imageUrls = result.map((v: any) => {
       return v.imageUrl;
     });
