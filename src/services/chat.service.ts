@@ -122,10 +122,15 @@ class ChatService {
 
   public acceptCard = async (roomId: string) => {
     await this.chatRepository.acceptCard(roomId);
+    await this.chatRepository.stateUpdate(roomId, 2);
   };
 
   public readMessage = async (roomId: string) => {
     this.chatRepository.readMessage(roomId);
+  };
+
+  public cancelCard = async (roomId: string) => {
+    await this.chatRepository.stateUpdate(roomId, 0);
   };
 
   public isReadMessage = async (postId: number, userId: number, receiverId: number) => {
