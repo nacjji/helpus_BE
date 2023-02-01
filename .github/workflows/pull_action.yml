@@ -20,7 +20,7 @@ jobs:
         script_stop: true
         script: |
           cd ${{ secrets.PATH }}
-          git pull origin master
+          sudo git pull origin master
           sudo npm install
           npx prisma db push
           npx tsc
