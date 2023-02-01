@@ -1,6 +1,8 @@
 import { RequestHandler } from 'express';
 import requestIp from 'request-ip';
 import AuthService from '../services/auth.service';
+import randomImg from '../randomImg';
+
 import {
   emailPattern,
   signupPattern,

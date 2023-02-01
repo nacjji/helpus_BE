@@ -6,8 +6,6 @@ import prisma from '../config/database/prisma';
 import { deleteS3ImagePost } from '../middlewares/multer.uploader';
 import randomImg from '../randomImg';
 
-const rand = Math.floor(Math.random() * 30);
-
 class PostsService {
   postsRepository: PostsRepository;
 
@@ -33,7 +31,8 @@ class PostsService {
     const imageFileName = images?.map((v) => {
       return v?.split('/')[4];
     });
-
+    const date = Number(new Date());
+    const seed = Number(date) % 30;
     const result = await this.postsRepository.createPost(
       userId,
       userName,
@@ -45,8 +44,9 @@ class PostsService {
       location2,
       tag,
       createdAt,
-      imageFileName?.length ? imageFileName : [randomImg[rand]]
+      imageFileName?.length ? imageFileName : [randomImg[seed]]
     );
+
     return result;
   };
 
