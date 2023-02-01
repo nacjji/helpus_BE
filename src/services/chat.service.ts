@@ -76,6 +76,7 @@ class ChatService {
           ? v.owner.userImage
           : `${process.env.S3_BUCKET_URL}/profile/${v.owner.userImage}`,
         leave: v.leave,
+        state: v.state,
       };
     });
     return { list: _results };
