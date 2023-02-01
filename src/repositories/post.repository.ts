@@ -132,6 +132,18 @@ class PostsRepository {
     return result;
   };
 
+  public findPost = async (postId: number) => {
+    const result = await this.prisma.post.findFirst({ where: { postId } });
+    console.log(result);
+
+    return result;
+  };
+
+  public postWriter = async (userId: number) => {
+    const result = await this.prisma.post.findFirst({ where: { userId } });
+    return result;
+  };
+
   public updatePost = async (
     postId?: number,
     userId?: number,
@@ -144,14 +156,8 @@ class PostsRepository {
     location2?: string,
     tag?: string
   ) => {
-    const postExist = await this.prisma.post.findUnique({ where: { postId } });
+    // 게시글이 존재하는지 데이터베이스에서 찾고 post.service 로 넘기는 것보다 여기서 바로 찾고 없을 경우 게시글이 없다는 에러메시지를 보냄
 
-    if (!postExist) {
-      throw notFound('게시글 없음');
-    }
-    if (postExist.userId !== userId) {
-      throw unauthorized('해당 글의 작성자가 아닙니다.');
-    }
     const result = await this.prisma.post.update({
       where: { postId },
       data: {
@@ -159,10 +165,10 @@ class PostsRepository {
         userId,
         title,
         content,
-        category: category || postExist.category,
+        category,
         appointed,
         updated: 1,
-        isDeadLine: isDeadLine || postExist.isDeadLine,
+        isDeadLine,
         location1,
         location2,
         tag,
@@ -171,13 +177,8 @@ class PostsRepository {
     return result;
   };
 
-  public deletePost = async (postId: number, userId: number) => {
-    const postExist = await this.prisma.post.findUnique({ where: { postId } });
+  public deletePost = async (postId: number) => {
     const images = await this.prisma.postImages.findMany({ where: { postId } });
-    if (!postExist) {
-      throw notFound('게시글 없음');
-    }
-    if (postExist.userId !== userId) throw unauthorized('게시글의 작성자가 아닙니다');
     await this.prisma.post.findUniqueOrThrow({ where: { postId } });
 
     await this.prisma.post.delete({ where: { postId } });

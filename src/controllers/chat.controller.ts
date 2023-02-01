@@ -19,10 +19,11 @@ class ChatController {
 
   public test: RequestHandler = async (req, res, next) => {
     try {
-      const { userId, roomId, leave } = req.body;
-      await this.chatService.leaveRoom(userId, roomId, leave);
+      const q = Number(req.query.q);
+      const userId = 54;
+      const results = await this.chatService.roomList(userId, q);
 
-      res.status(200).json({});
+      res.status(200).json({ results, message: 'please...... ' });
     } catch (err) {
       next(err);
     }
