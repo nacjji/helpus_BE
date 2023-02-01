@@ -105,8 +105,19 @@ const Socket = (server: http.Server) => {
       try {
         const { roomId } = data;
         chatService.acceptCard(roomId);
+        io.to(roomId).emit('updateState', { state: 2 });
       } catch (err) {
         socket.emit('error', 'acceptCard 이벤트 실패');
+      }
+    });
+
+    socket.on('cancelCard', async (data) => {
+      try {
+        const { roomId } = data;
+        chatService.cancelCard(roomId);
+        io.to(roomId).emit('updateState', { state: 0 });
+      } catch (err) {
+        socket.emit('error', 'cancelCard 이벤트 실패');
       }
     });
 
