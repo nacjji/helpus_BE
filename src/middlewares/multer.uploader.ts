@@ -17,7 +17,6 @@ const multeruploader = multer({
       callback(null, `helpus/${nanoid()}.${fileType}`);
     },
   }),
-
   limits: { fileSize: 20 * 1024 * 1024 },
   fileFilter: (req: Request, file: Express.Multer.File, callback: multer.FileFilterCallback) => {
     const fileType = file.mimetype.split('/')[0];

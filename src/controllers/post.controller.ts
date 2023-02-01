@@ -1,5 +1,5 @@
 /* eslint-disable class-methods-use-this */
-import { badRequest, unauthorized } from '@hapi/boom';
+import { unauthorized } from '@hapi/boom';
 import { Request, Response, NextFunction, RequestHandler } from 'express';
 import PostsService from '../services/post.service';
 import { postInputPattern } from '../validations/posts.validation';
@@ -94,10 +94,6 @@ class PostsController {
       const { title, content, location1, category, appointed, isDeadLine, location2, tag } =
         req.body;
       const { userId } = res.locals;
-
-      if (!postInputPattern.validateAsync) {
-        throw badRequest('수정사항이 없습니다.');
-      }
       await postInputPattern.validateAsync(req.body);
 
       const result = await this.postsService.updatePost(
