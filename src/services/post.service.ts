@@ -192,8 +192,8 @@ class PostsService {
     if (!postWriter) throw badRequest('게시글의 작성자가 아닙니다.');
 
     const result = await this.postsRepository.deadLine(postId, isDeadLine);
-    if (result.isDeadLine === 2) return { message: '마감 취소' };
-    return { message: '마감' };
+    if (result.isDeadLine === 2) return { message: '마감' };
+    return { message: '마감 취소' };
   };
 
   public deletePost = async (postId: number, userId: number) => {
