@@ -55,10 +55,9 @@ class ChatController {
   public getState: RequestHandler = async (req, res, next) => {
     try {
       const { roomId } = req.body;
-      return res.status(200).json(roomId);
-      // const state = await this.chatService.getState(roomId);
+      const state = await this.chatService.getState(roomId);
 
-      // res.status(200).json(state);
+      res.status(200).json(state);
     } catch (err) {
       next(err);
     }
