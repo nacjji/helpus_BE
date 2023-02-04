@@ -63,6 +63,17 @@ class ChatController {
       next(err);
     }
   };
+
+  public getState: RequestHandler = async (req, res, next) => {
+    try {
+      const { roomId } = req.body;
+      const state = await this.chatService.getState(roomId);
+
+      res.status(200).json(state);
+    } catch (err) {
+      next(err);
+    }
+  };
 }
 
 export { ChatController, chatImage };

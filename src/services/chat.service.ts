@@ -135,6 +135,13 @@ class ChatService {
     await this.chatRepository.deleteCard(roomId);
   };
 
+  public getState = async (roomId: string) => {
+    const result = await this.chatRepository.roomInfo(roomId);
+
+    if (!result) throw badRequest('해당 채팅방 없음');
+    return result.state;
+  };
+
   public isReadMessage = async (postId: number, userId: number, receiverId: number) => {
     try {
       const result = await this.chatRepository.updateAlarm(postId, receiverId, userId);
