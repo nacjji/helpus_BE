@@ -70,7 +70,9 @@ class KakaoAuthService {
       return {
         userid: isUser.userId,
         userName: isUser.userName,
-        userImage: isUser.userImage,
+        userImage: isUser.userImage.includes('https://')
+          ? isUser.userImage
+          : `${process.env.S3_BUCKET_URL}/profile/${isUser.userImage}`,
         state1: isUser.state1,
         state2: isUser.state2,
         accessToken,
