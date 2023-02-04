@@ -1,6 +1,5 @@
 /* eslint-disable class-methods-use-this */
-import { unauthorized } from '@hapi/boom';
-import { Request, Response, NextFunction, RequestHandler } from 'express';
+import { RequestHandler } from 'express';
 import PostsService from '../services/post.service';
 import { postInputPattern } from '../validations/posts.validation';
 
@@ -12,9 +11,11 @@ class PostsController {
   }
 
   // eslint-disable-next-line class-methods-use-this
-  public createPost = async (req: Request, res: Response, next: NextFunction) => {
+  public createPost: RequestHandler = async (req, res, next) => {
     try {
-      const { userId, userName } = res.locals;
+      // const { userId, userName } = res.locals;
+      const userId = 38;
+      const userName = 'nananan';
       const { title, content, category, appointed, location1, location2, tag, createdAt } =
         await postInputPattern.validateAsync(req.body);
       const imageUrls = req.files! as Array<Express.MulterS3.File>;
@@ -42,12 +43,9 @@ class PostsController {
   };
 
   // 내 위치 게시글 조회
-  public myLocationPosts = async (req: Request, res: Response, next: NextFunction) => {
-    const { userId, state1, state2 } = res.locals;
+  public myLocationPosts: RequestHandler = async (req, res, next) => {
+    const { state1, state2 } = res.locals;
     try {
-      if (!userId) {
-        throw unauthorized('내 위치 게시글 조회는 로그인 후 사용 가능한 기능입니다.');
-      }
       const search = req.query.search as string;
       const category = Number(req.query.category);
       const q = Number(req.query.q);
@@ -59,7 +57,7 @@ class PostsController {
   };
 
   // 전국 게시글 조회
-  public allLocationPosts = async (req: Request, res: Response, next: NextFunction) => {
+  public allLocationPosts: RequestHandler = async (req, res, next) => {
     const q = Number(req.query.q);
     const search = req.query.search as string;
 
@@ -73,7 +71,7 @@ class PostsController {
     }
   };
 
-  public findDetailPost = async (req: Request, res: Response, next: NextFunction) => {
+  public findDetailPost: RequestHandler = async (req, res, next) => {
     try {
       const postId = Number(req.params.postId);
       if (req.params.postId === 'mylocation') {
@@ -87,7 +85,7 @@ class PostsController {
     }
   };
 
-  public updatePost = async (req: Request, res: Response, next: NextFunction) => {
+  public updatePost: RequestHandler = async (req, res, next) => {
     try {
       const postId = Number(req.params.postId);
       const { title, content, location1, category, appointed, location2, tag } = req.body;
