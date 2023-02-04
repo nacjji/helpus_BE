@@ -1,4 +1,3 @@
-import { notFound, unauthorized } from '@hapi/boom';
 import { PrismaClient } from '@prisma/client';
 
 class PostsRepository {
@@ -18,9 +17,7 @@ class PostsRepository {
     location1?: string,
     location2?: string,
     tag?: string,
-    createdAt?: Date,
-    imageUrls?: string[]
-    // eslint-disable-next-line consistent-return
+    createdAt?: Date
   ) => {
     const result = await this.prisma.post.create({
       data: {
@@ -36,14 +33,13 @@ class PostsRepository {
         createdAt,
       },
     });
+    return result;
+  };
 
-    const imageArr = imageUrls?.map((imageUrl) => {
-      return { imageUrl, postId: result.postId, userId };
-    });
+  public uploadPostImages = async (imageArr: any) => {
     await this.prisma.postImages.createMany({
       data: imageArr || [],
     });
-    return result;
   };
 
   public myLocationPosts = async (
@@ -63,12 +59,12 @@ class PostsRepository {
               { category: category || undefined },
             ],
             OR: [
-              { title: { contains: search || '' } },
-              { content: { contains: search || '' } },
-              { userName: { contains: search || '' } },
-              { location1: { contains: search || '' } },
-              { location2: { contains: search || '' } },
-              { tag: { contains: search || '' } },
+              { title: { contains: search } },
+              { content: { contains: search } },
+              { userName: { contains: search } },
+              { location1: { contains: search } },
+              { location2: { contains: search } },
+              { tag: { contains: search } },
             ],
           },
         ],
@@ -78,10 +74,8 @@ class PostsRepository {
         PostImages: { select: { imageUrl: true } },
       },
 
-      // 무한스크롤
       skip: q || 0,
       take: 12,
-      // 생성순으로 정렬
       orderBy: { createdAt: 'desc' },
     });
 
@@ -109,10 +103,8 @@ class PostsRepository {
         user: { select: { userImage: true } },
         PostImages: { select: { imageUrl: true } },
       },
-      // 무한스크롤
       skip: q || 0,
       take: 12,
-      // 생성순으로 정렬
       orderBy: { createdAt: 'desc' },
     });
     return result;

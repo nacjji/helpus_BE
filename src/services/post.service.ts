@@ -1,5 +1,5 @@
 /* eslint-disable no-param-reassign */
-import { badRequest, notFound } from '@hapi/boom';
+import { badRequest, notFound, unauthorized } from '@hapi/boom';
 import PostsRepository from '../repositories/post.repository';
 import AuthRepository from '../repositories/auth.repository';
 import prisma from '../config/database/prisma';
@@ -31,6 +31,7 @@ class PostsService {
     const imageFileName = images?.map((v) => {
       return v?.split('/')[4];
     });
+
     const date = Number(new Date());
     const seed = Number(date) % 30;
     const result = await this.postsRepository.createPost(
@@ -43,9 +44,13 @@ class PostsService {
       location1,
       location2,
       tag,
-      createdAt,
-      imageFileName?.length ? imageFileName : [randomImg[seed]]
+      createdAt
     );
+
+    const imageUrls = imageFileName?.map((imageUrl) => {
+      return { imageUrl, postId: result.postId, userId };
+    });
+    await this.postsRepository.uploadPostImages(imageUrls?.length ? imageUrls : [randomImg[seed]]);
 
     return result;
   };

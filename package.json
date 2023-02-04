@@ -70,6 +70,7 @@
     "@types/supertest": "^2.0.12",
     "@typescript-eslint/eslint-plugin": "^5.47.0",
     "@typescript-eslint/parser": "^5.47.0",
+    "artillery": "^2.0.0-29",
     "babel-preset-env": "^1.7.0",
     "chai": "^4.3.7",
     "chai-http": "^4.3.0",
