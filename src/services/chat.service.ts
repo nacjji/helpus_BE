@@ -132,6 +132,7 @@ class ChatService {
 
   public cancelCard = async (roomId: string) => {
     await this.chatRepository.stateUpdate(roomId, 0);
+    await this.chatRepository.deleteCard(roomId);
   };
 
   public isReadMessage = async (postId: number, userId: number, receiverId: number) => {
