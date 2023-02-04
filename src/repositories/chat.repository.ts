@@ -121,6 +121,12 @@ class ChatRepository {
     });
   };
 
+  public deleteCard = async (roomId: string) => {
+    await this.prisma.chat.deleteMany({
+      where: { AND: [{ roomId }, { content: { contains: `\`card\`` } }] },
+    });
+  };
+
   public readMessage = async (roomId: string) => {
     await this.prisma.chat.updateMany({
       where: { roomId, isRead: 0 },
