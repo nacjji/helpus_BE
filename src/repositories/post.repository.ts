@@ -132,6 +132,12 @@ class PostsRepository {
     return result;
   };
 
+  public isWished = async (userId: number, postId: number) => {
+    const result = await this.prisma.wish.findFirst({ where: { AND: [{ userId }, { postId }] } });
+    if (result) return 1;
+    return 0;
+  };
+
   public findPost = async (postId: number) => {
     const result = await this.prisma.post.findFirst({ where: { postId } });
     return result;

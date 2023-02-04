@@ -76,12 +76,11 @@ class PostsController {
   public findDetailPost = async (req: Request, res: Response, next: NextFunction) => {
     try {
       const postId = Number(req.params.postId);
-
       if (req.params.postId === 'mylocation') {
         return next();
       }
-
-      const result = await this.postsService.findDetailPost(postId);
+      const userId = res.locals.userId || 0;
+      const result = await this.postsService.findDetailPost(postId, Number(userId));
       return res.status(200).json({ result });
     } catch (err) {
       return next(err);
@@ -91,8 +90,7 @@ class PostsController {
   public updatePost = async (req: Request, res: Response, next: NextFunction) => {
     try {
       const postId = Number(req.params.postId);
-      const { title, content, location1, category, appointed, isDeadLine, location2, tag } =
-        req.body;
+      const { title, content, location1, category, appointed, location2, tag } = req.body;
       const { userId } = res.locals;
       await postInputPattern.validateAsync(req.body);
 

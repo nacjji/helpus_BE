@@ -117,8 +117,9 @@ class PostsService {
     return _result;
   };
 
-  public findDetailPost = async (postId: number) => {
+  public findDetailPost = async (postId: number, userId: number) => {
     const result = await this.postsRepository.findDetailPost(postId);
+    const isWished = await this.postsRepository.isWished(userId, postId);
 
     if (!result) {
       throw notFound('게시글 없음');
@@ -152,6 +153,7 @@ class PostsService {
       updated: result.updated,
       // eslint-disable-next-line no-underscore-dangle
       Wish: result._count.Wish,
+      isWished,
     };
   };
 
