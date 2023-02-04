@@ -17,7 +17,7 @@ postsRouter.get('/my-location', requiredLogin, passAnyway, postsController.myLoc
 
 postsRouter.get('/all-location', passAnyway, postsController.allLocationPosts);
 
-postsRouter.get('/:postId', postsController.findDetailPost);
+postsRouter.get('/:postId', passAnyway, postsController.findDetailPost);
 
 postsRouter.put('/:postId', requiredLogin, postsController.updatePost);
 
