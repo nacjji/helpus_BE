@@ -1,11 +1,10 @@
 import { badRequest } from '@hapi/boom';
-import jwt from 'jsonwebtoken';
 import bcrypt from 'bcrypt';
 import AuthRepository from '../repositories/auth.repository';
 import prisma from '../config/database/prisma';
 import { deleteS3Image } from '../middlewares/multer.uploader';
+import { makeAccessToken, makeRefreshToken } from '../modules/token.generator';
 
-const { JWT_SECRET_KEY } = process.env as { JWT_SECRET_KEY: string };
 const { salt } = process.env as { salt: string };
 const { S3_BUCKET_URL } = process.env as { S3_BUCKET_URL: string };
 
@@ -56,17 +55,10 @@ class AuthService {
     const match = await bcrypt.compare(password, user.password);
     if (!match) throw badRequest('이메일/비밀번호 불일치');
 
-    const accessToken = await jwt.sign(
-      { userId: user.userId, userName: user.userName, state1: user.state1, state2: user.state2 },
-      JWT_SECRET_KEY,
-      {
-        expiresIn: '30m',
-      }
-    );
+    if (!user.state1 || !user.state2) throw badRequest('주소값 없는 사용자');
 
-    const refreshToken = await jwt.sign({}, JWT_SECRET_KEY, {
-      expiresIn: '14d',
-    });
+    const accessToken = await makeAccessToken(user.userId, user.userName, user.state1, user.state2);
+    const refreshToken = await makeRefreshToken();
 
     await this.authRepository.saveToken(user.userId, accessToken, refreshToken);
 
