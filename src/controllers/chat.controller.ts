@@ -17,18 +17,6 @@ class ChatController {
     this.chatService = new ChatService();
   }
 
-  public test: RequestHandler = async (req, res, next) => {
-    try {
-      const q = Number(req.query.q);
-      const userId = 54;
-      const results = await this.chatService.roomList(userId, q);
-
-      res.status(200).json({ results, message: 'please...... ' });
-    } catch (err) {
-      next(err);
-    }
-  };
-
   public alarmList: RequestHandler = async (req, res, next) => {
     try {
       const { userId } = res.locals;
@@ -67,9 +55,10 @@ class ChatController {
   public getState: RequestHandler = async (req, res, next) => {
     try {
       const { roomId } = req.body;
-      const state = await this.chatService.getState(roomId);
+      return res.status(200).json(roomId);
+      // const state = await this.chatService.getState(roomId);
 
-      res.status(200).json(state);
+      // res.status(200).json(state);
     } catch (err) {
       next(err);
     }
