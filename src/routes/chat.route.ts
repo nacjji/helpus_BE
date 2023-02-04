@@ -10,8 +10,6 @@ chatRouter.get('/alarm', auth.requiredLogin, chatController.alarmList);
 chatRouter.get('/list', auth.requiredLogin, chatController.roomList);
 chatRouter.post('/image', auth.requiredLogin, chatUploader.single('image'), chatImage);
 chatRouter.get('/info', auth.requiredLogin, chatController.roomInfo);
-chatRouter.get('/state', auth.requiredLogin, chatController.getState);
-
-chatRouter.get('/test', chatController.test);
+chatRouter.post('/state', auth.requiredLogin, chatController.getState);
 
 export default chatRouter;
