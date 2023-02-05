@@ -13,7 +13,9 @@ class PostsController {
   // eslint-disable-next-line class-methods-use-this
   public createPost: RequestHandler = async (req, res, next) => {
     try {
-      const { userId, userName } = res.locals;
+      // const { userId, userName } = res.locals;
+      const userId = 38;
+      const userName = 'nananan';
       const { title, content, category, appointed, location1, location2, tag, createdAt } =
         await postInputPattern.validateAsync(req.body);
       const imageUrls = req.files! as Array<Express.MulterS3.File>;
@@ -34,7 +36,7 @@ class PostsController {
         images
       );
 
-      return res.status(201).json({ result, images });
+      return res.status(201).json({ message: '게시글 생성완료' });
     } catch (err) {
       return next(err);
     }

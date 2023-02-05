@@ -38,7 +38,7 @@ class PostsRepository {
 
   public uploadPostImages = async (imageArr: any) => {
     await this.prisma.postImages.createMany({
-      data: imageArr || [],
+      data: imageArr,
     });
   };
 

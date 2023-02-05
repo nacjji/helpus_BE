@@ -8,7 +8,7 @@ const postsController = new PostsController();
 
 postsRouter.post(
   '/',
-  requiredLogin,
+  // requiredLogin,
   [multeruploader.array('post-images', 10)],
   postsController.createPost
 );

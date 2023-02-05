@@ -50,7 +50,11 @@ class PostsService {
     const imageUrls = imageFileName?.map((imageUrl) => {
       return { imageUrl, postId: result.postId, userId };
     });
-    await this.postsRepository.uploadPostImages(imageUrls?.length ? imageUrls : [randomImg[seed]]);
+    // if (imageArr[0].split('/')[2] === 'images.unsplash.com')
+
+    await this.postsRepository.uploadPostImages(
+      imageUrls?.length ? imageUrls : [{ imageUrl: randomImg[seed], postId: result.postId, userId }]
+    );
 
     return result;
   };
