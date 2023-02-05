@@ -27,6 +27,8 @@ const makeRefreshToken = async () => {
 const deleteCookie: RequestHandler = (req, res, next) => {
   res.cookie('helpusAccess', '', { sameSite: 'none', secure: true });
   res.cookie('helpusRefresh', '', { sameSite: 'none', secure: true });
+
+  next();
 };
 
 export { makeAccessToken, makeRefreshToken, deleteCookie };
