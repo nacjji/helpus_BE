@@ -1,6 +1,6 @@
 import { RequestHandler } from 'express';
 import KakaoAuthService from '../services/kakao.auth.service';
-import { deleteCookie } from '../modules/token.module';
+import { deleteCookie, makeCookie } from '../modules/cookie.module';
 
 class KakaoAuthController {
   kakaoAuthService: KakaoAuthService;
@@ -15,16 +15,10 @@ class KakaoAuthController {
 
       const result = await this.kakaoAuthService.kakao(code);
       if (result.accessToken) {
-        res.cookie('helpusAccess', result.accessToken, {
-          sameSite: 'none',
-          secure: true,
-          maxAge: 60 * 60 * 24 * 14 * 1000,
-        });
-        res.cookie('helpusRefresh', result.refreshToken, {
-          sameSite: 'none',
-          secure: true,
-          maxAge: 60 * 60 * 24 * 14 * 1000,
-        });
+        res.locals.access = result.accessToken;
+        res.locals.refresh = result.refreshToken;
+
+        makeCookie(req, res, next);
       }
 
       res.status(200).json({
@@ -45,16 +39,10 @@ class KakaoAuthController {
 
       const result = await this.kakaoAuthService.kakaoState(state1, state2, userId);
       if (result.accessToken) {
-        res.cookie('helpusAccess', result.accessToken, {
-          sameSite: 'none',
-          secure: true,
-          maxAge: 60 * 60 * 24 * 14 * 1000,
-        });
-        res.cookie('helpusRefresh', result.refreshToken, {
-          sameSite: 'none',
-          secure: true,
-          maxAge: 60 * 60 * 24 * 14 * 1000,
-        });
+        res.locals.access = result.accessToken;
+        res.locals.refresh = result.refreshToken;
+
+        makeCookie(req, res, next);
       }
 
       res.status(201).json({

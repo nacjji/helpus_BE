@@ -7,7 +7,7 @@ import {
   loginPattenrn,
   updatePattern,
 } from '../validations/auth.validations';
-import { deleteCookie } from '../modules/token.module';
+import { deleteCookie, makeCookie } from '../modules/cookie.module';
 
 class AuthController {
   authService: AuthService;
@@ -57,17 +57,11 @@ class AuthController {
       const { email, password } = await loginPattenrn.validateAsync(req.body);
       const result = await this.authService.localLogin(email, password);
 
+      res.locals.access = result.accessToken;
+      res.locals.refresh = result.refreshToken;
+
       // TODO: 프론트까지 배포 완료 이후 쿠키 보안 설정
-      res.cookie('helpusAccess', result.accessToken, {
-        sameSite: 'none',
-        secure: true,
-        maxAge: 60 * 60 * 24 * 14 * 1000,
-      });
-      res.cookie('helpusRefresh', result.refreshToken, {
-        sameSite: 'none',
-        secure: true,
-        maxAge: 60 * 60 * 24 * 14 * 1000,
-      });
+      makeCookie(req, res, next);
 
       res.status(200).json({
         userId: result.userId,
