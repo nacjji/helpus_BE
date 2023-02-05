@@ -23,4 +23,4 @@ jobs:
           npx prisma db push
           sudo npx tsc
           sudo pm2 kill
-          sudo npm run start
+          sudo npm run dev start
