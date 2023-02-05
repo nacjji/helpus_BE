@@ -1,6 +1,6 @@
 import { RequestHandler } from 'express';
 import KakaoAuthService from '../services/kakao.auth.service';
-import { deleteCookie, makeCookie } from '../middlewares/cookie.middleware';
+import { deleteCookie, makeCookie } from '../modules/cookie.module';
 
 class KakaoAuthController {
   kakaoAuthService: KakaoAuthService;

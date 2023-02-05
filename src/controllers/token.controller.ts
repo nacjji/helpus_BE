@@ -14,15 +14,18 @@ class TokenController {
   public newToken: RequestHandler = async (req, res, next) => {
     try {
       const { helpusAccess, helpusRefresh } = req.cookies;
-      if (!helpusAccess || !helpusRefresh) throw badRequest('비정상 토큰으로 확인됨');
+      if (!helpusAccess || !helpusRefresh) {
+        deleteCookie(req, res, next);
+        throw badRequest('비정상 토큰으로 확인됨');
+      }
 
       const { newAccessToken, newRefreshToken } = await this.tokenService.makeNewToken(
         helpusAccess,
         helpusRefresh
       );
 
-      if (newRefreshToken) res.locals.refresh = newRefreshToken;
       res.locals.access = newAccessToken;
+      if (newRefreshToken) res.locals.refresh = newRefreshToken;
       makeCookie(req, res, next);
 
       res.status(200).json({ message: '토큰 발급 완료' });
@@ -51,9 +54,9 @@ class TokenController {
     try {
       const { helpusAccess, helpusRefresh } = req.cookies;
 
-      if (!helpusAccess || !helpusRefresh) throw badRequest('비정상 토큰으로 확인됨');
-
       deleteCookie(req, res, next);
+
+      if (!helpusAccess || !helpusRefresh) throw badRequest('비정상 토큰으로 확인됨');
 
       await this.tokenService.removeAllTokens(helpusAccess, helpusRefresh);
       res.status(200).json({ message: '전체 토큰 삭제 완료' });
