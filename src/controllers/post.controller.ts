@@ -13,16 +13,14 @@ class PostsController {
   // eslint-disable-next-line class-methods-use-this
   public createPost: RequestHandler = async (req, res, next) => {
     try {
-      // const { userId, userName } = res.locals;
-      const userId = 38;
-      const userName = 'nananan';
+      const { userId, userName } = res.locals;
       const { title, content, category, appointed, location1, location2, tag, createdAt } =
         await postInputPattern.validateAsync(req.body);
       const imageUrls = req.files! as Array<Express.MulterS3.File>;
       const images = imageUrls.map((v) => {
         return v.location;
       });
-      const result = await this.postsService.createPost(
+      await this.postsService.createPost(
         userId,
         userName,
         title,
