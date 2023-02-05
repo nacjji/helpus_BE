@@ -118,8 +118,8 @@
   <tbody>
     <td><a href="https://github.com/nacjji">BE</a></td>
     <td><a href="https://github.com/minaliokng">BE</a></td>
-    <td><a href="https://github.com/nacjji">FE</a></td>
-    <td><a href="https://github.com/nacjji">FE</a></td>
-    <td><a href="https://github.com/nacjji">FE</a></td>
+    <td><a href="https://github.com/hanul-dev">FE</a></td>
+    <td><a href="https://github.com/buddesign">FE</a></td>
+    <td><a href="https://github.com/deasaungkim">FE</a></td>
   </tbody>
 </table>
