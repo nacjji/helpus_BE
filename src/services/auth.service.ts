@@ -89,7 +89,6 @@ class AuthService {
         userInfo.Score?.reduce((sum: number, curValue: any) => {
           return sum + curValue.score;
         }, 0) / userInfo.Score.length;
-
       return {
         userId: userInfo.userId,
         userName: userInfo.userName,
