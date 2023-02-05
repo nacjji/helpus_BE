@@ -7,7 +7,7 @@ import {
   loginPattenrn,
   updatePattern,
 } from '../validations/auth.validations';
-import { deleteCookie, makeCookie } from '../modules/cookie.module';
+import { makeCookie, deleteCookie } from '../modules/cookie.module';
 
 class AuthController {
   authService: AuthService;
@@ -60,7 +60,6 @@ class AuthController {
       res.locals.access = result.accessToken;
       res.locals.refresh = result.refreshToken;
 
-      // TODO: 프론트까지 배포 완료 이후 쿠키 보안 설정
       makeCookie(req, res, next);
 
       res.status(200).json({
@@ -164,6 +163,7 @@ class AuthController {
       deleteCookie(req, res, next);
 
       res.status(200).json({ message: '탈퇴 완료', userId });
+      next();
     } catch (err) {
       next(err);
     }
