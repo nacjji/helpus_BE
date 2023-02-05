@@ -13,11 +13,14 @@ const makeCookie: RequestHandler = (req, res, next) => {
     secure: true,
     maxAge: 60 * 60 * 24 * 14 * 1000,
   });
-  res.cookie('helpusRefresh', res.locals.refresh, {
-    sameSite: 'none',
-    secure: true,
-    maxAge: 60 * 60 * 24 * 14 * 1000,
-  });
+
+  if (res.locals.refresh !== null) {
+    res.cookie('helpusRefresh', res.locals.refresh, {
+      sameSite: 'none',
+      secure: true,
+      maxAge: 60 * 60 * 24 * 14 * 1000,
+    });
+  }
 
   next();
 };
