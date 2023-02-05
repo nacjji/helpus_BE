@@ -1,7 +1,5 @@
 import { RequestHandler } from 'express';
-import requestIp from 'request-ip';
 import AuthService from '../services/auth.service';
-import randomImg from '../randomImg';
 
 import {
   emailPattern,
@@ -9,6 +7,7 @@ import {
   loginPattenrn,
   updatePattern,
 } from '../validations/auth.validations';
+import { deleteCookie } from '../modules/token.module';
 
 class AuthController {
   authService: AuthService;
@@ -168,8 +167,7 @@ class AuthController {
       const { userId } = res.locals;
       await this.authService.deleteUser(userId);
 
-      res.cookie('helpusAccess', '', { sameSite: 'none', secure: true });
-      res.cookie('helpusRefresh', '', { sameSite: 'none', secure: true });
+      deleteCookie(req, res, next);
 
       res.status(200).json({ message: '탈퇴 완료', userId });
     } catch (err) {

@@ -1,5 +1,6 @@
 import { RequestHandler } from 'express';
 import KakaoAuthService from '../services/kakao.auth.service';
+import { deleteCookie } from '../modules/token.module';
 
 class KakaoAuthController {
   kakaoAuthService: KakaoAuthService;
@@ -71,6 +72,7 @@ class KakaoAuthController {
   public kakaoDelete: RequestHandler = async (req, res, next) => {
     try {
       await this.kakaoAuthService.kakaoDelete(res.locals.userId);
+      deleteCookie(req, res, next);
 
       res.status(200).json({ message: '탈퇴 완료' });
     } catch (err) {

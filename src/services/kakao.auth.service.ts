@@ -2,7 +2,7 @@ import { badRequest } from '@hapi/boom';
 import axios from 'axios';
 import prisma from '../config/database/prisma';
 import KakaoAuthRepository from '../repositories/kakao.auth.repository';
-import { makeAccessToken, makeRefreshToken } from '../modules/token.generator';
+import { makeAccessToken, makeRefreshToken } from '../modules/token.module';
 
 const { REST_API_KEY, REDIRECT_URI, ADMIN_KEY } = process.env as {
   REST_API_KEY: string;

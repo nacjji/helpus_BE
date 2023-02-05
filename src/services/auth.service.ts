@@ -3,7 +3,7 @@ import bcrypt from 'bcrypt';
 import AuthRepository from '../repositories/auth.repository';
 import prisma from '../config/database/prisma';
 import { deleteS3Image } from '../middlewares/multer.uploader';
-import { makeAccessToken, makeRefreshToken } from '../modules/token.generator';
+import { makeAccessToken, makeRefreshToken } from '../modules/token.module';
 
 const { salt } = process.env as { salt: string };
 const { S3_BUCKET_URL } = process.env as { S3_BUCKET_URL: string };

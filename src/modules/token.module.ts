@@ -1,3 +1,4 @@
+import { RequestHandler } from 'express-serve-static-core';
 import jwt from 'jsonwebtoken';
 
 const { JWT_SECRET_KEY } = process.env as { JWT_SECRET_KEY: string };
@@ -23,4 +24,9 @@ const makeRefreshToken = async () => {
   return refreshToken;
 };
 
-export { makeAccessToken, makeRefreshToken };
+const deleteCookie: RequestHandler = (req, res, next) => {
+  res.cookie('helpusAccess', '', { sameSite: 'none', secure: true });
+  res.cookie('helpusRefresh', '', { sameSite: 'none', secure: true });
+};
+
+export { makeAccessToken, makeRefreshToken, deleteCookie };
