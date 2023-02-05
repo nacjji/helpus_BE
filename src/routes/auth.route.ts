@@ -3,6 +3,7 @@ import { profileUploader } from '../middlewares/multer.uploader';
 import KakaoAuthController from '../controllers/kakao.auth.controller';
 import AuthController from '../controllers/auth.controller';
 import * as auth from '../middlewares/auth.middleware';
+import * as cookie from '../middlewares/cookie.middleware';
 
 const authRouter = Router();
 const authController = new AuthController();
@@ -37,7 +38,7 @@ authRouter.get('/wishlist', auth.requiredLogin, authController.wishlist);
 authRouter.patch('/password', auth.requiredLogin, authController.changePassword);
 authRouter.get('/:userId/detail', authController.getUserDetail);
 
-authRouter.delete('/delete', auth.requiredLogin, authController.deleteUser);
+authRouter.delete('/delete', auth.requiredLogin, authController.deleteUser, cookie.deleteCookie);
 authRouter.delete('/delete/kakao', auth.requiredLogin, kakaoAuthController.kakaoDelete);
 authRouter.patch('/score/:userId', auth.requiredLogin, authController.score);
 

@@ -7,7 +7,7 @@ import {
   loginPattenrn,
   updatePattern,
 } from '../validations/auth.validations';
-import { deleteCookie, makeCookie } from '../modules/cookie.module';
+import { makeCookie } from '../middlewares/cookie.middleware';
 
 class AuthController {
   authService: AuthService;
@@ -161,9 +161,8 @@ class AuthController {
       const { userId } = res.locals;
       await this.authService.deleteUser(userId);
 
-      deleteCookie(req, res, next);
-
       res.status(200).json({ message: '탈퇴 완료', userId });
+      next();
     } catch (err) {
       next(err);
     }
