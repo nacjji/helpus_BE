@@ -20,7 +20,7 @@ class PostsController {
       const images = imageUrls.map((v) => {
         return v.location;
       });
-      const result = await this.postsService.createPost(
+      await this.postsService.createPost(
         userId,
         userName,
         title,
@@ -34,7 +34,7 @@ class PostsController {
         images
       );
 
-      return res.status(201).json({ result, images });
+      return res.status(201).json({ message: '게시글 생성완료' });
     } catch (err) {
       return next(err);
     }
