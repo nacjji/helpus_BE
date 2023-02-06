@@ -82,11 +82,10 @@ const Socket = (server: http.Server) => {
         if (chatId) {
           io.to(roomId).emit('broadcast', { userId, content, createdAt });
           if (isCard) io.to(roomId).emit('updateState', { state: 1 });
+          const readYet = await chatService.isReadMessage(postId, userId, receiverId as number);
 
           setTimeout(async () => {
-            const readYet = await chatService.isReadMessage(postId, userId, receiverId as number);
-
-            if (readYet !== 0) {
+            if (readYet === 0) {
               if (side) {
                 // eslint-disable-next-line no-restricted-syntax
                 for (const list of side) {
@@ -94,12 +93,6 @@ const Socket = (server: http.Server) => {
                 }
               }
             }
-            else {
-                // eslint-disable-next-line no-restricted-syntax
-                for (const list of side) {
-                  io.to(list.socketId).emit('alarm-test', { senderName, title, readYet });
-                }
-              }
           }, 500);
         }
       } catch (err) {
