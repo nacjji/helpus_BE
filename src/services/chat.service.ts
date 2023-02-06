@@ -144,14 +144,14 @@ class ChatService {
     return result.state;
   };
 
-  public isReadMessage = async (postId: number, userId: number, receiverId: number) => {
-    try {
-      const result = await this.chatRepository.updateAlarm(postId, receiverId, userId);
-      return result.count;
-    } catch {
-      await this.chatRepository.createAlarm(postId, receiverId, userId);
-      return 1;
-    }
+  public createAlarm = async (postId: number, userId: number, receiverId: number) => {
+    await this.chatRepository.createAlarm(postId, receiverId, userId);
+  };
+
+  public readYet = async (roomId: string, userId: number) => {
+    const results = await this.chatRepository.readYet(roomId, userId);
+
+    return results;
   };
 
   public saveSocket = async (userId: number, socketId: string) => {
