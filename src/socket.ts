@@ -87,9 +87,13 @@ const Socket = (server: http.Server) => {
           setTimeout(async () => {
             const readYet = await chatService.readYet(roomId, userId);
 
-            if (readYet) {
-              socket.emit('test', { side });
-            } else socket.emit('test', { side });
+            if (side) {
+              // eslint-disable-next-line no-restricted-syntax
+              for (const list of side) {
+                io.emit('test', list);
+                // io.to(list.socketId).emit('new-chat', { senderName, title, readYet });
+              }
+            }
           }, 500);
         }
       } catch (err) {
