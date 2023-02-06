@@ -24,10 +24,9 @@ class AuthController {
   public emailCheck: RequestHandler = async (req, res, next) => {
     try {
       const { email } = await emailPattern.validateAsync(req.body);
-      const check = await this.authService.emailCheck(email);
+      await this.authService.emailCheck(email);
 
-      if (check) res.status(400).json({ errorMessage: '중복된 이메일' });
-      else res.status(200).json({ message: '사용 가능' });
+      res.status(200).json({ message: '사용 가능' });
     } catch (err) {
       next(err);
     }

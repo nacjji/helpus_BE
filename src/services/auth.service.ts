@@ -18,6 +18,8 @@ class AuthService {
   public emailCheck = async (email: string) => {
     const check = await this.authRepository.emailCheck(email);
 
+    if (check) throw badRequest('중복된 이메일');
+
     return check;
   };
 
@@ -80,7 +82,7 @@ class AuthService {
 
     if (!userInfo) throw badRequest('요구사항에 맞지 않는 입력값');
     else {
-      const imageUrl = userInfo.userImage.includes('https://')
+      const imageUrl = userInfo.userImage.includes('kakaocdn')
         ? userInfo.userImage
         : `${process.env.S3_BUCKET_URL}/profile/${userInfo?.userImage}`;
 

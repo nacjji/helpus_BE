@@ -2,8 +2,7 @@ import jwt from 'jsonwebtoken';
 import { unauthorized, badRequest } from '@hapi/boom';
 import prisma from '../config/database/prisma';
 import TokenRepository from '../repositories/token.repository';
-
-const { JWT_SECRET_KEY } = process.env as { JWT_SECRET_KEY: string };
+import { makeAccessToken, makeRefreshToken } from '../modules/token.module';
 
 class TokenService {
   tokenRepository: TokenRepository;
@@ -13,6 +12,8 @@ class TokenService {
   }
 
   public makeNewToken = async (accessToken: string, refreshToken: string) => {
+    if (!accessToken || !refreshToken) throw badRequest('비정상 토큰으로 확인됨');
+
     const result = await this.tokenRepository.checkToken(accessToken, refreshToken);
     if (!result) throw unauthorized('로그인 필요');
 
@@ -28,22 +29,14 @@ class TokenService {
       state2: string;
     };
 
-    const newAccessToken = await jwt.sign(
-      {
-        userId: userInfo.userId,
-        userName: userInfo.userName,
-        state1: userInfo.state1,
-        state2: userInfo.state2,
-      },
-      JWT_SECRET_KEY,
-      {
-        expiresIn: '30m',
-      }
+    const newAccessToken = await makeAccessToken(
+      userInfo.userId,
+      userInfo.userName,
+      userInfo.state1,
+      userInfo.state2
     );
     if (leftTime < 86400) {
-      const newRefreshToken = await jwt.sign({}, JWT_SECRET_KEY, {
-        expiresIn: '14d',
-      });
+      const newRefreshToken = await makeRefreshToken();
 
       await this.tokenRepository.updateRefresh(result.tokenId, newAccessToken, newRefreshToken);
       return { newAccessToken, newRefreshToken };
@@ -53,10 +46,14 @@ class TokenService {
   };
 
   public removeToken = async (accessToken: string, refreshToken: string) => {
+    if (!accessToken || !refreshToken) throw badRequest('비정상 토큰으로 확인됨');
+
     await this.tokenRepository.removeToken(accessToken, refreshToken);
   };
 
   public removeAllTokens = async (accessToken: string, refreshToken: string) => {
+    if (!accessToken || !refreshToken) throw badRequest('비정상 토큰으로 확인됨');
+
     const result = await this.tokenRepository.checkToken(accessToken, refreshToken);
     if (result) {
       const { userId } = jwt.decode(result.accessToken) as { userId: number };

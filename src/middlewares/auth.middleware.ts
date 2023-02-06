@@ -1,7 +1,7 @@
 import { RequestHandler } from 'express';
 import { unauthorized, badRequest } from '@hapi/boom';
 import jwt from 'jsonwebtoken';
-import { deleteCookie, makeCookie } from '../modules/cookie.module';
+import { deleteCookie } from '../modules/cookie.module';
 
 const { JWT_SECRET_KEY } = process.env as { JWT_SECRET_KEY: string };
 
