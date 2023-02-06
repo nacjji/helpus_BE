@@ -79,10 +79,13 @@ const Socket = (server: http.Server) => {
         const { chatId, createdAt, side, senderName, postId, title, receiverId } =
           await chatService.sendMessageAt(roomId, userId, content, isCard);
 
+        socket.emit('test', 1);
         if (chatId) {
+          socket.emit('test', 2);
           io.to(roomId).emit('broadcast', { userId, content, createdAt });
           if (isCard) io.to(roomId).emit('updateState', { state: 1 });
           await chatService.createAlarm(postId, userId, receiverId as number);
+          socket.emit('test', 3);
 
           setTimeout(async () => {
             const readYet = await chatService.readYet(roomId, userId);
