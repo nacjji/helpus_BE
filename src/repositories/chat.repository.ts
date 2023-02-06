@@ -156,6 +156,13 @@ class ChatRepository {
     });
   };
 
+  public updateAlarm = async (postId: number, ownerId: number, senderId: number) => {
+    await this.prisma.alarm.updateMany({
+      where: { postId, ownerId, senderId },
+      data: { count: { increment: 1 } },
+    });
+  };
+
   public readYet = async (roomId: string, userId: number) => {
     const result = this.prisma.chat.findFirst({
       where: { AND: [{ roomId }, { NOT: { userId } }, { isRead: 0 }] },
