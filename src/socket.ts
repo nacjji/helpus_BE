@@ -32,7 +32,7 @@ const Socket = (server: http.Server) => {
       try {
         await chatService.deleteSocket(socket.id);
       } catch (err) {
-        socket.emit('error', 'test 이벤트 실패');
+        socket.emit('error', 'disconnect 이벤트 실패');
       }
     });
 
@@ -90,7 +90,7 @@ const Socket = (server: http.Server) => {
             if (side) {
               // eslint-disable-next-line no-restricted-syntax
               for (const list of side) {
-                io.emit('test', list);
+                io.to(roomId).emit('test', list);
                 // io.to(list.socketId).emit('new-chat', { senderName, title, readYet });
               }
             }
