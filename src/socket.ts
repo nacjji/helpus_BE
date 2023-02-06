@@ -81,18 +81,15 @@ const Socket = (server: http.Server) => {
 
         if (chatId) {
           io.to(roomId).emit('broadcast', { userId, content, createdAt });
-          socket.emit('test', 1);
           if (isCard) io.to(roomId).emit('updateState', { state: 1 });
-          socket.emit('test', { postId, userId, receiverId });
           await chatService.createAlarm(postId, userId, receiverId as number);
-          socket.emit('test', 3);
 
           setTimeout(async () => {
             const readYet = await chatService.readYet(roomId, userId);
 
             if (readYet) {
-              socket.emit('test', '제발 받아주세요');
-            }
+              socket.emit('test', { message: '안읽었음', readYet });
+            } else socket.emit('test', { message: '읽었음', readYet });
           }, 500);
         }
       } catch (err) {
