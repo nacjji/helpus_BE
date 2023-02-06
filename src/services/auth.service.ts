@@ -18,6 +18,8 @@ class AuthService {
   public emailCheck = async (email: string) => {
     const check = await this.authRepository.emailCheck(email);
 
+    if (check) throw badRequest('중복된 이메일');
+
     return check;
   };
 
