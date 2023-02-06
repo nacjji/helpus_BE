@@ -9,7 +9,7 @@ const makeAccessToken = async (
   state2: string
 ) => {
   const accessToken = await jwt.sign({ userId, userName, state1, state2 }, JWT_SECRET_KEY, {
-    expiresIn: '10s',
+    expiresIn: '30m',
   });
 
   return accessToken;
@@ -17,7 +17,7 @@ const makeAccessToken = async (
 
 const makeRefreshToken = async () => {
   const refreshToken = await jwt.sign({}, JWT_SECRET_KEY, {
-    expiresIn: '15s',
+    expiresIn: '14d',
   });
 
   return refreshToken;
