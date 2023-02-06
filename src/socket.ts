@@ -5,6 +5,7 @@ import { fromBuffer } from 'file-type';
 import { nanoid } from 'nanoid';
 import './config/env';
 import ChatService from './services/chat.service';
+import { emit } from 'process';
 
 const Socket = (server: http.Server) => {
   const chatService = new ChatService();
@@ -86,6 +87,7 @@ const Socket = (server: http.Server) => {
 
           setTimeout(async () => {
             const readYet = await chatService.readYet(roomId, userId);
+            socket.emit('test', readYet);
 
             if (side && readYet) {
               // eslint-disable-next-line no-restricted-syntax
