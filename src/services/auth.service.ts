@@ -80,11 +80,9 @@ class AuthService {
 
     if (!userInfo) throw badRequest('요구사항에 맞지 않는 입력값');
     else {
-      let imageUrl = userInfo.userImage;
-      // eslint-disable-next-line no-unused-expressions
-      userInfo.userImage.includes('http://')
-        ? userInfo?.userImage
-        : (imageUrl = `${process.env.S3_BUCKET_URL}/profile/${userInfo?.userImage}`);
+      const imageUrl = userInfo.userImage.includes('https://')
+        ? userInfo.userImage
+        : `${process.env.S3_BUCKET_URL}/profile/${userInfo?.userImage}`;
 
       return {
         userId: userInfo.userId,
