@@ -71,10 +71,12 @@ class ChatService {
         senderImage: v.sender.userImage.includes('http://')
           ? v.sender.userImage
           : `${process.env.S3_BUCKET_URL}/profile/${v.sender.userImage}`,
+        senderScore: v.sender.score,
         ownerName: v.owner.userName,
         ownerImage: v.owner.userImage.includes('http://')
           ? v.owner.userImage
           : `${process.env.S3_BUCKET_URL}/profile/${v.owner.userImage}`,
+        ownerScore: v.owner.score,
         leave: v.leave,
         state: v.state,
       };
