@@ -117,7 +117,7 @@ class PostsRepository {
         _count: {
           select: { Wish: true },
         },
-        user: { select: { userImage: true, score: true } },
+        user: { select: { userImage: true, score: true, score_total: true } },
         PostImages: { select: { imageUrl: true } },
       },
     });

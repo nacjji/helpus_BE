@@ -116,14 +116,11 @@ class AuthRepository {
   };
 
   public score = async (userId: number, score: number) => {
-    const isExistUser = await this.prisma.user.findUnique({ where: { userId } });
-    if (!isExistUser) throw badRequest('존재하지 않는 사용자');
     const scoreRate = await this.prisma.user.update({
       where: { userId },
       data: { score: { increment: score }, score_total: { increment: 1 } },
     });
-
-    return scoreRate;
+    return scoreRate.score / scoreRate.score_total;
   };
 
   public myPosts = async (userId: number, q: number) => {

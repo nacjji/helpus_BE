@@ -50,8 +50,6 @@ class PostsService {
     const imageUrls = imageFileName?.map((imageUrl) => {
       return { imageUrl, postId: result.postId, userId };
     });
-    // if (imageArr[0].split('/')[2] === 'images.unsplash.com')
-
     await this.postsRepository.uploadPostImages(
       imageUrls?.length ? imageUrls : [{ imageUrl: randomImg[seed], postId: result.postId, userId }]
     );
@@ -141,6 +139,7 @@ class PostsService {
       userImage: result.user.userImage.includes('http://')
         ? result.user.userImage
         : `${process.env.S3_BUCKET_URL}/profile/${result.user.userImage}`,
+      score: result.user.score / result.user.score_total,
       title: result.title,
       content: result.content,
       category: result.category,
