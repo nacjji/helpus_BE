@@ -88,12 +88,7 @@ const Socket = (server: http.Server) => {
             const readYet = await chatService.readYet(roomId, userId);
 
             if (readYet) {
-              if (side) {
-                // eslint-disable-next-line no-restricted-syntax
-                for (const list of side) {
-                  io.to(list.socketId).emit('new-chat', { senderName, title });
-                }
-              }
+              socket.emit('test', '제발 받아주세요');
             }
           }, 500);
         }
@@ -126,7 +121,6 @@ const Socket = (server: http.Server) => {
       try {
         const { roomId, userId } = data;
         await chatService.readMessage(roomId, userId);
-        socket.emit('test', '제발 받아주세요');
       } catch (err) {
         socket.emit('error', 'read 이벤트 실패');
       }
