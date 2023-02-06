@@ -83,7 +83,7 @@ const Socket = (server: http.Server) => {
           io.to(roomId).emit('broadcast', { userId, content, createdAt });
           socket.emit('test', 1);
           if (isCard) io.to(roomId).emit('updateState', { state: 1 });
-          socket.emit('test', 2);
+          socket.emit('test', { postId, userId, receiverId });
           await chatService.createAlarm(postId, userId, receiverId as number);
           socket.emit('test', 3);
 
