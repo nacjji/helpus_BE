@@ -109,7 +109,7 @@ class PostsRepository {
     });
     return result;
   };
-
+  
   public findDetailPost = async (postId: number) => {
     const result = await this.prisma.post.findUnique({
       where: { postId },
@@ -117,7 +117,7 @@ class PostsRepository {
         _count: {
           select: { Wish: true },
         },
-        user: { select: { userImage: true, score: true } },
+        user: { select: { userImage: true, score: true, score_total: true } },
         PostImages: { select: { imageUrl: true } },
       },
     });
