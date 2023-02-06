@@ -88,8 +88,8 @@ const Socket = (server: http.Server) => {
             const readYet = await chatService.readYet(roomId, userId);
 
             if (readYet) {
-              socket.emit('test', { message: '안읽었음', readYet });
-            } else socket.emit('test', { message: '읽었음', readYet });
+              socket.emit('test', { side });
+            } else socket.emit('test', { side });
           }, 500);
         }
       } catch (err) {
