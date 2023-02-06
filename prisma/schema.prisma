@@ -4,7 +4,7 @@ generator client {
 
 datasource db {
   provider = "mysql"
-  url      = env("DATABASE_URL")
+  url      = env("DATABASE_TEST_URL")
 }
 
 model User {
@@ -16,6 +16,7 @@ model User {
   state2      String?
   userImage   String
   score       Float         @default(0)
+  score_total Int           @default(0)
   reportCount Int           @default(0)
   kakao       BigInt?       @unique
   alarmOwner  Alarm[]       @relation("Owner")
@@ -25,22 +26,12 @@ model User {
   Report      Report[]
   roomOwner   Room[]        @relation("Owner")
   roomSender  Room[]        @relation("Sender")
-  Score       Score[]
   SocketTable SocketTable[]
   Wish        Wish[]
   Token       Token[]
   PostImages  PostImages[]
 
   @@unique([userId, userName])
-}
-
-model Score {
-  id     Int   @id @default(autoincrement())
-  userId Int
-  score  Float
-  user   User  @relation(fields: [userId], references: [userId], onDelete: Cascade)
-
-  @@index([userId], map: "Score_userId_fkey")
 }
 
 model Post {
