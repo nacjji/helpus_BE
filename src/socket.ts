@@ -90,7 +90,7 @@ const Socket = (server: http.Server) => {
             if (side) {
               // eslint-disable-next-line no-restricted-syntax
               for (const list of side) {
-                io.to(roomId).emit('test', list);
+                io.to(list.socketId).emit('test', 'please');
                 // io.to(list.socketId).emit('new-chat', { senderName, title, readYet });
               }
             }
