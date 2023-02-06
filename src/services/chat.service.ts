@@ -3,7 +3,6 @@ import { badRequest } from '@hapi/boom';
 import ChatRepository from '../repositories/chat.repository';
 import prisma from '../config/database/prisma';
 import { deleteS3ImageChat } from '../middlewares/multer.uploader';
-import { nextTick } from 'process';
 
 class ChatService {
   private chatRepository: ChatRepository;
@@ -155,6 +154,7 @@ class ChatService {
 
   public readYet = async (roomId: string, userId: number) => {
     const results = await this.chatRepository.readYet(roomId, userId);
+    console.log(results);
 
     return results;
   };

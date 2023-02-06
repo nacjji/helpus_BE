@@ -164,7 +164,7 @@ class ChatRepository {
   };
 
   public readYet = async (roomId: string, userId: number) => {
-    const result = this.prisma.chat.findFirst({
+    const result = await this.prisma.chat.findFirst({
       where: { AND: [{ roomId }, { NOT: { userId } }, { isRead: 0 }] },
     });
 
