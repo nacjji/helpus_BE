@@ -124,8 +124,8 @@ const Socket = (server: http.Server) => {
 
     socket.on('read', async (data) => {
       try {
-        const { roomId } = data;
-        await chatService.readMessage(roomId);
+        const { roomId, userId } = data;
+        await chatService.readMessage(roomId, userId);
         socket.emit('test', '제발 받아주세요');
       } catch (err) {
         socket.emit('error', 'read 이벤트 실패');

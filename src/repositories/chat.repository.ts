@@ -127,9 +127,9 @@ class ChatRepository {
     });
   };
 
-  public readMessage = async (roomId: string) => {
+  public readMessage = async (roomId: string, userId: number) => {
     await this.prisma.chat.updateMany({
-      where: { roomId, isRead: 0 },
+      where: { AND: [{ roomId, isRead: 0 }, { NOT: { userId } }] },
       data: { isRead: 1 },
     });
   };

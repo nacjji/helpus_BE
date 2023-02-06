@@ -128,8 +128,8 @@ class ChatService {
     await this.chatRepository.stateUpdate(roomId, 2);
   };
 
-  public readMessage = async (roomId: string) => {
-    this.chatRepository.readMessage(roomId);
+  public readMessage = async (roomId: string, userId: number) => {
+    this.chatRepository.readMessage(roomId, userId);
   };
 
   public cancelCard = async (roomId: string) => {
