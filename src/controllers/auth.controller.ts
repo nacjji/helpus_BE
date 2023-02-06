@@ -123,8 +123,8 @@ class AuthController {
 
   public wishlist: RequestHandler = async (req, res, next) => {
     try {
-      const q = Number(req.query.q);
-      const results = await this.authService.wishlist(res.locals.userId, q);
+      const { page } = req.query;
+      const results = await this.authService.wishlist(res.locals.userId, Number(page));
       res.status(200).json(results);
     } catch (err) {
       next(err);
@@ -180,10 +180,10 @@ class AuthController {
 
   public myPosts: RequestHandler = async (req, res, next) => {
     try {
-      const q = Number(req.query.q);
+      const { page } = req.query;
       const { userId } = res.locals;
 
-      const result = await this.authService.myPosts(userId, q);
+      const result = await this.authService.myPosts(userId, Number(page));
       return res.status(200).json({ result });
     } catch (err) {
       return next(err);

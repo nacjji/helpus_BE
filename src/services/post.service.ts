@@ -1,5 +1,5 @@
 /* eslint-disable no-param-reassign */
-import { badRequest, notFound, unauthorized } from '@hapi/boom';
+import { badRequest, notFound } from '@hapi/boom';
 import PostsRepository from '../repositories/post.repository';
 import AuthRepository from '../repositories/auth.repository';
 import prisma from '../config/database/prisma';
@@ -28,12 +28,11 @@ class PostsService {
     createdAt?: Date,
     images?: string[]
   ) => {
+    // 이미지 파일명만 추출
     const imageFileName = images?.map((v) => {
       return v?.split('/')[4];
     });
 
-    const date = Number(new Date());
-    const seed = Number(date) % 30;
     const result = await this.postsRepository.createPost(
       userId,
       userName,
@@ -46,92 +45,103 @@ class PostsService {
       tag,
       createdAt
     );
+    // 생성되는 시간을 30으로 나눈 나머지의 값은 0~29, 배열형태의 randomImg에서 인덱스 값으로 쓰일 예정
+    const date = Number(new Date());
+    const seed = Number(date) % 30;
 
+    // 이미지 파일명을 객체 형태로 재배치, postId와 userId를 담아 postImage 테이블에 넣기 위해 레포지토리로 보냄
     const imageUrls = imageFileName?.map((imageUrl) => {
       return { imageUrl, postId: result.postId, userId };
     });
-    await this.postsRepository.uploadPostImages(
-      imageUrls?.length ? imageUrls : [{ imageUrl: randomImg[seed], postId: result.postId, userId }]
-    );
+    // 게시글 이미지를 없이 게시할 경우 randomImg 배열의 seed 번째 이미지 url 을 넣는다.
+    await this.postsRepository.uploadPostImages(imageUrls?.length ? imageUrls : [randomImg[seed]]);
 
     return result;
   };
 
   public myLocationPosts = async (
-    q: number,
+    page: number,
     state1?: string,
     state2?: string,
     category?: number,
     search?: string
   ) => {
-    const result = await this.postsRepository.myLocationPosts(q, state1, state2, category, search);
+    const posts = await this.postsRepository.myLocationPosts(
+      page,
+      state1,
+      state2,
+      category,
+      search
+    );
 
     // eslint-disable-next-line no-underscore-dangle
-    const _result = result.map((v: any) => {
+    const result = posts.map((post: any) => {
       return {
-        postId: v.postId,
-        userId: v.userId,
-        userImage: v.user.userImage.includes('http://')
-          ? v.user.userImage
-          : `${process.env.S3_BUCKET_URL}/profile/${v.user.userImage}`,
-        title: v.title,
-        content: v.content,
-        category: v.category,
-        appointed: v.appointed,
-        isDeadLine: v.isDeadLine,
-        location1: v.location1,
-        location2: v.location2,
+        postId: post.postId,
+        userId: post.userId,
+        // 프로필 사진에 https:// 가 포함된단면 유저가 직접 업로드한 이미지임
+        userImage: post.user.userImage.includes('http://')
+          ? post.user.userImage
+          : // s3 버킷에 업로드 된 이미지는 파일명으로만 저장되기 때문에 버킷 URL을 붙여서 보냄
+            `${process.env.S3_BUCKET_URL}/profile/${post.user.userImage}`,
+        title: post.title,
+        content: post.content,
+        category: post.category,
+        appointed: post.appointed,
+        isDeadLine: post.isDeadLine,
+        location1: post.location1,
+        location2: post.location2,
         thumbnail:
-          v.PostImages[0].imageUrl.split('/')[2] === 'images.unsplash.com'
-            ? v.PostImages[0].imageUrl
-            : `${process.env.S3_BUCKET_URL}/${v.PostImages[0].imageUrl}`,
-        tag: v.tag,
-        createdAt: v.createdAt,
-        updated: v.updated,
+          // 썸네일 이미지는 게시글 이미지의 첫 번째 이미지로 설정
+          // 이미지 URL을 나눴을 때 랜덤 이미지로 생성한 이미지가 아니라면 S3버킷에 업로드된 이미지를 보냄
+          post.PostImages[0].imageUrl.split('/')[2] === 'images.unsplash.com'
+            ? post.PostImages[0].imageUrl
+            : `${process.env.S3_BUCKET_URL}/${post.PostImages[0].imageUrl}`,
+        tag: post.tag,
+        createdAt: post.createdAt,
+        updated: post.updated,
       };
     });
-
-    return _result;
+    return result;
   };
 
   public allLocationPosts = async (q: number, category: number, search: string) => {
     const result = await this.postsRepository.allLocationPosts(q, category, search);
-    // eslint-disable-next-line no-underscore-dangle
-    const _result = result.map((v: any) => {
+    const posts = result.map((post: any) => {
       return {
-        postId: v.postId,
-        userId: v.userId,
-        userName: v.userName,
-        userImage: v.user.userImage.includes('http://')
-          ? v.user.userImage
-          : `${process.env.S3_BUCKET_URL}/profile/${v.user.userImage}`,
-        title: v.title,
-        content: v.content,
-        category: v.category,
-        appointed: v.appointed,
-        isDeadLine: v.isDeadLine,
-        location1: v.location1,
-        location2: v.location2,
+        postId: post.postId,
+        userId: post.userId,
+        userName: post.userName,
+        userImage: post.user.userImage.includes('http://')
+          ? post.user.userImage
+          : `${process.env.S3_BUCKET_URL}/profile/${post.user.userImage}`,
+        title: post.title,
+        content: post.content,
+        category: post.category,
+        appointed: post.appointed,
+        isDeadLine: post.isDeadLine,
+        location1: post.location1,
+        location2: post.location2,
         thumbnail:
-          v.PostImages[0].imageUrl.split('/')[2] === 'images.unsplash.com'
-            ? v.PostImages[0].imageUrl
-            : `${process.env.S3_BUCKET_URL}/${v.PostImages[0].imageUrl}`,
-        tag: v.tag,
-        createdAt: v.createdAt,
-        updated: v.updated,
+          post.PostImages[0].imageUrl.split('/')[2] === 'images.unsplash.com'
+            ? post.PostImages[0].imageUrl
+            : `${process.env.S3_BUCKET_URL}/${post.PostImages[0].imageUrl}`,
+        tag: post.tag,
+        createdAt: post.createdAt,
+        updated: post.updated,
       };
     });
-    return _result;
+    return posts;
   };
 
   public findDetailPost = async (postId: number, userId: number) => {
     const result = await this.postsRepository.findDetailPost(postId);
+    // 해당 게시글 찜 여부를 보여주기 위해 isWished 메소드를 사용
     const isWished = await this.postsRepository.isWished(userId, postId);
 
     if (!result) {
       throw notFound('게시글 없음');
     }
-    // eslint-disable-next-line no-underscore-dangle
     return {
       postId: result.postId,
       userId: result.userId,
@@ -139,7 +149,6 @@ class PostsService {
       userImage: result.user.userImage.includes('http://')
         ? result.user.userImage
         : `${process.env.S3_BUCKET_URL}/profile/${result.user.userImage}`,
-      score: Math.trunc(result.user.score / result.user.score_total) || 0,
       title: result.title,
       content: result.content,
       category: result.category,
@@ -147,14 +156,15 @@ class PostsService {
       isDeadLine: result.isDeadLine,
       location1: result.location1,
       location2: result.location2,
+      // 프론트 요청으로 메인이미지 추가로 보내줌
       mainImage:
         result.PostImages[0].imageUrl?.split('/')[2] === 'images.unsplash.com'
           ? result.PostImages[0].imageUrl
           : `${process.env.S3_BUCKET_URL}/${result.PostImages[0].imageUrl}`,
-      imageUrls: result.PostImages.map((val: any) => {
-        return val.imageUrl.split('/')[2] === 'images.unsplash.com'
-          ? val.imageUrl
-          : `${process.env.S3_BUCKET_URL}/${val.imageUrl}`;
+      imageUrls: result.PostImages.map((postImage: any) => {
+        return postImage.imageUrl.split('/')[2] === 'images.unsplash.com'
+          ? postImage.imageUrl
+          : `${process.env.S3_BUCKET_URL}/${postImage.imageUrl}`;
       }),
       tag: result.tag,
       createdAt: result.createdAt,
@@ -188,6 +198,7 @@ class PostsService {
       content,
       Number(category),
       appointed,
+      // 지역 정보가 없으면 작업을 수행하지 않음
       location1 || undefined,
       location2 || undefined,
       tag
@@ -196,8 +207,11 @@ class PostsService {
   };
 
   public deadLine = async (postId: number, userId: number, isDeadLine: number) => {
+    // 게시글 존재 여부 찾기
     const findPost = await this.postsRepository.findPost(postId);
     if (!findPost) throw notFound('게시글 없음');
+
+    // 게시글 작성자 여부 찾기
     const postWriter = await this.postsRepository.postWriter(userId);
     if (!postWriter) throw badRequest('게시글의 작성자가 아닙니다.');
 
@@ -209,12 +223,15 @@ class PostsService {
   public deletePost = async (postId: number, userId: number) => {
     const findPost = await this.postsRepository.findPost(postId);
     if (!findPost) throw notFound('게시글 없음');
+
     const postWriter = await this.postsRepository.postWriter(userId);
     if (!postWriter) throw badRequest('게시글의 작성자가 아닙니다.');
 
     const result = await this.postsRepository.deletePost(postId);
-    const imageUrls = result.map((v: any) => {
-      return v.imageUrl;
+
+    // 게시글이 삭제되면 게시글에 포함된 이미지도 S3에서 삭제
+    const imageUrls = result.map((image: any) => {
+      return image.imageUrl;
     });
     deleteS3ImagePost(imageUrls);
     return result;

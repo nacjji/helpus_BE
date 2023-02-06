@@ -9,6 +9,7 @@ const postsController = new PostsController();
 postsRouter.post(
   '/',
   requiredLogin,
+  // 게시글 최대 10장까지 다중 업로드
   [multeruploader.array('post-images', 10)],
   postsController.createPost
 );

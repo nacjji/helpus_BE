@@ -93,13 +93,12 @@ const Socket = (server: http.Server) => {
                   io.to(list.socketId).emit('new-chat', { senderName, title, readYet });
                 }
               }
-            }
-            else {
-                // eslint-disable-next-line no-restricted-syntax
-                for (const list of side) {
-                  io.to(list.socketId).emit('alarm-test', { senderName, title, readYet });
-                }
+            } else {
+              // eslint-disable-next-line no-restricted-syntax
+              for (const list of side) {
+                io.to(list.socketId).emit('alarm-test', { senderName, title, readYet });
               }
+            }
           }, 500);
         }
       } catch (err) {
