@@ -172,8 +172,8 @@ class AuthController {
   public score: RequestHandler = async (req, res, next) => {
     try {
       const { score, userId } = req.body;
-      const result = await this.authService.score(Number(userId), Number(score));
-      return res.status(201).json({ result });
+      await this.authService.score(Number(userId), Number(score));
+      return res.status(201).json({ message: `userId ${userId} 에게 평점 완료` });
     } catch (err) {
       return next(err);
     }
