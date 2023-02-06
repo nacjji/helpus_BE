@@ -1,4 +1,4 @@
-import { badRequest } from '@hapi/boom';
+import { badRequest, notFound } from '@hapi/boom';
 import bcrypt from 'bcrypt';
 import AuthRepository from '../repositories/auth.repository';
 import prisma from '../config/database/prisma';
@@ -82,15 +82,10 @@ class AuthService {
 
     if (!userInfo) throw badRequest('요구사항에 맞지 않는 입력값');
     else {
-      let imageUrl = userInfo.userImage;
-      if (!userInfo.kakao || !userInfo.userImage.includes('http://'))
-        imageUrl = `${process.env.S3_BUCKET_URL}/profile/${userInfo?.userImage}`;
+      const imageUrl = userInfo.userImage.includes('kakaocdn')
+        ? userInfo.userImage
+        : `${process.env.S3_BUCKET_URL}/profile/${userInfo?.userImage}`;
 
-      // const scoreAvg =
-      //   // eslint-disable-next-line no-unsafe-optional-chaining
-      //   userInfo.Score?.reduce((sum: number, curValue: any) => {
-      //     return sum + curValue.score;
-      //   }, 0) / userInfo.Score.length;
       return {
         userId: userInfo.userId,
         userName: userInfo.userName,
@@ -98,8 +93,7 @@ class AuthService {
         email: userInfo.email,
         state1: userInfo.state1,
         state2: userInfo.state2,
-        score: userInfo.score / userInfo.score_total,
-        // score: Number(scoreAvg.toFixed(0)) || 0,
+        score: Math.trunc(userInfo.score / userInfo.score_total),
         reportCount: userInfo.Report.length,
       };
     }
@@ -181,6 +175,8 @@ class AuthService {
   };
 
   public score = async (userId: number, score: number) => {
+    const findUser = await this.authRepository.userInfo(userId);
+    if (!findUser) throw notFound('잘못된 유저 정보이거나 탈퇴한 유저입니다.');
     await this.authRepository.score(userId, score);
   };
 
