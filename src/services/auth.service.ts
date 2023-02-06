@@ -1,4 +1,4 @@
-import { badRequest } from '@hapi/boom';
+import { badRequest, notFound } from '@hapi/boom';
 import bcrypt from 'bcrypt';
 import AuthRepository from '../repositories/auth.repository';
 import prisma from '../config/database/prisma';
@@ -173,6 +173,8 @@ class AuthService {
   };
 
   public score = async (userId: number, score: number) => {
+    const findUser = await this.authRepository.userInfo(userId);
+    if (!findUser) throw notFound('잘못된 유저 정보이거나 탈퇴한 유저입니다.');
     await this.authRepository.score(userId, score);
   };
 
