@@ -84,11 +84,11 @@ class AuthService {
       if (!userInfo.kakao || !userInfo.userImage.includes('http://'))
         imageUrl = `${process.env.S3_BUCKET_URL}/profile/${userInfo?.userImage}`;
 
-      const scoreAvg =
-        // eslint-disable-next-line no-unsafe-optional-chaining
-        userInfo.Score?.reduce((sum: number, curValue: any) => {
-          return sum + curValue.score;
-        }, 0) / userInfo.Score.length;
+      // const scoreAvg =
+      //   // eslint-disable-next-line no-unsafe-optional-chaining
+      //   userInfo.Score?.reduce((sum: number, curValue: any) => {
+      //     return sum + curValue.score;
+      //   }, 0) / userInfo.Score.length;
       return {
         userId: userInfo.userId,
         userName: userInfo.userName,
@@ -96,7 +96,8 @@ class AuthService {
         email: userInfo.email,
         state1: userInfo.state1,
         state2: userInfo.state2,
-        score: Number(scoreAvg.toFixed(0)) || 0,
+        score: userInfo.score / userInfo.score_total,
+        // score: Number(scoreAvg.toFixed(0)) || 0,
         reportCount: userInfo.Report.length,
       };
     }
@@ -178,8 +179,7 @@ class AuthService {
   };
 
   public score = async (userId: number, score: number) => {
-    const scoreRate = await this.authRepository.score(userId, score);
-    return scoreRate;
+    await this.authRepository.score(userId, score);
   };
 
   public myPosts = async (userId: number, q: number) => {
