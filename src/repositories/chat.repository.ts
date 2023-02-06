@@ -161,7 +161,7 @@ class ChatRepository {
       where: { AND: [{ roomId }, { NOT: { userId } }, { isRead: 0 }] },
     });
 
-    return results;
+    return result;
   };
 
   public saveSocket = async (userId: number, socketId: string) => {
