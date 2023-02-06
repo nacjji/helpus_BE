@@ -164,11 +164,11 @@ class ChatRepository {
   };
 
   public readYet = async (roomId: string, userId: number) => {
-    const result = await this.prisma.chat.findFirst({
+    const results = await this.prisma.chat.findMany({
       where: { AND: [{ roomId }, { userId }, { isRead: 0 }] },
     });
 
-    return result;
+    return results;
   };
 
   public saveSocket = async (userId: number, socketId: string) => {

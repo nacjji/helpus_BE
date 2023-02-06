@@ -155,7 +155,7 @@ class ChatService {
   public readYet = async (roomId: string, userId: number) => {
     const results = await this.chatRepository.readYet(roomId, userId);
 
-    return results;
+    return results.length;
   };
 
   public saveSocket = async (userId: number, socketId: string) => {
