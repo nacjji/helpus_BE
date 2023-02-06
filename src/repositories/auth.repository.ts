@@ -1,4 +1,3 @@
-import { badRequest } from '@hapi/boom';
 import { PrismaClient } from '@prisma/client';
 
 class AuthRepository {
