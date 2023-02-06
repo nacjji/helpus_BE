@@ -1,4 +1,4 @@
-import { Request, Response, NextFunction } from 'express';
+import { RequestHandler } from 'express';
 import WishsService from '../services/wish.service';
 
 class WishsController {
@@ -9,13 +9,12 @@ class WishsController {
   }
 
   // eslint-disable-next-line consistent-return
-  public wishPost = async (req: Request, res: Response, next: NextFunction) => {
+  public wishPost: RequestHandler = async (req, res, next) => {
     try {
       const { postId } = req.params;
-
       const { userId } = res.locals;
       const result = await this.wishsService.wishPost(Number(postId), userId);
-      return res.status(201).json({ message: result.message, postId: result.postId });
+      return res.status(201).json({ message: result.message, postId });
     } catch (err) {
       return next(err);
     }

@@ -1,5 +1,5 @@
 /* eslint-disable no-param-reassign */
-import { badRequest, notFound } from '@hapi/boom';
+import { badRequest, notFound, unauthorized } from '@hapi/boom';
 import PostsRepository from '../repositories/post.repository';
 import AuthRepository from '../repositories/auth.repository';
 import prisma from '../config/database/prisma';
@@ -31,6 +31,7 @@ class PostsService {
     const imageFileName = images?.map((v) => {
       return v?.split('/')[4];
     });
+
     const date = Number(new Date());
     const seed = Number(date) % 30;
     const result = await this.postsRepository.createPost(
@@ -43,8 +44,14 @@ class PostsService {
       location1,
       location2,
       tag,
-      createdAt,
-      imageFileName?.length ? imageFileName : [randomImg[seed]]
+      createdAt
+    );
+
+    const imageUrls = imageFileName?.map((imageUrl) => {
+      return { imageUrl, postId: result.postId, userId };
+    });
+    await this.postsRepository.uploadPostImages(
+      imageUrls?.length ? imageUrls : [{ imageUrl: randomImg[seed], postId: result.postId, userId }]
     );
 
     return result;
@@ -117,8 +124,9 @@ class PostsService {
     return _result;
   };
 
-  public findDetailPost = async (postId: number) => {
+  public findDetailPost = async (postId: number, userId: number) => {
     const result = await this.postsRepository.findDetailPost(postId);
+    const isWished = await this.postsRepository.isWished(userId, postId);
 
     if (!result) {
       throw notFound('게시글 없음');
@@ -131,6 +139,7 @@ class PostsService {
       userImage: result.user.userImage.includes('http://')
         ? result.user.userImage
         : `${process.env.S3_BUCKET_URL}/profile/${result.user.userImage}`,
+      score: Math.trunc(result.user.score / result.user.score_total) || 0,
       title: result.title,
       content: result.content,
       category: result.category,
@@ -152,6 +161,7 @@ class PostsService {
       updated: result.updated,
       // eslint-disable-next-line no-underscore-dangle
       Wish: result._count.Wish,
+      isWished,
     };
   };
 

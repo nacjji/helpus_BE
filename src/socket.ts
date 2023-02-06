@@ -81,7 +81,7 @@ const Socket = (server: http.Server) => {
 
         if (chatId) {
           io.to(roomId).emit('broadcast', { userId, content, createdAt });
-          io.to(roomId).emit('updateState', { state: 1 });
+          if (isCard) io.to(roomId).emit('updateState', { state: 1 });
 
           setTimeout(async () => {
             const readYet = await chatService.isReadMessage(postId, userId, receiverId as number);

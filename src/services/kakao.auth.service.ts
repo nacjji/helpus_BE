@@ -1,14 +1,13 @@
 import { badRequest } from '@hapi/boom';
 import axios from 'axios';
-import jwt from 'jsonwebtoken';
 import prisma from '../config/database/prisma';
 import KakaoAuthRepository from '../repositories/kakao.auth.repository';
+import { makeAccessToken, makeRefreshToken } from '../modules/token.module';
 
-const { REST_API_KEY, REDIRECT_URI, ADMIN_KEY, JWT_SECRET_KEY } = process.env as {
+const { REST_API_KEY, REDIRECT_URI, ADMIN_KEY } = process.env as {
   REST_API_KEY: string;
   REDIRECT_URI: string;
   ADMIN_KEY: string;
-  JWT_SECRET_KEY: string;
 };
 
 class KakaoAuthService {
@@ -47,30 +46,22 @@ class KakaoAuthService {
 
     let isUser = await this.kakaoauthRepository.checkIsUser(data.id);
 
-    if (isUser && isUser.state1) {
-      const accessToken = await jwt.sign(
-        {
-          userId: isUser.userId,
-          userName: isUser.userName,
-          state1: isUser.state1,
-          state2: isUser.state2,
-        },
-        JWT_SECRET_KEY,
-        {
-          expiresIn: '30m',
-        }
+    if (isUser && isUser.state1 && isUser.state2) {
+      const accessToken = await makeAccessToken(
+        isUser.userId,
+        isUser.userName,
+        isUser.state1,
+        isUser.state2
       );
 
-      const refreshToken = await jwt.sign({}, JWT_SECRET_KEY, {
-        expiresIn: '14d',
-      });
+      const refreshToken = await makeRefreshToken();
 
       await this.kakaoauthRepository.saveToken(isUser.userId, accessToken, refreshToken);
 
       return {
         userid: isUser.userId,
         userName: isUser.userName,
-        userImage: isUser.userImage.includes('https://')
+        userImage: isUser.userImage.includes('http://')
           ? isUser.userImage
           : `${process.env.S3_BUCKET_URL}/profile/${isUser.userImage}`,
         state1: isUser.state1,
@@ -100,17 +91,9 @@ class KakaoAuthService {
   public kakaoState = async (state1: string, state2: string, userId: number) => {
     const result = await this.kakaoauthRepository.kakaoState(state1, state2, userId);
 
-    const accessToken = await jwt.sign(
-      { userId, userName: result.userName, state1, state2 },
-      JWT_SECRET_KEY,
-      {
-        expiresIn: '30m',
-      }
-    );
+    const accessToken = await makeAccessToken(userId, result.userName, state1, state2);
 
-    const refreshToken = await jwt.sign({}, JWT_SECRET_KEY, {
-      expiresIn: '14d',
-    });
+    const refreshToken = await makeRefreshToken();
 
     await this.kakaoauthRepository.saveToken(userId, accessToken, refreshToken);
 

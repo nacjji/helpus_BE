@@ -39,6 +39,6 @@ authRouter.get('/:userId/detail', authController.getUserDetail);
 
 authRouter.delete('/delete', auth.requiredLogin, authController.deleteUser);
 authRouter.delete('/delete/kakao', auth.requiredLogin, kakaoAuthController.kakaoDelete);
-authRouter.patch('/score/:userId', auth.requiredLogin, authController.score);
+authRouter.patch('/score', auth.requiredLogin, authController.score);
 
 export default authRouter;

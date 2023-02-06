@@ -1,7 +1,5 @@
 import { RequestHandler } from 'express';
-import requestIp from 'request-ip';
 import AuthService from '../services/auth.service';
-import randomImg from '../randomImg';
 
 import {
   emailPattern,
@@ -9,6 +7,7 @@ import {
   loginPattenrn,
   updatePattern,
 } from '../validations/auth.validations';
+import { makeCookie, deleteCookie } from '../modules/cookie.module';
 
 class AuthController {
   authService: AuthService;
@@ -58,17 +57,10 @@ class AuthController {
       const { email, password } = await loginPattenrn.validateAsync(req.body);
       const result = await this.authService.localLogin(email, password);
 
-      // TODO: 프론트까지 배포 완료 이후 쿠키 보안 설정
-      res.cookie('helpusAccess', result.accessToken, {
-        sameSite: 'none',
-        secure: true,
-        maxAge: 60 * 60 * 24 * 14 * 1000,
-      });
-      res.cookie('helpusRefresh', result.refreshToken, {
-        sameSite: 'none',
-        secure: true,
-        maxAge: 60 * 60 * 24 * 14 * 1000,
-      });
+      res.locals.access = result.accessToken;
+      res.locals.refresh = result.refreshToken;
+
+      makeCookie(req, res, next);
 
       res.status(200).json({
         userId: result.userId,
@@ -168,10 +160,10 @@ class AuthController {
       const { userId } = res.locals;
       await this.authService.deleteUser(userId);
 
-      res.cookie('helpusAccess', '', { sameSite: 'none', secure: true });
-      res.cookie('helpusRefresh', '', { sameSite: 'none', secure: true });
+      deleteCookie(req, res, next);
 
       res.status(200).json({ message: '탈퇴 완료', userId });
+      next();
     } catch (err) {
       next(err);
     }
@@ -179,10 +171,9 @@ class AuthController {
 
   public score: RequestHandler = async (req, res, next) => {
     try {
-      const { userId } = req.params;
-      const { score } = req.body;
-      const result = await this.authService.score(Number(userId), Number(score));
-      return res.status(201).json({ result });
+      const { score, userId } = req.body;
+      await this.authService.score(Number(userId), Number(score));
+      return res.status(201).json({ message: `userId ${userId} 에게 평점 완료` });
     } catch (err) {
       return next(err);
     }

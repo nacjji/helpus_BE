@@ -1,9 +1,8 @@
 import { badRequest } from '@hapi/boom';
 import { RequestHandler } from 'express';
 
-import jwt from 'jsonwebtoken';
-
 import TokenService from '../services/token.service';
+import { deleteCookie, makeCookie } from '../modules/cookie.module';
 
 class TokenController {
   tokenService: TokenService;
@@ -15,29 +14,23 @@ class TokenController {
   public newToken: RequestHandler = async (req, res, next) => {
     try {
       const { helpusAccess, helpusRefresh } = req.cookies;
-      if (!helpusAccess || !helpusRefresh) throw badRequest('비정상 토큰으로 확인됨');
+      if (!helpusAccess || !helpusRefresh) {
+        deleteCookie(req, res, next);
+        throw badRequest('비정상 토큰으로 확인됨');
+      }
 
       const { newAccessToken, newRefreshToken } = await this.tokenService.makeNewToken(
         helpusAccess,
         helpusRefresh
       );
 
-      res.cookie('helpusAccess', newAccessToken, {
-        sameSite: 'none',
-        secure: true,
-        maxAge: 60 * 60 * 24 * 14 * 1000,
-      });
-      if (newRefreshToken)
-        res.cookie('helpusRefresh', newRefreshToken, {
-          sameSite: 'none',
-          secure: true,
-          maxAge: 60 * 60 * 24 * 14 * 1000,
-        });
+      res.locals.access = newAccessToken;
+      if (newRefreshToken) res.locals.refresh = newRefreshToken;
+      makeCookie(req, res, next);
 
       res.status(200).json({ message: '토큰 발급 완료' });
     } catch (err) {
-      res.cookie('helpusAccess', '', { sameSite: 'none', secure: true });
-      res.cookie('helpusRefresh', '', { sameSite: 'none', secure: true });
+      deleteCookie(req, res, next);
       next(err);
     }
   };
@@ -46,8 +39,7 @@ class TokenController {
     try {
       const { helpusAccess, helpusRefresh } = req.cookies;
 
-      res.cookie('helpusAccess', '', { sameSite: 'none', secure: true });
-      res.cookie('helpusRefresh', '', { sameSite: 'none', secure: true });
+      deleteCookie(req, res, next);
 
       if (!helpusAccess || !helpusRefresh) throw badRequest('비정상 토큰으로 확인됨');
 
@@ -62,8 +54,7 @@ class TokenController {
     try {
       const { helpusAccess, helpusRefresh } = req.cookies;
 
-      res.cookie('helpusAccess', '', { sameSite: 'none', secure: true });
-      res.cookie('helpusRefresh', '', { sameSite: 'none', secure: true });
+      deleteCookie(req, res, next);
 
       if (!helpusAccess || !helpusRefresh) throw badRequest('비정상 토큰으로 확인됨');
 

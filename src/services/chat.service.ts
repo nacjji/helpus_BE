@@ -71,10 +71,12 @@ class ChatService {
         senderImage: v.sender.userImage.includes('http://')
           ? v.sender.userImage
           : `${process.env.S3_BUCKET_URL}/profile/${v.sender.userImage}`,
+        senderScore: v.sender.total === 0 ? 0 : v.sender.score / v.sender.total,
         ownerName: v.owner.userName,
         ownerImage: v.owner.userImage.includes('http://')
           ? v.owner.userImage
           : `${process.env.S3_BUCKET_URL}/profile/${v.owner.userImage}`,
+        ownerScore: v.owner.total === 0 ? 0 : v.owner.score / v.owner.total,
         leave: v.leave,
         state: v.state,
       };
@@ -133,6 +135,13 @@ class ChatService {
   public cancelCard = async (roomId: string) => {
     await this.chatRepository.stateUpdate(roomId, 0);
     await this.chatRepository.deleteCard(roomId);
+  };
+
+  public getState = async (roomId: string) => {
+    const result = await this.chatRepository.roomInfo(roomId);
+
+    if (!result) throw badRequest('해당 채팅방 없음');
+    return result.state;
   };
 
   public isReadMessage = async (postId: number, userId: number, receiverId: number) => {

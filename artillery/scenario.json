@@ -1,0 +1,32 @@
+{
+  "config": {
+    "target": "https://helpus-test-be.shop/api",
+    "phases": [
+      {
+        "duration": 60,
+        "arrivalRate": 70
+      }
+    ]
+  },
+  "scenarios": [
+    {
+      "flow": [
+        {
+          "get": { "url": "/" }
+        },
+        {
+          "get": { "url": "/post/all-location?category=3&search=" }
+        },
+        {
+          "get": { "url": "/post/all-location?category=3&search=test" }
+        },
+        {
+          "get": { "url": "/post/all-location?category=1&search=test" }
+        },
+        {
+          "get": { "url": "/post/1" }
+        }
+      ]
+    }
+  ]
+}
