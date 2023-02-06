@@ -109,7 +109,7 @@ class PostsRepository {
     });
     return result;
   };
-  
+
   public findDetailPost = async (postId: number) => {
     const result = await this.prisma.post.findUnique({
       where: { postId },

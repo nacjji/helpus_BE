@@ -139,7 +139,7 @@ class PostsService {
       userImage: result.user.userImage.includes('http://')
         ? result.user.userImage
         : `${process.env.S3_BUCKET_URL}/profile/${result.user.userImage}`,
-      score: result.user.score / result.user.score_total,
+      score: Math.trunc(result.user.score / result.user.score_total) || 0,
       title: result.title,
       content: result.content,
       category: result.category,
