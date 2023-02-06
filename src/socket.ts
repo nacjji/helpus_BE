@@ -87,7 +87,7 @@ const Socket = (server: http.Server) => {
           setTimeout(async () => {
             const readYet = await chatService.readYet(roomId, userId);
 
-            if (side) {
+            if (side && readYet) {
               // eslint-disable-next-line no-restricted-syntax
               for (const list of side) {
                 io.to(list.socketId).emit('test', list.socketId);
