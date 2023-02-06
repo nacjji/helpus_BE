@@ -82,14 +82,16 @@ const Socket = (server: http.Server) => {
         if (chatId) {
           io.to(roomId).emit('broadcast', { userId, content, createdAt });
           if (isCard) io.to(roomId).emit('updateState', { state: 1 });
-          const readYet = await chatService.isReadMessage(postId, userId, receiverId as number);
+          await chatService.createAlarm(postId, userId, receiverId as number);
 
           setTimeout(async () => {
-            if (readYet === 0) {
+            const readYet = await chatService.readYet(roomId, userId);
+
+            if (readYet) {
               if (side) {
                 // eslint-disable-next-line no-restricted-syntax
                 for (const list of side) {
-                  io.to(list.socketId).emit('new-chat', { senderName, title, readYet });
+                  io.to(list.socketId).emit('new-chat', { senderName, title });
                 }
               }
             }
