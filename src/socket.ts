@@ -89,11 +89,10 @@ const Socket = (server: http.Server) => {
 
             if (side) {
               // eslint-disable-next-line no-restricted-syntax
-              // for (const list of side) {
-              //   io.to(list.socketId).emit('test', 'please');
-              //   // io.to(list.socketId).emit('new-chat', { senderName, title, readYet });
-              // }
-              socket.emit('test', side);
+              for (const list of side) {
+                io.to(list.socketId).emit('test', list.socketId);
+                // io.to(list.socketId).emit('new-chat', { senderName, title, readYet });
+              }
             }
           }, 500);
         }
