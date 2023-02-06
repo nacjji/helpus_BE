@@ -124,6 +124,7 @@ const Socket = (server: http.Server) => {
       try {
         const { roomId } = data;
         await chatService.readMessage(roomId);
+        socket.emit('test', '제발 받아주세요');
       } catch (err) {
         socket.emit('error', 'read 이벤트 실패');
       }
