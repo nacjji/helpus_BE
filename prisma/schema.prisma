@@ -82,16 +82,17 @@ model Chat {
 }
 
 model Room {
-  roomId   String @id
+  roomId   String  @id
   ownerId  Int
   senderId Int
   postId   Int
-  leave    Int    @default(0)
-  state    Int    @default(0)
+  leave    Int     @default(0)
+  state    Int     @default(0)
   Chat     Chat[]
-  owner    User   @relation("Owner", fields: [ownerId], references: [userId], onDelete: Cascade)
-  Post     Post   @relation(fields: [postId], references: [postId], onDelete: Cascade)
-  sender   User   @relation("Sender", fields: [senderId], references: [userId], onDelete: Cascade)
+  Alarm    Alarm[]
+  owner    User    @relation("Owner", fields: [ownerId], references: [userId], onDelete: Cascade)
+  Post     Post    @relation(fields: [postId], references: [postId], onDelete: Cascade)
+  sender   User    @relation("Sender", fields: [senderId], references: [userId], onDelete: Cascade)
 
   @@index([ownerId], map: "Room_ownerId_fkey")
   @@index([postId], map: "Room_postId_fkey")
@@ -120,10 +121,12 @@ model Alarm {
   senderId Int
   ownerId  Int
   postId   Int
-  count    Int  @default(0)
-  user     User @relation("Owner", fields: [ownerId], references: [userId], onDelete: Cascade)
-  post     Post @relation(fields: [postId], references: [postId], onDelete: Cascade)
-  sender   User @relation("Sender", fields: [senderId], references: [userId], onDelete: Cascade)
+  roomId   String
+  count    Int    @default(1)
+  room     Room   @relation(fields: [roomId], references: [roomId], onDelete: Cascade)
+  user     User   @relation("Owner", fields: [ownerId], references: [userId], onDelete: Cascade)
+  post     Post   @relation(fields: [postId], references: [postId], onDelete: Cascade)
+  sender   User   @relation("Sender", fields: [senderId], references: [userId], onDelete: Cascade)
 
   @@id([postId, ownerId, senderId])
   @@index([ownerId], map: "Alarm_ownerId_fkey")

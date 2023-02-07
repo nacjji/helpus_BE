@@ -1,8 +1,5 @@
 import http from 'http';
 import { Server } from 'socket.io';
-import { writeFile } from 'fs';
-import { fromBuffer } from 'file-type';
-import { nanoid } from 'nanoid';
 import './config/env';
 import ChatService from './services/chat.service';
 
@@ -76,24 +73,26 @@ const Socket = (server: http.Server) => {
         const { roomId, content, userId } = data;
 
         const isCard = content === `\`card\`0`;
-        const { chatId, createdAt, side, senderName, postId, title, receiverId } =
-          await chatService.sendMessageAt(roomId, userId, content, isCard);
+        const { chatId, createdAt, side, postId, receiverId } = await chatService.sendMessageAt(
+          roomId,
+          userId,
+          content,
+          isCard
+        );
 
         if (chatId) {
           io.to(roomId).emit('broadcast', { userId, content, createdAt });
           if (isCard) io.to(roomId).emit('updateState', { state: 1 });
-          // await chatService.createAlarm(postId, userId, receiverId as number);
+          await chatService.createAlarm(postId, userId, receiverId as number, roomId);
 
           setTimeout(async () => {
-            const readYet = await chatService.readYet(roomId, userId);
+            const isRead = await chatService.readYet(roomId, receiverId, userId);
 
-            if (side) {
+            if (side && isRead) {
               // eslint-disable-next-line no-restricted-syntax
-              // for (const list of side) {
-              //   io.to(list.socketId).emit('test', 'please');
-              //   // io.to(list.socketId).emit('new-chat', { senderName, title, readYet });
-              // }
-              socket.emit('test', side);
+              for (const list of side) {
+                io.to(list.socketId).emit('new-chat', '새로운 채팅 있음');
+              }
             }
           }, 500);
         }

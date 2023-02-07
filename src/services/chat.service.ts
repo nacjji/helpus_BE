@@ -12,7 +12,12 @@ class ChatService {
   }
 
   public alarmList = async (ownerId: number) => {
-    const list = await this.chatRepository.alarmList(ownerId);
+    const results = await this.chatRepository.alarmList(ownerId);
+
+    const list = results.map((alarm: any) => {
+      return { count: alarm.count, title: alarm.post.title, senderName: alarm.sender.userName };
+    });
+
     return list;
   };
 
@@ -97,16 +102,13 @@ class ChatService {
     const result = await this.chatRepository.sendMessage(roomId, userId, content);
 
     let socketId: { socketId: string }[] = [];
-    let senderName = '';
     let receiverId = 0;
 
     if (roomInfo.ownerId === userId) {
       socketId = await this.chatRepository.searchSockets(roomInfo.senderId);
-      senderName = roomInfo.Post.userName;
       receiverId = roomInfo.senderId;
     } else {
       socketId = await this.chatRepository.searchSockets(roomInfo.ownerId);
-      senderName = roomInfo.sender.userName;
       receiverId = roomInfo.ownerId;
     }
 
@@ -116,9 +118,7 @@ class ChatService {
       chatId: result.chatId,
       createdAt: result.createdAt,
       side: socketId,
-      senderName,
       postId: roomInfo.postId,
-      title: roomInfo.Post.title,
       receiverId,
     };
   };
@@ -130,6 +130,7 @@ class ChatService {
 
   public readMessage = async (roomId: string, userId: number) => {
     this.chatRepository.readMessage(roomId, userId);
+    this.chatRepository.deleteAlarm(roomId, userId);
   };
 
   public cancelCard = async (roomId: string) => {
@@ -144,18 +145,23 @@ class ChatService {
     return result.state;
   };
 
-  public createAlarm = async (postId: number, userId: number, receiverId: number) => {
+  public createAlarm = async (
+    postId: number,
+    userId: number,
+    receiverId: number,
+    roomId: string
+  ) => {
     try {
-      await this.chatRepository.createAlarm(postId, receiverId, userId);
+      await this.chatRepository.createAlarm(postId, receiverId, userId, roomId);
     } catch {
       await this.chatRepository.updateAlarm(postId, receiverId, userId);
     }
   };
 
-  public readYet = async (roomId: string, userId: number) => {
-    const results = await this.chatRepository.readYet(roomId, userId);
+  public readYet = async (roomId: string, ownerId: number, senderId: number) => {
+    const result = await this.chatRepository.readYet(roomId, ownerId, senderId);
 
-    return results;
+    return result;
   };
 
   public saveSocket = async (userId: number, socketId: string) => {

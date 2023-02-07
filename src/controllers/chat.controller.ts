@@ -20,9 +20,9 @@ class ChatController {
   public alarmList: RequestHandler = async (req, res, next) => {
     try {
       const { userId } = res.locals;
-      const results = await this.chatService.alarmList(userId);
+      const list = await this.chatService.alarmList(userId);
 
-      res.status(200).json({ list: results });
+      res.status(200).json(list);
     } catch (err) {
       next(err);
     }
