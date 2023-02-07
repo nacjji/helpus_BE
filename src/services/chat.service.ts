@@ -15,7 +15,12 @@ class ChatService {
     const results = await this.chatRepository.alarmList(ownerId);
 
     const list = results.map((alarm: any) => {
-      return { count: alarm.count, title: alarm.post.title, senderName: alarm.sender.userName };
+      return {
+        count: alarm.count,
+        title: alarm.post.title,
+        senderName: alarm.sender.userName,
+        roomId: alarm.roomId,
+      };
     });
 
     return list;
