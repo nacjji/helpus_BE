@@ -134,6 +134,12 @@ class ChatRepository {
     });
   };
 
+  // public checkAlarm = async (roomId: string, userId: number) => {
+  //   await this.prisma.alarm.update({
+  //     where: { userId, roomId },
+  //   });
+  // };
+
   public isReadMessage = async (chatId: number) => {
     const result = await this.prisma.chat.findUnique({
       where: { chatId },
@@ -150,9 +156,14 @@ class ChatRepository {
     return result;
   };
 
-  public createAlarm = async (postId: number, ownerId: number, senderId: number) => {
+  public createAlarm = async (
+    postId: number,
+    ownerId: number,
+    senderId: number,
+    roomId: string
+  ) => {
     await this.prisma.alarm.create({
-      data: { postId, ownerId, senderId },
+      data: { postId, ownerId, senderId, roomId },
     });
   };
 
@@ -160,6 +171,12 @@ class ChatRepository {
     await this.prisma.alarm.updateMany({
       where: { postId, ownerId, senderId },
       data: { count: { increment: 1 } },
+    });
+  };
+
+  public deleteAlarm = async (senderId: number, roomId: string) => {
+    await this.prisma.alarm.deleteMany({
+      where: { senderId, roomId },
     });
   };
 

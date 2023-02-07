@@ -130,6 +130,7 @@ class ChatService {
 
   public readMessage = async (roomId: string, userId: number) => {
     this.chatRepository.readMessage(roomId, userId);
+    this.chatRepository.deleteAlarm(userId, roomId);
   };
 
   public cancelCard = async (roomId: string) => {
@@ -144,9 +145,14 @@ class ChatService {
     return result.state;
   };
 
-  public createAlarm = async (postId: number, userId: number, receiverId: number) => {
+  public createAlarm = async (
+    postId: number,
+    userId: number,
+    receiverId: number,
+    roomId: string
+  ) => {
     try {
-      await this.chatRepository.createAlarm(postId, receiverId, userId);
+      await this.chatRepository.createAlarm(postId, receiverId, userId, roomId);
     } catch {
       await this.chatRepository.updateAlarm(postId, receiverId, userId);
     }

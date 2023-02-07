@@ -1,11 +1,7 @@
 import http from 'http';
 import { Server } from 'socket.io';
-import { writeFile } from 'fs';
-import { fromBuffer } from 'file-type';
-import { nanoid } from 'nanoid';
 import './config/env';
 import ChatService from './services/chat.service';
-import { emit } from 'process';
 
 const Socket = (server: http.Server) => {
   const chatService = new ChatService();
@@ -83,7 +79,7 @@ const Socket = (server: http.Server) => {
         if (chatId) {
           io.to(roomId).emit('broadcast', { userId, content, createdAt });
           if (isCard) io.to(roomId).emit('updateState', { state: 1 });
-          // await chatService.createAlarm(postId, userId, receiverId as number);
+          await chatService.createAlarm(postId, userId, receiverId as number, roomId);
 
           setTimeout(async () => {
             const readYet = await chatService.readYet(roomId, userId);
