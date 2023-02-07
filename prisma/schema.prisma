@@ -73,7 +73,6 @@ model Chat {
   content   String
   createdAt DateTime @default(now())
   userId    Int
-  isRead    Int      @default(0)
   Room      Room     @relation(fields: [roomId], references: [roomId], onDelete: Cascade)
   user      User     @relation(fields: [userId], references: [userId], onDelete: Cascade)
 

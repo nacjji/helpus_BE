@@ -127,19 +127,6 @@ class ChatRepository {
     });
   };
 
-  public readMessage = async (roomId: string, userId: number) => {
-    await this.prisma.chat.updateMany({
-      where: { AND: [{ roomId, isRead: 0 }, { NOT: { userId } }] },
-      data: { isRead: 1 },
-    });
-  };
-
-  // public checkAlarm = async (roomId: string, userId: number) => {
-  //   await this.prisma.alarm.update({
-  //     where: { userId, roomId },
-  //   });
-  // };
-
   public isReadMessage = async (chatId: number) => {
     const result = await this.prisma.chat.findUnique({
       where: { chatId },

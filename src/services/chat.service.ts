@@ -129,7 +129,6 @@ class ChatService {
   };
 
   public readMessage = async (roomId: string, userId: number) => {
-    this.chatRepository.readMessage(roomId, userId);
     this.chatRepository.deleteAlarm(roomId, userId);
   };
 
