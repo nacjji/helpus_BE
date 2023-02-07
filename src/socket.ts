@@ -1,8 +1,5 @@
 import http from 'http';
 import { Server } from 'socket.io';
-import { writeFile } from 'fs';
-import { fromBuffer } from 'file-type';
-import { nanoid } from 'nanoid';
 import './config/env';
 import ChatService from './services/chat.service';
 
@@ -32,7 +29,7 @@ const Socket = (server: http.Server) => {
       try {
         await chatService.deleteSocket(socket.id);
       } catch (err) {
-        socket.emit('error', 'test 이벤트 실패');
+        socket.emit('error', 'disconnect 이벤트 실패');
       }
     });
 
@@ -76,22 +73,25 @@ const Socket = (server: http.Server) => {
         const { roomId, content, userId } = data;
 
         const isCard = content === `\`card\`0`;
-        const { chatId, createdAt, side, senderName, postId, title, receiverId } =
-          await chatService.sendMessageAt(roomId, userId, content, isCard);
+        const { chatId, createdAt, side, postId, receiverId } = await chatService.sendMessageAt(
+          roomId,
+          userId,
+          content,
+          isCard
+        );
 
         if (chatId) {
           io.to(roomId).emit('broadcast', { userId, content, createdAt });
           if (isCard) io.to(roomId).emit('updateState', { state: 1 });
+          await chatService.createAlarm(postId, userId, receiverId as number, roomId);
 
           setTimeout(async () => {
-            const readYet = await chatService.isReadMessage(postId, userId, receiverId as number);
+            const isRead = await chatService.readYet(roomId, receiverId, userId);
 
-            if (readYet !== 0) {
-              if (side) {
-                // eslint-disable-next-line no-restricted-syntax
-                for (const list of side) {
-                  io.to(list.socketId).emit('new-chat', { senderName, title, readYet });
-                }
+            if (side && isRead) {
+              // eslint-disable-next-line no-restricted-syntax
+              for (const list of side) {
+                io.to(list.socketId).emit('new-chat', '새로운 채팅 있음');
               }
             }
           }, 500);
@@ -123,8 +123,8 @@ const Socket = (server: http.Server) => {
 
     socket.on('read', async (data) => {
       try {
-        const { roomId } = data;
-        await chatService.readMessage(roomId);
+        const { roomId, userId } = data;
+        await chatService.readMessage(roomId, userId);
       } catch (err) {
         socket.emit('error', 'read 이벤트 실패');
       }

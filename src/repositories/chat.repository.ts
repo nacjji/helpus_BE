@@ -10,7 +10,7 @@ class ChatRepository {
 
   public alarmList = async (ownerId: number) => {
     const results = await this.prisma.alarm.findMany({
-      where: { ownerId, NOT: { count: 0 } },
+      where: { ownerId },
       include: { post: true, sender: true },
     });
 
@@ -127,12 +127,18 @@ class ChatRepository {
     });
   };
 
-  public readMessage = async (roomId: string) => {
+  public readMessage = async (roomId: string, userId: number) => {
     await this.prisma.chat.updateMany({
-      where: { roomId, isRead: 0 },
+      where: { AND: [{ roomId, isRead: 0 }, { NOT: { userId } }] },
       data: { isRead: 1 },
     });
   };
+
+  // public checkAlarm = async (roomId: string, userId: number) => {
+  //   await this.prisma.alarm.update({
+  //     where: { userId, roomId },
+  //   });
+  // };
 
   public isReadMessage = async (chatId: number) => {
     const result = await this.prisma.chat.findUnique({
@@ -150,22 +156,34 @@ class ChatRepository {
     return result;
   };
 
-  public createAlarm = async (postId: number, ownerId: number, senderId: number) => {
+  public createAlarm = async (
+    postId: number,
+    ownerId: number,
+    senderId: number,
+    roomId: string
+  ) => {
     await this.prisma.alarm.create({
-      data: { postId, ownerId, senderId },
+      data: { postId, ownerId, senderId, roomId },
     });
   };
 
   public updateAlarm = async (postId: number, ownerId: number, senderId: number) => {
-    const result = await this.prisma.alarm.updateMany({
-      where: {
-        postId,
-        ownerId,
-        senderId,
-      },
-      data: {
-        count: { increment: 1 },
-      },
+    await this.prisma.alarm.updateMany({
+      where: { postId, ownerId, senderId },
+      data: { count: { increment: 1 } },
+    });
+  };
+
+  public deleteAlarm = async (roomId: string, ownerId: number) => {
+    await this.prisma.alarm.deleteMany({
+      where: { roomId, ownerId },
+    });
+  };
+
+  public readYet = async (roomId: string, ownerId: number, senderId: number) => {
+    const result = await this.prisma.alarm.findFirst({
+      where: { roomId, ownerId, senderId },
+      select: { count: true, post: true, sender: true },
     });
 
     return result;
