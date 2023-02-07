@@ -130,7 +130,7 @@ class ChatService {
 
   public readMessage = async (roomId: string, userId: number) => {
     this.chatRepository.readMessage(roomId, userId);
-    this.chatRepository.deleteAlarm(userId, roomId);
+    this.chatRepository.deleteAlarm(roomId, userId);
   };
 
   public cancelCard = async (roomId: string) => {
@@ -158,10 +158,10 @@ class ChatService {
     }
   };
 
-  public readYet = async (roomId: string, userId: number) => {
-    const results = await this.chatRepository.readYet(roomId, userId);
+  public readYet = async (roomId: string, ownerId: number, senderId: number) => {
+    const result = await this.chatRepository.readYet(roomId, ownerId, senderId);
 
-    return results.length;
+    return result;
   };
 
   public saveSocket = async (userId: number, socketId: string) => {

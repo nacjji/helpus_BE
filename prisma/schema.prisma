@@ -122,7 +122,7 @@ model Alarm {
   ownerId  Int
   postId   Int
   roomId   String
-  count    Int    @default(0)
+  count    Int    @default(1)
   room     Room   @relation(fields: [roomId], references: [roomId], onDelete: Cascade)
   user     User   @relation("Owner", fields: [ownerId], references: [userId], onDelete: Cascade)
   post     Post   @relation(fields: [postId], references: [postId], onDelete: Cascade)

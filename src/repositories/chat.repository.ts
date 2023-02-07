@@ -174,18 +174,19 @@ class ChatRepository {
     });
   };
 
-  public deleteAlarm = async (senderId: number, roomId: string) => {
+  public deleteAlarm = async (roomId: string, ownerId: number) => {
     await this.prisma.alarm.deleteMany({
-      where: { senderId, roomId },
+      where: { roomId, ownerId },
     });
   };
 
-  public readYet = async (roomId: string, userId: number) => {
-    const results = await this.prisma.chat.findMany({
-      where: { AND: [{ roomId }, { userId }, { isRead: 0 }] },
+  public readYet = async (roomId: string, ownerId: number, senderId: number) => {
+    const result = await this.prisma.alarm.findFirst({
+      where: { roomId, ownerId, senderId },
+      select: { count: true, post: true, sender: true },
     });
 
-    return results;
+    return result;
   };
 
   public saveSocket = async (userId: number, socketId: string) => {
