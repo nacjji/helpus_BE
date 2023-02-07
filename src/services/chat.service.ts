@@ -12,7 +12,12 @@ class ChatService {
   }
 
   public alarmList = async (ownerId: number) => {
-    const list = await this.chatRepository.alarmList(ownerId);
+    const results = await this.chatRepository.alarmList(ownerId);
+
+    const list = results.map((alarm: any) => {
+      return { count: alarm.count, title: alarm.post.title, senderName: alarm.sender.userName };
+    });
+
     return list;
   };
 
@@ -97,16 +102,13 @@ class ChatService {
     const result = await this.chatRepository.sendMessage(roomId, userId, content);
 
     let socketId: { socketId: string }[] = [];
-    let senderName = '';
     let receiverId = 0;
 
     if (roomInfo.ownerId === userId) {
       socketId = await this.chatRepository.searchSockets(roomInfo.senderId);
-      senderName = roomInfo.Post.userName;
       receiverId = roomInfo.senderId;
     } else {
       socketId = await this.chatRepository.searchSockets(roomInfo.ownerId);
-      senderName = roomInfo.sender.userName;
       receiverId = roomInfo.ownerId;
     }
 
@@ -116,9 +118,7 @@ class ChatService {
       chatId: result.chatId,
       createdAt: result.createdAt,
       side: socketId,
-      senderName,
       postId: roomInfo.postId,
-      title: roomInfo.Post.title,
       receiverId,
     };
   };

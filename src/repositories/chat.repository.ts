@@ -10,7 +10,7 @@ class ChatRepository {
 
   public alarmList = async (ownerId: number) => {
     const results = await this.prisma.alarm.findMany({
-      where: { ownerId, NOT: { count: 0 } },
+      where: { ownerId },
       include: { post: true, sender: true },
     });
 

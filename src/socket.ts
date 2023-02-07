@@ -73,8 +73,12 @@ const Socket = (server: http.Server) => {
         const { roomId, content, userId } = data;
 
         const isCard = content === `\`card\`0`;
-        const { chatId, createdAt, side, senderName, postId, title, receiverId } =
-          await chatService.sendMessageAt(roomId, userId, content, isCard);
+        const { chatId, createdAt, side, postId, receiverId } = await chatService.sendMessageAt(
+          roomId,
+          userId,
+          content,
+          isCard
+        );
 
         if (chatId) {
           io.to(roomId).emit('broadcast', { userId, content, createdAt });
@@ -85,14 +89,9 @@ const Socket = (server: http.Server) => {
             const isRead = await chatService.readYet(roomId, receiverId, userId);
 
             if (side && isRead) {
-              const alarm = {
-                senderName: isRead.sender.userName,
-                title: isRead.post.title,
-                count: isRead.count,
-              };
               // eslint-disable-next-line no-restricted-syntax
               for (const list of side) {
-                io.to(list.socketId).emit('new-chat', alarm);
+                io.to(list.socketId).emit('new-chat', '새로운 채팅 있음');
               }
             }
           }, 500);
