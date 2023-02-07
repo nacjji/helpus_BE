@@ -11,5 +11,6 @@ chatRouter.get('/list', auth.requiredLogin, chatController.roomList);
 chatRouter.post('/image', auth.requiredLogin, chatUploader.single('image'), chatImage);
 chatRouter.get('/info', auth.requiredLogin, chatController.roomInfo);
 chatRouter.post('/state', auth.requiredLogin, chatController.getState);
+chatRouter.delete('/alarm', auth.requiredLogin, chatController.deleteAllAlarm);
 
 export default chatRouter;

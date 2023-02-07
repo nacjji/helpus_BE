@@ -167,6 +167,12 @@ class ChatRepository {
     });
   };
 
+  public deleteAllAlarm = async (ownerId: number) => {
+    await this.prisma.alarm.deleteMany({
+      where: { ownerId },
+    });
+  };
+
   public readYet = async (roomId: string, ownerId: number, senderId: number) => {
     const result = await this.prisma.alarm.findFirst({
       where: { roomId, ownerId, senderId },
