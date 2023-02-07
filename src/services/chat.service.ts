@@ -134,7 +134,11 @@ class ChatService {
   };
 
   public readMessage = async (roomId: string, userId: number) => {
-    this.chatRepository.deleteAlarm(roomId, userId);
+    await this.chatRepository.deleteAlarm(roomId, userId);
+  };
+
+  public deleteAllAlarm = async (userId: number) => {
+    await this.chatRepository.deleteAllAlarm(userId);
   };
 
   public cancelCard = async (roomId: string) => {
