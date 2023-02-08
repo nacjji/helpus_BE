@@ -1,6 +1,6 @@
 import { RequestHandler } from 'express';
 import AuthService from '../services/auth.service';
-
+import { scorePattern } from '../validations/auth.validations';
 import {
   emailPattern,
   signupPattern,
@@ -171,7 +171,8 @@ class AuthController {
   public score: RequestHandler = async (req, res, next) => {
     try {
       const { score, userId } = req.body;
-      await this.authService.score(Number(userId), Number(score));
+      await this.authService.score(userId, score);
+      await scorePattern.validateAsync(req.body);
       return res.status(201).json({ message: `userId ${userId} 에게 평점 완료` });
     } catch (err) {
       return next(err);
@@ -183,8 +184,8 @@ class AuthController {
       const { page } = req.query;
       const { userId } = res.locals;
 
-      const result = await this.authService.myPosts(userId, Number(page));
-      return res.status(200).json({ result });
+      const results = await this.authService.myPosts(userId, Number(page));
+      return res.status(200).json({ results });
     } catch (err) {
       return next(err);
     }
