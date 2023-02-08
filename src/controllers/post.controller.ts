@@ -62,13 +62,13 @@ class PostsController {
 
   // 전국 게시글 조회
   public allLocationPosts: RequestHandler = async (req, res, next) => {
-    const page = Number(req.query.q);
+    const { page } = req.query;
     const search = req.query.search as string;
 
     const category = Number(req.query.category);
 
     try {
-      const result = await this.postsService.allLocationPosts(page, category, search);
+      const result = await this.postsService.allLocationPosts(Number(page), category, search);
       return res.status(200).json({ result });
     } catch (err) {
       return next(err);
