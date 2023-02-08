@@ -7,6 +7,7 @@ class PostsRepository {
     this.prisma = prisma;
   }
 
+  // 이 부분에선 이미지를 제외한 텍스트 데이터만 Post 테이블에 추가한다
   public createPost = async (
     userId: number,
     userName: string,
@@ -36,6 +37,7 @@ class PostsRepository {
     return result;
   };
 
+  // 이 부분에선 이미지 데이터를 PostImage 테이블에 생성한다.
   public uploadPostImages = async (imageArr: any) => {
     await this.prisma.postImages.createMany({
       data: imageArr,
@@ -51,7 +53,10 @@ class PostsRepository {
   ) => {
     const result = await this.prisma.post.findMany({
       where: {
+        // 내위치 게시글에 만족하고, 검색어에 해당하는 게시글을 불러옴
+        // 위치와 카테고리에 모두 부합하는지 확인
         AND: [{ location1: state1 }, { location2: state2 }, { category: category || undefined }],
+        // 검색어 중 하나라도 일치하는 것들을 불러옴
         OR: [
           { title: { contains: search || '' } },
           { content: { contains: search || '' } },
@@ -61,12 +66,15 @@ class PostsRepository {
           { tag: { contains: search || '' } },
         ],
       },
+      // 게시글에 표시할 게시글 작성자의 프로필 이미지와 게시글 이미지 포함
       include: {
         user: { select: { userImage: true } },
         PostImages: { select: { imageUrl: true } },
       },
 
+      // 무한스크롤을 위한 페이지네이션
       skip: page || 0,
+      // 보여주고 싶은 최대 게시글 개수의 배수를 page query에 입력
       take: 12,
       orderBy: { createdAt: 'desc' },
     });
@@ -77,8 +85,11 @@ class PostsRepository {
   public allLocationPosts = async (page: number, category: number, search?: string) => {
     const result = await this.prisma.post.findMany({
       where: {
+        // 쿼리로 카테고리를 보내면 카테고리에 해당하는 게시글을 조회하고, 설정하지 않으면 전체 게시글을 조회함
         category: category || undefined,
+        //
         OR: [
+          // 검색어를 입력하지 않으면 모든 게시글을 조회함, || '' 를 이용해 search= 와 동일한 상태로 만듦
           { title: { contains: search || '' } },
           { content: { contains: search || '' } },
           { userName: { contains: search || '' } },
@@ -88,7 +99,9 @@ class PostsRepository {
         ],
       },
       include: {
+        // 게시글 작성자의 프로필사진
         user: { select: { userImage: true } },
+        // 게시글의 이미지
         PostImages: { select: { imageUrl: true } },
       },
       skip: page || 0,
@@ -102,9 +115,11 @@ class PostsRepository {
     const result = await this.prisma.post.findUnique({
       where: { postId },
       include: {
+        // 찜 개수
         _count: {
           select: { Wish: true },
         },
+        // 게시글 작성자 프로필사진, 평점총합, 평점 참여자 수
         user: { select: { userImage: true, score: true, score_total: true } },
         PostImages: { select: { imageUrl: true } },
       },
@@ -112,17 +127,22 @@ class PostsRepository {
     return result;
   };
 
+  // 찜여부 확인
   public isWished = async (userId: number, postId: number) => {
     const result = await this.prisma.wish.findFirst({ where: { AND: [{ userId }, { postId }] } });
+    // 찜 되어 있으면 1
     if (result) return 1;
+    // 찜 안되어있으면 0
     return 0;
   };
 
+  // 게시글 존재 여부 확인, 수정, 삭제, 상세조회, 찜하기에서 사용됨
   public findPost = async (postId: number) => {
     const result = await this.prisma.post.findFirst({ where: { postId } });
     return result;
   };
 
+  // 게시글 작성자 여부 확인, 수정, 삭제, 마감에서 사용됨
   public postWriter = async (userId: number) => {
     const result = await this.prisma.post.findFirst({ where: { userId } });
     return result;
@@ -148,6 +168,7 @@ class PostsRepository {
         content,
         category,
         appointed,
+        // 수정된 게시글에 "수정됨" 표시해주려고 수정 안된 게시글은 0, 수정된 게시글은 1로 표시했는데 이 부분 구현 안됐습니다
         updated: 1,
         location1,
         location2,
@@ -157,6 +178,7 @@ class PostsRepository {
     return result;
   };
 
+  // 게시글 마감
   public deadLine = async (postId: number, isDeadLine: number) => {
     const result = await this.prisma.post.update({ where: { postId }, data: { isDeadLine } });
     return result;
@@ -164,10 +186,9 @@ class PostsRepository {
 
   public deletePost = async (postId: number) => {
     const images = await this.prisma.postImages.findMany({ where: { postId } });
-    await this.prisma.post.findUniqueOrThrow({ where: { postId } });
-
     await this.prisma.post.delete({ where: { postId } });
     await this.prisma.postImages.deleteMany({ where: { postId } });
+    // 삭제할 게시글의 이미지 정보를 service 로 보냄
     return images;
   };
 }

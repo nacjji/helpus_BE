@@ -87,10 +87,11 @@ const deleteS3Image = (profileImage: string) => {
 };
 
 // 게시글 이미지 삭제
-const deleteS3ImagePost = (imageUrls: any) => {
+const deleteS3ImagePost = (imageUrls: string[]) => {
   // 이미지 이름만을 추출해 "[{Key : URL} .. ]" 형식으로 생성됨
-  const deleteImgs = imageUrls.map((v: string) => {
-    return { Key: `helpus/${v}` };
+  const deleteImgs = imageUrls.map((imageUrl: string) => {
+    // S3 helpus 폴더에 있는 게시글을 삭제
+    return { Key: `helpus/${imageUrl}` };
   });
   s3.deleteObjects({
     Bucket: process.env.S3_BUCKET_NAME as string,
@@ -101,8 +102,8 @@ const deleteS3ImagePost = (imageUrls: any) => {
 };
 
 const deleteS3ImageChat = (imageUrls: any[]) => {
-  const deleteImgs = imageUrls.map((v: { content: string }) => {
-    return { Key: v.content.split('.com/')[1] };
+  const deleteImgs = imageUrls.map((imageUrl: { content: string }) => {
+    return { Key: imageUrl.content.split('.com/')[1] };
   });
 
   s3.deleteObjects({

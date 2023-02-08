@@ -8,7 +8,6 @@ class ReportRepository {
     this.prisma = prisma;
   }
 
-  // eslint-disable-next-line class-methods-use-this
   public reportUser = async (postId: number, reportNum: number, reason?: string) => {
     // 이전에 같은 내용으로 신고한 내역이 있는지 확인
     const reportHistory = await this.prisma.report.findMany({

@@ -15,6 +15,7 @@ class PostsController {
       const { userId, userName } = res.locals;
       const { title, content, category, appointed, location1, location2, tag, createdAt } =
         await postInputPattern.validateAsync(req.body);
+      // multeruploader 설정이 array이기 때문에 Array 형식으로 req.files 를 받아옴
       const imageUrls = req.files! as Array<Express.MulterS3.File>;
 
       const images = imageUrls.map((image) => {
@@ -78,6 +79,7 @@ class PostsController {
   public findDetailPost: RequestHandler = async (req, res, next) => {
     try {
       const postId = Number(req.params.postId);
+      // 찜 여부를 표시해야 해서 로그인 유저의 userId가 필요하지만 로그인 정보가 없을 경우 0을 보내 아무 작업도 수행하지 않게 함
       const userId = res.locals.userId || 0;
       const result = await this.postsService.findDetailPost(postId, Number(userId));
       return res.status(200).json({ result });
