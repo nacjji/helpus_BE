@@ -1,11 +1,11 @@
 import { RequestHandler } from 'express';
 import AuthService from '../services/auth.service';
-import { scorePattern } from '../validations/auth.validations';
 import {
   emailPattern,
   signupPattern,
   loginPattenrn,
   updatePattern,
+  scorePattern,
 } from '../validations/auth.validations';
 import { makeCookie, deleteCookie } from '../modules/cookie.module';
 
@@ -183,7 +183,6 @@ class AuthController {
     try {
       const { page } = req.query;
       const { userId } = res.locals;
-
       const results = await this.authService.myPosts(userId, Number(page));
       return res.status(200).json({ results });
     } catch (err) {
