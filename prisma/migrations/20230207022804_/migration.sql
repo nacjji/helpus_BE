@@ -1,0 +1,2 @@
+-- AlterTable
+ALTER TABLE `Alarm` MODIFY `count` INTEGER NOT NULL DEFAULT 1;

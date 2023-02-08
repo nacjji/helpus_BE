@@ -10,7 +10,7 @@ class ChatRepository {
 
   public alarmList = async (ownerId: number) => {
     const results = await this.prisma.alarm.findMany({
-      where: { ownerId, NOT: { count: 0 } },
+      where: { ownerId },
       include: { post: true, sender: true },
     });
 
@@ -127,13 +127,6 @@ class ChatRepository {
     });
   };
 
-  public readMessage = async (roomId: string, userId: number) => {
-    await this.prisma.chat.updateMany({
-      where: { AND: [{ roomId, isRead: 0 }, { NOT: { userId } }] },
-      data: { isRead: 1 },
-    });
-  };
-
   public isReadMessage = async (chatId: number) => {
     const result = await this.prisma.chat.findUnique({
       where: { chatId },
@@ -150,9 +143,14 @@ class ChatRepository {
     return result;
   };
 
-  public createAlarm = async (postId: number, ownerId: number, senderId: number) => {
+  public createAlarm = async (
+    postId: number,
+    ownerId: number,
+    senderId: number,
+    roomId: string
+  ) => {
     await this.prisma.alarm.create({
-      data: { postId, ownerId, senderId },
+      data: { postId, ownerId, senderId, roomId },
     });
   };
 
@@ -163,9 +161,16 @@ class ChatRepository {
     });
   };
 
-  public readYet = async (roomId: string, userId: number) => {
-    const result = this.prisma.chat.findFirst({
-      where: { AND: [{ roomId }, { NOT: { userId } }, { isRead: 0 }] },
+  public deleteAlarm = async (roomId: string, ownerId: number) => {
+    await this.prisma.alarm.deleteMany({
+      where: { roomId, ownerId },
+    });
+  };
+
+  public readYet = async (roomId: string, ownerId: number, senderId: number) => {
+    const result = await this.prisma.alarm.findFirst({
+      where: { roomId, ownerId, senderId },
+      select: { count: true, post: true, sender: true },
     });
 
     return result;
