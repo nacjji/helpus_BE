@@ -27,8 +27,8 @@ class PostsService {
     createdAt?: Date,
     images?: string[]
   ) => {
-    const imageFileName = images?.map((v) => {
-      return v?.split('/')[4];
+    const imageFileName = images?.map((image) => {
+      return image?.split('/')[4];
     });
 
     const date = Number(new Date());
@@ -75,6 +75,7 @@ class PostsService {
       return {
         postId: post.postId,
         userId: post.userId,
+
         userImage: post.user.userImage.includes('http://')
           ? post.user.userImage
           : `${process.env.S3_BUCKET_URL}/profile/${post.user.userImage}`,
@@ -114,10 +115,12 @@ class PostsService {
         isDeadLine: post.isDeadLine,
         location1: post.location1,
         location2: post.location2,
+
         thumbnail:
           post.PostImages[0].imageUrl.split('/')[2] === 'images.unsplash.com'
             ? post.PostImages[0].imageUrl
             : `${process.env.S3_BUCKET_URL}/${post.PostImages[0].imageUrl}`,
+
         tag: post.tag,
         createdAt: post.createdAt,
         updated: post.updated,
@@ -128,6 +131,7 @@ class PostsService {
 
   public findDetailPost = async (postId: number, userId: number) => {
     const result = await this.postsRepository.findDetailPost(postId);
+
     const isWished = await this.postsRepository.isWished(userId, postId);
 
     if (!result) {
@@ -147,10 +151,12 @@ class PostsService {
       isDeadLine: result.isDeadLine,
       location1: result.location1,
       location2: result.location2,
+
       mainImage:
         result.PostImages[0].imageUrl?.split('/')[2] === 'images.unsplash.com'
           ? result.PostImages[0].imageUrl
           : `${process.env.S3_BUCKET_URL}/${result.PostImages[0].imageUrl}`,
+
       imageUrls: result.PostImages.map((postImage: any) => {
         return postImage.imageUrl.split('/')[2] === 'images.unsplash.com'
           ? postImage.imageUrl
@@ -158,7 +164,9 @@ class PostsService {
       }),
       tag: result.tag,
       createdAt: result.createdAt,
+
       updated: result.updated,
+
       // eslint-disable-next-line no-underscore-dangle
       Wish: result._count.Wish,
       isWished,
@@ -180,7 +188,9 @@ class PostsService {
     if (!findPost) throw notFound('없는 게시글');
 
     const postWriter = await this.postsRepository.postWriter(userId);
+
     if (!postWriter) throw badRequest('게시글의 작성자가 아닙니다.');
+
     const result = await this.postsRepository.updatePost(
       Number(postId),
       Number(userId),
@@ -188,6 +198,7 @@ class PostsService {
       content,
       Number(category),
       appointed,
+
       location1 || undefined,
       location2 || undefined,
       tag
@@ -203,15 +214,19 @@ class PostsService {
     if (!postWriter) throw badRequest('게시글의 작성자가 아닙니다.');
 
     const result = await this.postsRepository.deadLine(postId, isDeadLine);
+
     if (result.isDeadLine === 2) return { message: '마감' };
+
     return { message: '마감 취소' };
   };
 
   public deletePost = async (postId: number, userId: number) => {
     const findPost = await this.postsRepository.findPost(postId);
+
     if (!findPost) throw notFound('게시글 없음');
 
     const postWriter = await this.postsRepository.postWriter(userId);
+
     if (!postWriter) throw badRequest('게시글의 작성자가 아닙니다.');
 
     const result = await this.postsRepository.deletePost(postId);

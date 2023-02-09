@@ -1,11 +1,11 @@
 import { RequestHandler } from 'express';
 import AuthService from '../services/auth.service';
+
 import {
   emailPattern,
   signupPattern,
   loginPattenrn,
   updatePattern,
-  scorePattern,
 } from '../validations/auth.validations';
 import { makeCookie, deleteCookie } from '../modules/cookie.module';
 
@@ -24,9 +24,10 @@ class AuthController {
   public emailCheck: RequestHandler = async (req, res, next) => {
     try {
       const { email } = await emailPattern.validateAsync(req.body);
-      await this.authService.emailCheck(email);
+      const check = await this.authService.emailCheck(email);
 
-      res.status(200).json({ message: '사용 가능' });
+      if (check) res.status(400).json({ errorMessage: '중복된 이메일' });
+      else res.status(200).json({ message: '사용 가능' });
     } catch (err) {
       next(err);
     }
@@ -123,8 +124,8 @@ class AuthController {
 
   public wishlist: RequestHandler = async (req, res, next) => {
     try {
-      const { page } = req.query;
-      const results = await this.authService.wishlist(res.locals.userId, Number(page));
+      const q = Number(req.query.q);
+      const results = await this.authService.wishlist(res.locals.userId, q);
       res.status(200).json(results);
     } catch (err) {
       next(err);
@@ -171,8 +172,7 @@ class AuthController {
   public score: RequestHandler = async (req, res, next) => {
     try {
       const { score, userId } = req.body;
-      await this.authService.score(userId, score);
-      await scorePattern.validateAsync(req.body);
+      await this.authService.score(Number(userId), Number(score));
       return res.status(201).json({ message: `userId ${userId} 에게 평점 완료` });
     } catch (err) {
       return next(err);
@@ -181,10 +181,11 @@ class AuthController {
 
   public myPosts: RequestHandler = async (req, res, next) => {
     try {
-      const { page } = req.query;
+      const q = Number(req.query.q);
       const { userId } = res.locals;
-      const results = await this.authService.myPosts(userId, Number(page));
-      return res.status(200).json({ results });
+
+      const result = await this.authService.myPosts(userId, q);
+      return res.status(200).json({ result });
     } catch (err) {
       return next(err);
     }
