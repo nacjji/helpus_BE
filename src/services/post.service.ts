@@ -31,6 +31,8 @@ class PostsService {
       return v?.split('/')[4];
     });
 
+    const date = Number(new Date());
+    const seed = Number(date) % 30;
     const result = await this.postsRepository.createPost(
       userId,
       userName,
@@ -44,14 +46,12 @@ class PostsService {
       createdAt
     );
 
-    const date = Number(new Date());
-    const seed = Number(date) % 30;
-
     const imageUrls = imageFileName?.map((imageUrl) => {
       return { imageUrl, postId: result.postId, userId };
     });
-
-    await this.postsRepository.uploadPostImages(imageUrls?.length ? imageUrls : [randomImg[seed]]);
+    await this.postsRepository.uploadPostImages(
+      imageUrls?.length ? imageUrls : [{ imageUrl: randomImg[seed], postId: result.postId, userId }]
+    );
 
     return result;
   };
