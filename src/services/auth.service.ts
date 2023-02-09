@@ -122,30 +122,33 @@ class AuthService {
     const posts = await this.authRepository.wishlist(userId, q); // 페이지와 함께 전달
     const results = posts.map((v: any) => {
       // TODO: 모든 맵에서. v 말고 명확한 변수명 사용할것
+  public wishlist = async (userId: number, page: number) => {
+    const posts = await this.authRepository.wishlist(userId, page);
+    const result = posts.map((post: any) => {
       return {
-        postId: v.postId,
-        userId: v.post.userId,
-        userName: v.post.user.userName,
-        userImage: v.post.user.userImage.includes('http://')
-          ? v.post.user.userImage
-          : `${process.env.S3_BUCKET_URL}/profile/${v.post.user.userImage}`,
-        title: v.post.title,
-        content: v.post.content,
-        category: v.post.category,
-        appointed: v.post.appointed,
-        isDeadLine: v.post.isDeadLine,
-        location1: v.post.location1,
-        location2: v.post.location2,
+        postId: post.postId,
+        userId: post.post.userId,
+        userName: post.post.user.userName,
+        userImage: post.post.user.userImage.includes('http://')
+          ? post.post.user.userImage
+          : `${process.env.S3_BUCKET_URL}/profile/${post.post.user.userImage}`,
+        title: post.post.title,
+        content: post.post.content,
+        category: post.post.category,
+        appointed: post.post.appointed,
+        isDeadLine: post.post.isDeadLine,
+        location1: post.post.location1,
+        location2: post.post.location2,
         thumbnail:
-          v.post.PostImages[0].imageUrl.split('/')[2] === 'images.unsplash.com'
-            ? v.post.PostImages[0].imageUrl
-            : `${process.env.S3_BUCKET_URL}/${v.post.PostImages[0].imageUrl}`,
-        tag: v.post.tag,
-        createdAt: v.post.createdAt,
-        updated: v.post.updated,
+          post.post.PostImages[0].imageUrl.split('/')[2] === 'images.unsplash.com'
+            ? post.post.PostImages[0].imageUrl
+            : `${process.env.S3_BUCKET_URL}/${post.post.PostImages[0].imageUrl}`,
+        tag: post.post.tag,
+        createdAt: post.post.createdAt,
+        updated: post.post.updated,
       };
     });
-    return results;
+    return result;
   };
 
   public updateImage = async (userId: number, userImage: string) => {
@@ -207,32 +210,30 @@ class AuthService {
     await this.authRepository.score(userId, score); // 있으면 점수 부여
   };
 
-  public myPosts = async (userId: number, q: number) => {
-    // 내 게시글 조회 로직
-    // TODO: 받는 값도 q 말고 page로.
-    const myPosts = await this.authRepository.myPosts(userId, q); // 페이지와 userId로 조회 시도
-    const result = myPosts.map((v: any) => {
+  public myPosts = async (userId: number, page: number) => {
+    const myPosts = await this.authRepository.myPosts(userId, page);
+    const result = myPosts.map((myPost: any) => {
       return {
-        postId: v.postId,
-        userId: v.userId,
-        userName: v.userName,
-        userImage: v.user.userImage.includes('http://')
-          ? v.user.userImage
-          : `${process.env.S3_BUCKET_URL}/profile/${v.user.userImage}`,
-        title: v.title,
-        content: v.content,
-        category: v.category,
-        appointed: v.appointed,
-        isDeadLine: v.isDeadLine,
-        location1: v.location1,
-        location2: v.location2,
+        postId: myPost.postId,
+        userId: myPost.userId,
+        userName: myPost.userName,
+        userImage: myPost.user.userImage.includes('http://')
+          ? myPost.user.userImage
+          : `${process.env.S3_BUCKET_URL}/profile/${myPost.user.userImage}`,
+        title: myPost.title,
+        content: myPost.content,
+        category: myPost.category,
+        appointed: myPost.appointed,
+        isDeadLine: myPost.isDeadLine,
+        location1: myPost.location1,
+        location2: myPost.location2,
         thumbnail:
-          v.PostImages[0].imageUrl.split('/')[2] === 'images.unsplash.com'
-            ? v.PostImages[0].imageUrl
-            : `${process.env.S3_BUCKET_URL}/${v.PostImages[0].imageUrl}`,
-        tag: v.tag,
-        createdAt: v.createdAt,
-        updated: v.updated,
+          myPost.PostImages[0].imageUrl.split('/')[2] === 'images.unsplash.com'
+            ? myPost.PostImages[0].imageUrl
+            : `${process.env.S3_BUCKET_URL}/${myPost.PostImages[0].imageUrl}`,
+        tag: myPost.tag,
+        createdAt: myPost.createdAt,
+        updated: myPost.updated,
       };
     });
     return result;

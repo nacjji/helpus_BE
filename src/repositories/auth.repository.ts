@@ -149,7 +149,7 @@ class AuthRepository {
         user: { select: { userImage: true } }, // 내 이미지는 프론트가 가지고 있을텐데 굳이 들어가야 할까? 한 번만 사용할 데이터가 모든 객체에 들어갈텐데
         PostImages: { select: { imageUrl: true } }, // PostImage로 썸네일 가져옴
       },
-      skip: q || 0,
+      skip: page || 0,
       take: 6,
       orderBy: { createdAt: 'desc' },
     });

@@ -137,8 +137,8 @@ class AuthController {
   public wishlist: RequestHandler = async (req, res, next) => {
     // 찜목록을 불러오기 위한 함수
     try {
-      const q = Number(req.query.q); // query를 통해 페이지 변수 q를 받음. page로 변경해야 명확함.
-      const results = await this.authService.wishlist(res.locals.userId, q); // 가져와야 할 페이지와 locals에 저장된 userId를 서비스단에 넘김
+      const { page } = req.query;
+      const results = await this.authService.wishlist(res.locals.userId, Number(page)); // 가져와야 할 페이지와 locals에 저장된 userId를 서비스단에 넘김
       res.status(200).json(results); // 결과로 받은 목록들을 클라이언트에 전달
     } catch (err) {
       next(err);
@@ -191,8 +191,8 @@ class AuthController {
     try {
       // TODO: score에 대한 범위값 유효성 검사는 필요없을까요? 필요하다고 봅니다.
       const { score, userId } = req.body;
-      // TODO:? 강제 형변환 필요한지
-      await this.authService.score(Number(userId), Number(score)); // 여기 제가 작성한게 아닌 것 같은데, 강제 형변환이 필요한가요?
+      await this.authService.score(userId, score);
+      await scorePattern.validateAsync(req.body);
       return res.status(201).json({ message: `userId ${userId} 에게 평점 완료` });
     } catch (err) {
       return next(err);
@@ -202,13 +202,10 @@ class AuthController {
   public myPosts: RequestHandler = async (req, res, next) => {
     // 내 게시물 목록 조회를 위한 함수
     try {
-      // TODO: q -> page 변수명 변경
-      const q = Number(req.query.q); // query를 통해 페이지를 확인함. page로 변수명을 바꾸는 것이 명확할듯
-      const { userId } = res.locals; // userId를 locals에서... 후...
-
-      // TODO: result -> results 변수명 변경
-      const result = await this.authService.myPosts(userId, q);
-      return res.status(200).json({ result }); // 받은 목록을 클라이언트에 넘겨줌. 배열로 된 목록이니 results가 명확해보임
+      const { page } = req.query;
+      const { userId } = res.locals;
+      const results = await this.authService.myPosts(userId, Number(page));
+      return res.status(200).json({ results });
     } catch (err) {
       return next(err);
     }

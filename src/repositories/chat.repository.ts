@@ -51,8 +51,6 @@ class ChatRepository {
         sender: { select: { userName: true, userImage: true } },
         owner: { select: { userName: true, userImage: true } }, // 어떤 유저가 상대방인지 판단은 서비스단에서. 여기서는 일단 모든 정보 가져옴
       },
-      skip: q || 0,
-      take: 6,
       orderBy: { roomId: 'desc' },
     });
 
@@ -187,6 +185,12 @@ class ChatRepository {
     // 알람 확인함. 그에 따른 알람 삭제
     await this.prisma.alarm.deleteMany({
       where: { roomId, ownerId },
+    });
+  };
+
+  public deleteAllAlarm = async (ownerId: number) => {
+    await this.prisma.alarm.deleteMany({
+      where: { ownerId },
     });
   };
 

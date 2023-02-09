@@ -1,4 +1,3 @@
-import { notFound } from '@hapi/boom';
 import { PrismaClient } from '@prisma/client';
 
 class WishsRepository {

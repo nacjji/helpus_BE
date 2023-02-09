@@ -40,5 +40,5 @@ export const updatePattern = joi.object().keys({
 });
 
 export const scorePattern = joi.object().keys({
-  score: joi.string().required(),
+  score: joi.string().min(0).max(10).required(),
 });

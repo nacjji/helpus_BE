@@ -32,13 +32,22 @@ class ChatController {
     }
   };
 
+  public deleteAllAlarm: RequestHandler = async (req, res, next) => {
+    try {
+      const { userId } = res.locals;
+      await this.chatService.deleteAllAlarm(userId);
+
+      res.status(200).json({ message: '알람 삭제 완료' });
+    } catch (err) {
+      next(err);
+    }
+  };
+
   public roomList: RequestHandler = async (req, res, next) => {
     // 채팅방 목록 조회를 위한 함수
     try {
-      // TOOD: q -> page 변수명 변경
-      const q = Number(req.query.q); // 여기도 변수명 변경!
       const { userId } = res.locals;
-      const results = await this.chatService.roomList(userId, q);
+      const results = await this.chatService.roomList(userId);
 
       res.status(200).json(results);
     } catch (err) {
