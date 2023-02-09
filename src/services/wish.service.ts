@@ -18,10 +18,12 @@ class WishsService {
     if (!findPost) throw notFound('없는 게시글이거나 삭제된 게시글입니다.');
 
     const isWish = await this.wishsRepository.isWish(postId, userId);
+
     if (isWish.length) {
       await this.wishsRepository.wishDelete(postId, userId);
       return { message: '찜 취소', postId };
     }
+
     this.wishsRepository.wishPost(postId, userId);
     return { message: '찜' };
   };

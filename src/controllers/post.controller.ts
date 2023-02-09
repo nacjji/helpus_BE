@@ -40,7 +40,6 @@ class PostsController {
     }
   };
 
-  // 내 위치 게시글 조회
   public myLocationPosts: RequestHandler = async (req, res, next) => {
     const { state1, state2 } = res.locals;
     try {
@@ -60,7 +59,6 @@ class PostsController {
     }
   };
 
-  // 전국 게시글 조회
   public allLocationPosts: RequestHandler = async (req, res, next) => {
     const { page } = req.query;
     const search = req.query.search as string;
