@@ -14,9 +14,11 @@ const multeruploader = multer({
     },
     key(req, file, callback) {
       const fileType = file.mimetype.split('/')[1];
+
       callback(null, `helpus/${nanoid()}.${fileType}`);
     },
   }),
+
   limits: { fileSize: 20 * 1024 * 1024 },
   fileFilter: (req: Request, file: Express.Multer.File, callback: multer.FileFilterCallback) => {
     const fileType = file.mimetype.split('/')[0];
@@ -83,9 +85,9 @@ const deleteS3Image = (profileImage: string) => {
   });
 };
 
-const deleteS3ImagePost = (imageUrls: any) => {
-  const deleteImgs = imageUrls.map((v: string) => {
-    return { Key: `helpus/${v}` };
+const deleteS3ImagePost = (imageUrls: string[]) => {
+  const deleteImgs = imageUrls.map((imageUrl: string) => {
+    return { Key: `helpus/${imageUrl}` };
   });
   s3.deleteObjects({
     Bucket: process.env.S3_BUCKET_NAME as string,
@@ -96,8 +98,8 @@ const deleteS3ImagePost = (imageUrls: any) => {
 };
 
 const deleteS3ImageChat = (imageUrls: any[]) => {
-  const deleteImgs = imageUrls.map((v: { content: string }) => {
-    return { Key: v.content.split('.com/')[1] };
+  const deleteImgs = imageUrls.map((imageUrl: { content: string }) => {
+    return { Key: imageUrl.content.split('.com/')[1] };
   });
 
   s3.deleteObjects({

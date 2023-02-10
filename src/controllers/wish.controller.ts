@@ -8,7 +8,6 @@ class WishsController {
     this.wishsService = new WishsService();
   }
 
-  // eslint-disable-next-line consistent-return
   public wishPost: RequestHandler = async (req, res, next) => {
     try {
       const { postId } = req.params;

@@ -28,11 +28,21 @@ class ChatController {
     }
   };
 
+  public deleteAllAlarm: RequestHandler = async (req, res, next) => {
+    try {
+      const { userId } = res.locals;
+      await this.chatService.deleteAllAlarm(userId);
+
+      res.status(200).json({ message: '알람 삭제 완료' });
+    } catch (err) {
+      next(err);
+    }
+  };
+
   public roomList: RequestHandler = async (req, res, next) => {
     try {
-      const q = Number(req.query.q);
       const { userId } = res.locals;
-      const results = await this.chatService.roomList(userId, q);
+      const results = await this.chatService.roomList(userId);
 
       res.status(200).json(results);
     } catch (err) {

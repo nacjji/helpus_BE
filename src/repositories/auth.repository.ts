@@ -43,7 +43,7 @@ class AuthRepository {
     return user;
   };
 
-  public wishlist = async (userId: number, q: number) => {
+  public wishlist = async (userId: number, page: number) => {
     const results = await this.prisma.wish.findMany({
       where: { userId },
       include: {
@@ -54,7 +54,7 @@ class AuthRepository {
           },
         },
       },
-      skip: q || 0,
+      skip: page || 0,
       take: 6,
       orderBy: { postId: 'desc' },
     });
@@ -122,14 +122,14 @@ class AuthRepository {
     return scoreRate.score / scoreRate.score_total;
   };
 
-  public myPosts = async (userId: number, q: number) => {
+  public myPosts = async (userId: number, page: number) => {
     const myPosts = await this.prisma.post.findMany({
       where: { userId },
       include: {
         user: { select: { userImage: true } },
         PostImages: { select: { imageUrl: true } },
       },
-      skip: q || 0,
+      skip: page || 0,
       take: 6,
       orderBy: { createdAt: 'desc' },
     });

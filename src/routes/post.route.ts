@@ -13,7 +13,7 @@ postsRouter.post(
   postsController.createPost
 );
 
-postsRouter.get('/my-location', requiredLogin, passAnyway, postsController.myLocationPosts);
+postsRouter.get('/my-location', requiredLogin, postsController.myLocationPosts);
 
 postsRouter.get('/all-location', passAnyway, postsController.allLocationPosts);
 

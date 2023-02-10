@@ -43,7 +43,7 @@ class PostsRepository {
   };
 
   public myLocationPosts = async (
-    q: number,
+    page: number,
     state1?: string,
     state2?: string,
     category?: number,
@@ -51,22 +51,14 @@ class PostsRepository {
   ) => {
     const result = await this.prisma.post.findMany({
       where: {
-        AND: [
-          {
-            AND: [
-              { location1: state1 },
-              { location2: state2 },
-              { category: category || undefined },
-            ],
-            OR: [
-              { title: { contains: search } },
-              { content: { contains: search } },
-              { userName: { contains: search } },
-              { location1: { contains: search } },
-              { location2: { contains: search } },
-              { tag: { contains: search } },
-            ],
-          },
+        AND: [{ location1: state1 }, { location2: state2 }, { category: category || undefined }],
+        OR: [
+          { title: { contains: search || '' } },
+          { content: { contains: search || '' } },
+          { userName: { contains: search || '' } },
+          { location1: { contains: search || '' } },
+          { location2: { contains: search || '' } },
+          { tag: { contains: search || '' } },
         ],
       },
       include: {
@@ -74,7 +66,7 @@ class PostsRepository {
         PostImages: { select: { imageUrl: true } },
       },
 
-      skip: q || 0,
+      skip: page || 0,
       take: 12,
       orderBy: { createdAt: 'desc' },
     });
@@ -82,28 +74,26 @@ class PostsRepository {
     return result;
   };
 
-  public allLocationPosts = async (q: number, category: number, search?: string) => {
+  public allLocationPosts = async (page: number, category: number, search?: string) => {
     const result = await this.prisma.post.findMany({
       where: {
+        category: category || undefined,
+        //
         OR: [
-          {
-            category: category || undefined,
-            OR: [
-              { title: { contains: search || '' } },
-              { content: { contains: search || '' } },
-              { userName: { contains: search || '' } },
-              { location1: { contains: search || '' } },
-              { location2: { contains: search || '' } },
-              { tag: { contains: search || '' } },
-            ],
-          },
+          { title: { contains: search || '' } },
+          { content: { contains: search || '' } },
+          { userName: { contains: search || '' } },
+          { location1: { contains: search || '' } },
+          { location2: { contains: search || '' } },
+          { tag: { contains: search || '' } },
         ],
       },
       include: {
         user: { select: { userImage: true } },
+
         PostImages: { select: { imageUrl: true } },
       },
-      skip: q || 0,
+      skip: page || 0,
       take: 12,
       orderBy: { createdAt: 'desc' },
     });
@@ -117,6 +107,7 @@ class PostsRepository {
         _count: {
           select: { Wish: true },
         },
+
         user: { select: { userImage: true, score: true, score_total: true } },
         PostImages: { select: { imageUrl: true } },
       },
@@ -126,7 +117,9 @@ class PostsRepository {
 
   public isWished = async (userId: number, postId: number) => {
     const result = await this.prisma.wish.findFirst({ where: { AND: [{ userId }, { postId }] } });
+
     if (result) return 1;
+
     return 0;
   };
 
@@ -160,6 +153,7 @@ class PostsRepository {
         content,
         category,
         appointed,
+
         updated: 1,
         location1,
         location2,
@@ -176,10 +170,9 @@ class PostsRepository {
 
   public deletePost = async (postId: number) => {
     const images = await this.prisma.postImages.findMany({ where: { postId } });
-    await this.prisma.post.findUniqueOrThrow({ where: { postId } });
-
     await this.prisma.post.delete({ where: { postId } });
     await this.prisma.postImages.deleteMany({ where: { postId } });
+
     return images;
   };
 }
