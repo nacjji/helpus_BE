@@ -23,7 +23,8 @@
 
 
 ### ⚒️ ERD
-![스크린샷 2023-02-04 오전 9 52 27](https://user-images.githubusercontent.com/105340187/216736227-28e94c09-e9c1-4786-a52c-c75689c4b228.png)
+![스크린샷 2023-02-10 오전 10 12 09](https://user-images.githubusercontent.com/105340187/217975174-1e53e567-7372-4bc1-aa69-abbf0a2bb602.png)
+
 
 ### ⚙️ 기술 스택
 <div>
