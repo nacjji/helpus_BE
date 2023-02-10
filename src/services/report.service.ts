@@ -25,13 +25,7 @@ class ReportService {
       throw badRequest('이미 신고한 게시글');
     }
 
-    const result = await this.reportRepository.reportPost(
-      Number(postId),
-      Number(reportNum),
-      findPost.userId,
-      reason
-    );
-    return result;
+    await this.reportRepository.reportPost(postId, reportNum, findPost.userId, reason);
   };
 }
 
