@@ -1,3 +1,4 @@
+// TODO: ?요기 eslint 무시 주석은 왜 있는거지?
 /* eslint-disable class-methods-use-this */
 import { RequestHandler } from 'express';
 import PostsService from '../services/post.service';
@@ -11,13 +12,15 @@ class PostsController {
   }
 
   public createPost: RequestHandler = async (req, res, next) => {
+    // 게시글 작성 함수
     try {
       const { userId, userName } = res.locals;
       const { title, content, category, appointed, location1, location2, tag, createdAt } =
         await postInputPattern.validateAsync(req.body);
-      const imageUrls = req.files! as Array<Express.MulterS3.File>;
+      const imageUrls = req.files! as Array<Express.MulterS3.File>; // 배열 형태로 파일 저장 url 가져옴
 
       const images = imageUrls.map((image) => {
+        // url 중 파일 이름 부분만 빼내오는 작업
         return image.location;
       });
       await this.postsService.createPost(
@@ -44,7 +47,7 @@ class PostsController {
   public myLocationPosts: RequestHandler = async (req, res, next) => {
     const { state1, state2 } = res.locals;
     try {
-      const search = req.query.search as string;
+      const search = req.query.search as string; // 여기 보니까 전부 query에서 받는데, 구조분해할당으로 받고
       const category = Number(req.query.category);
       const page = Number(req.query.page);
       const result = await this.postsService.myLocationPosts(
@@ -52,7 +55,7 @@ class PostsController {
         state1,
         state2,
         category,
-        search
+        search // 이쪽에서 형변환을 해줬으면 깔끔해보이지 않았을까 하는 생각이 좀 듭니다. 그치만 이렇게 써도 문제는 없습니다!
       );
       return res.status(200).json({ result });
     } catch (err) {
@@ -76,6 +79,7 @@ class PostsController {
   };
 
   public findDetailPost: RequestHandler = async (req, res, next) => {
+    // 게시글 상세
     try {
       const postId = Number(req.params.postId);
       const userId = res.locals.userId || 0;
@@ -87,6 +91,7 @@ class PostsController {
   };
 
   public updatePost: RequestHandler = async (req, res, next) => {
+    // 게시글 수정
     try {
       const { postId } = req.params;
       const { title, content, location1, category, appointed, location2, tag } = req.body;
@@ -111,6 +116,7 @@ class PostsController {
   };
 
   public deadLine: RequestHandler = async (req, res, next) => {
+    // 마감처리
     try {
       const { userId } = res.locals;
       const { isDeadLine } = req.body;
@@ -128,6 +134,7 @@ class PostsController {
   };
 
   public deletePost: RequestHandler = async (req, res, next) => {
+    // 게시글 삭제
     try {
       const { userId } = res.locals;
       const { postId } = req.params;
