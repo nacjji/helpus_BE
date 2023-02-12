@@ -192,10 +192,12 @@
 
 ### 서버 설정
 - 운영서버
+
 ![스크린샷 2023-02-12 오후 1 19 23](https://user-images.githubusercontent.com/105340187/218292852-fa8d6e69-b2e7-4fcf-a209-005fe444407d.png)
 ![스크린샷 2023-02-12 오후 1 22 27](https://user-images.githubusercontent.com/105340187/218292872-471d46e9-6ff7-44b6-a443-b49f6b5696fc.png)
 
 - 개발서버
+
 ![스크린샷 2023-02-12 오후 1 24 45](https://user-images.githubusercontent.com/105340187/218292928-f25f6770-0068-4214-a4d2-4958ce9f61e4.png)
 ![스크린샷 2023-02-12 오후 1 25 25](https://user-images.githubusercontent.com/105340187/218292941-dd838b63-845f-4bc7-9058-ab8bd1cc395b.png)
 
