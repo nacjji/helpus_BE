@@ -163,6 +163,10 @@ class PostsRepository {
     return result;
   };
 
+  public updateImage = async (imageId: number, imageUrl: string) => {
+    await this.prisma.postImages.update({ where: { imageId }, data: { imageUrl } });
+  };
+
   public deadLine = async (postId: number, isDeadLine: number) => {
     const result = await this.prisma.post.update({ where: { postId }, data: { isDeadLine } });
     return result;
