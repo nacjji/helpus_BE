@@ -194,7 +194,9 @@
 - 운영서버
 
 ![스크린샷 2023-02-12 오후 1 19 23](https://user-images.githubusercontent.com/105340187/218292852-fa8d6e69-b2e7-4fcf-a209-005fe444407d.png)
+
 sites-enabled/default
+
 ![스크린샷 2023-02-12 오후 1 22 27](https://user-images.githubusercontent.com/105340187/218292872-471d46e9-6ff7-44b6-a443-b49f6b5696fc.png)
 nginx.config
 
