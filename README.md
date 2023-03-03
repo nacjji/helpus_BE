@@ -191,7 +191,8 @@
 
 
 ### 서버 설정
-- 운영서버
+#### 운영서버
+
 sites-enabled/default
 
 ![스크린샷 2023-02-12 오후 1 19 23](https://user-images.githubusercontent.com/105340187/218292852-fa8d6e69-b2e7-4fcf-a209-005fe444407d.png)
@@ -202,7 +203,8 @@ nginx.config
 
 
 
-- 개발서버
+#### 개발서버
+
 sites-enabled/default
 
 ![스크린샷 2023-02-12 오후 1 24 45](https://user-images.githubusercontent.com/105340187/218292928-f25f6770-0068-4214-a4d2-4958ce9f61e4.png)
