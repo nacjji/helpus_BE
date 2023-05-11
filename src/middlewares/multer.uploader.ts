@@ -1,13 +1,16 @@
+import dotenv from 'dotenv';
 import { Request } from 'express';
 import multer from 'multer';
-import { nanoid } from 'nanoid';
 import multers3 from 'multer-s3';
+import { nanoid } from 'nanoid';
 import s3 from '../config/AWS.s3';
+
+dotenv.config();
 
 const multeruploader = multer({
   storage: multers3({
     s3,
-    bucket: process.env.S3_BUCKET_NAME as string,
+    bucket: `'${process.env.S3_BUCKET_NAME}'`,
     acl: 'public-read',
     contentType: (req, file, callback) => {
       callback(null, `image/${file.mimetype.split('/')[1]}`);
@@ -33,7 +36,7 @@ const multeruploader = multer({
 const profileUploader = multer({
   storage: multers3({
     s3,
-    bucket: process.env.S3_BUCKET_NAME as string,
+    bucket: `'${process.env.S3_BUCKET_NAME}'`,
     acl: 'public-read',
     contentType: (req, file, callback) => {
       callback(null, `image/${file.mimetype.split('/')[1]}`);
@@ -57,7 +60,7 @@ const profileUploader = multer({
 const chatUploader = multer({
   storage: multers3({
     s3,
-    bucket: process.env.S3_BUCKET_NAME as string,
+    bucket: `'${process.env.S3_BUCKET_NAME}'`,
     acl: 'public-read',
     contentType: (req, file, callback) => {
       callback(null, `image/${file.mimetype.split('/')[1]}`);
@@ -80,7 +83,7 @@ const chatUploader = multer({
 
 const deleteS3Image = (profileImage: string) => {
   s3.deleteObject({
-    Bucket: process.env.S3_BUCKET_NAME as string,
+    Bucket: `'${process.env.S3_BUCKET_NAME}'`,
     Key: `helpus/profile/${profileImage}`,
   });
 };
@@ -90,7 +93,7 @@ const deleteS3ImagePost = (imageUrls: string[]) => {
     return { Key: `helpus/${imageUrl}` };
   });
   s3.deleteObjects({
-    Bucket: process.env.S3_BUCKET_NAME as string,
+    Bucket: `'${process.env.S3_BUCKET_NAME}'`,
     Delete: {
       Objects: deleteImgs,
     },
@@ -103,7 +106,7 @@ const deleteS3ImageChat = (imageUrls: any[]) => {
   });
 
   s3.deleteObjects({
-    Bucket: process.env.S3_BUCKET_NAME as string,
+    Bucket: `'${process.env.S3_BUCKET_NAME}'`,
     Delete: {
       Objects: deleteImgs,
     },

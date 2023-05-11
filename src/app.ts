@@ -1,14 +1,14 @@
-import express from 'express';
-import session from 'express-session';
+import compression from 'compression';
 import cookieParser from 'cookie-parser';
 import cors from 'cors';
+import express from 'express';
+import session from 'express-session';
 import helmet from 'helmet';
-import compression from 'compression';
 import { createServer } from 'http';
+import logger from './config/logger';
+import errorHandler from './middlewares/errorHandler';
 import morgan from './middlewares/morgan';
 import router from './routes';
-import errorHandler from './middlewares/errorHandler';
-import logger from './config/logger';
 import Socket from './socket';
 
 const { COOKIE } = process.env as { COOKIE: string };
